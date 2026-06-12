@@ -73,9 +73,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .ftab{padding:5px 12px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--text-2);transition:all .15s;font-family:inherit}
 .ftab.active{background:var(--primary-light);color:var(--primary)}
 .ftab:hover:not(.active){background:var(--bg);color:var(--text)}
-.search-wrap{position:relative}
-.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none;color:var(--text-2)}
-.search-inp{padding:7px 12px 7px 32px;border:1px solid var(--border);border-radius:var(--r);font-size:13px;color:var(--text);background:var(--bg);width:240px;outline:none;transition:border-color .15s,box-shadow .15s;font-family:inherit}
+.search-inp{padding:7px 12px;border:1px solid var(--border);border-radius:var(--r);font-size:13px;color:var(--text);background:var(--bg);width:240px;outline:none;transition:border-color .15s,box-shadow .15s;font-family:inherit}
 .search-inp:focus{border-color:var(--primary);background:var(--white);box-shadow:0 0 0 3px rgba(37,99,235,.08)}
 
 /* TABLE */
@@ -86,18 +84,20 @@ thead{background:var(--bg);border-bottom:1px solid var(--border)}
 th{padding:10px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
 td{padding:13px 14px;border-bottom:1px solid var(--border-light);vertical-align:middle}
 tr:last-child td{border-bottom:none}
+tbody tr{cursor:pointer}
 tbody tr:hover td{background:#FAFBFF}
 .th-r{text-align:right}
 .td-r{text-align:right}
 
 /* VEHICLE ROW */
 .veh-info{display:flex;align-items:center;gap:10px}
-.veh-thumb{width:52px;height:38px;background:var(--bg);border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.veh-thumb{width:52px;height:38px;background:var(--bg);border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;overflow:hidden}
+.veh-thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .veh-name{font-weight:600;font-size:14px}
 .veh-detail{font-size:11px;color:var(--text-2);margin-top:1px}
 
-/* BADGES */
-.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+/* BADGES — sin emojis */
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
 .badge-available{background:var(--success-bg);color:var(--success)}
 .badge-reserved{background:var(--warning-bg);color:var(--warning)}
 .badge-sold{background:#F1F5F9;color:var(--text-2)}
@@ -134,6 +134,36 @@ input:focus,select:focus,textarea:focus{border-color:var(--primary);box-shadow:0
 textarea{resize:vertical;min-height:76px;line-height:1.5}
 .input-hint{font-size:11px;color:var(--text-2);margin-top:2px}
 
+/* PHOTOS */
+.photo-upload-area{display:block;border:2px dashed var(--border);border-radius:var(--r);padding:18px 20px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;margin-top:10px}
+.photo-upload-area:hover{border-color:var(--primary);background:var(--primary-light)}
+.photo-upload-prompt{display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:none}
+.photo-upload-prompt .up-icon{font-size:22px;color:var(--text-2)}
+.photo-upload-prompt .up-label{font-size:13px;font-weight:500;color:var(--text-2)}
+.photo-upload-prompt .up-hint{font-size:11px;color:var(--text-2)}
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;margin-bottom:10px}
+.photo-item{position:relative;aspect-ratio:4/3;border-radius:6px;overflow:hidden;border:1px solid var(--border);background:var(--bg)}
+.photo-item img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-remove{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;border:none;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;line-height:1}
+.photo-item:hover .photo-remove{opacity:1}
+.photo-main-badge{position:absolute;bottom:4px;left:4px;background:rgba(37,99,235,.85);color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;letter-spacing:.04em;text-transform:uppercase}
+
+/* GALLERY */
+.photo-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+.gallery-img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:6px;cursor:zoom-in;border:1px solid var(--border);transition:opacity .15s;display:block}
+.gallery-img:hover{opacity:.82}
+
+/* LIGHTBOX */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px}
+.lightbox img{max-width:90vw;max-height:88vh;border-radius:8px;object-fit:contain;display:block}
+.lb-close{position:absolute;top:14px;right:18px;color:#fff;font-size:26px;cursor:pointer;background:none;border:none;line-height:1;padding:6px;opacity:.8;transition:opacity .15s}
+.lb-close:hover{opacity:1}
+.lb-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.12);border:none;color:#fff;font-size:28px;cursor:pointer;border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;transition:background .15s;line-height:1}
+.lb-nav:hover{background:rgba(255,255,255,.24)}
+.lb-prev{left:16px}
+.lb-next{right:16px}
+.lb-count{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.65);font-size:13px}
+
 /* EXPENSE LINES */
 .exp-list{display:flex;flex-direction:column;gap:7px;margin-bottom:10px}
 .exp-line{display:grid;grid-template-columns:1fr 140px 30px;gap:8px;align-items:center}
@@ -164,6 +194,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .spec{display:flex;flex-direction:column;gap:2px}
 .spec-l{font-size:10px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em}
 .spec-v{font-size:15px;font-weight:600}
+.detail-hero-img{width:120px;height:88px;object-fit:cover;border-radius:8px;border:1px solid var(--border);flex-shrink:0}
 
 .detail-grid{display:grid;grid-template-columns:1fr 340px;gap:18px;align-items:start}
 .dcard{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden}
@@ -179,7 +210,6 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .exp-item:last-child{border-bottom:none}
 .exp-concept{color:var(--text)}
 .exp-amount{font-weight:600}
-
 .exp-subtotal{display:flex;justify-content:space-between;padding:9px 12px;background:var(--bg);border-radius:6px;font-size:13px;font-weight:600;margin-top:8px}
 
 .hist-list{display:flex;flex-direction:column}
@@ -273,8 +303,9 @@ const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7
 
 // ─── STATE ───────────────────────────────────────────────────
 let S = { view:'dash', filter:'all', q:'', editId:null, detailId:null, delId:null };
-let fData = {};          // form vehicle data
-let fExp  = [];          // form expenses
+let fData   = {};
+let fExp    = [];
+let fPhotos = [];
 
 // ─── CALCS ───────────────────────────────────────────────────
 function calc(v) {
@@ -312,7 +343,6 @@ const esc = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g
 
 const STATUS_LABEL = { available:'Disponible', reserved:'Reservado', sold:'Vendido' };
 const STATUS_BADGE = { available:'badge-available', reserved:'badge-reserved', sold:'badge-sold' };
-const STATUS_ICON  = { available:'✅', reserved:'🔒', sold:'✔' };
 
 // ─── RENDER ──────────────────────────────────────────────────
 function render() {
@@ -357,13 +387,10 @@ function renderDash() {
 </div>
 <div class="filter-bar">
   <div class="filter-tabs">
-    ${[['all','Todos',getVehicles().length],['available','✅ Disponibles',sm.avail],['reserved','🔒 Reservados',sm.reserved],['sold','✔ Vendidos',sm.sold]]
+    ${[['all','Todos',getVehicles().length],['available','Disponibles',sm.avail],['reserved','Reservados',sm.reserved],['sold','Vendidos',sm.sold]]
       .map(([k,l,n])=>`<button class="ftab${S.filter===k?' active':''}" onclick="setFilter('${k}')">${l} <span style="opacity:.6">(${n})</span></button>`).join('')}
   </div>
-  <div class="search-wrap">
-    <span class="search-icon">🔍</span>
-    <input class="search-inp" type="text" placeholder="Buscar marca, modelo, color…" value="${esc(S.q)}" id="searchInp" oninput="setQ(this.value)">
-  </div>
+  <input class="search-inp" type="text" placeholder="Buscar marca, modelo..." value="${esc(S.q)}" id="searchInp" oninput="setQ(this.value)">
 </div>
 <div class="table-wrap">
   ${vs.length ? `<div class="table-scroll"><table><thead><tr>
@@ -378,9 +405,12 @@ function renderDash() {
 function renderRow(v) {
   const c = calc(v);
   const dc = c.days>90?'alert':c.days>45?'warn':'';
-  return `<tr>
+  const thumb = v.photos && v.photos[0]
+    ? `<div class="veh-thumb"><img src="${v.photos[0]}" alt="foto"></div>`
+    : `<div class="veh-thumb">🚘</div>`;
+  return `<tr onclick="showDetail('${v.id}')">
     <td><div class="veh-info">
-      <div class="veh-thumb">🚘</div>
+      ${thumb}
       <div>
         <div class="veh-name">${esc(v.brand)} ${esc(v.model)}</div>
         <div class="veh-detail">${esc(v.color)||'—'} · ${v.vin?'···'+v.vin.slice(-5):'Sin VIN'}</div>
@@ -395,9 +425,8 @@ function renderRow(v) {
       <div style="font-size:11px;color:var(--text-2)">${pct(c.marginPct)}</div>
     </td>
     <td>${v.status!=='sold'?`<span class="days-tag ${dc}">${c.days}d</span>`:'<span style="color:var(--text-2)">—</span>'}</td>
-    <td><span class="badge ${STATUS_BADGE[v.status]}">${STATUS_ICON[v.status]} ${STATUS_LABEL[v.status]}</span></td>
-    <td><div class="row-actions">
-      <button class="btn btn-secondary btn-xs" onclick="showDetail('${v.id}')">Ver</button>
+    <td><span class="badge ${STATUS_BADGE[v.status]}">${STATUS_LABEL[v.status]}</span></td>
+    <td onclick="event.stopPropagation()"><div class="row-actions">
       <button class="btn btn-secondary btn-xs" onclick="showEdit('${v.id}')">✏️</button>
       <button class="btn btn-danger-soft btn-xs" onclick="openDel('${v.id}')">🗑</button>
     </div></td>
@@ -421,10 +450,11 @@ function renderEmpty() {
 
 // ─── FORM ────────────────────────────────────────────────────
 function initForm(v) {
-  fData = v ? {...v} : {};
-  fExp  = v && v.expenses && v.expenses.length
+  fData   = v ? {...v} : {};
+  fExp    = v && v.expenses && v.expenses.length
     ? v.expenses.map(e=>({...e}))
     : [{id:uid(),concept:'',amount:''}];
+  fPhotos = v && v.photos ? [...v.photos] : [];
 }
 
 function renderForm() {
@@ -459,11 +489,24 @@ function renderForm() {
         <input type="date" name="entryDate" value="${fData.entryDate||today}" required></div>
       <div class="fg"><label>Estado</label>
         <select name="status">
-          <option value="available"${(fData.status||'available')==='available'?' selected':''}>✅ Disponible</option>
-          <option value="reserved"${fData.status==='reserved'?' selected':''}>🔒 Reservado</option>
-          <option value="sold"${fData.status==='sold'?' selected':''}>✔ Vendido</option>
+          <option value="available"${(fData.status||'available')==='available'?' selected':''}>Disponible</option>
+          <option value="reserved"${fData.status==='reserved'?' selected':''}>Reservado</option>
+          <option value="sold"${fData.status==='sold'?' selected':''}>Vendido</option>
         </select></div>
     </div>
+  </div>
+
+  <div class="fsec">
+    <div class="fsec-title">📷 Fotos <span class="opt" style="font-weight:400">· se guardan en el navegador</span></div>
+    <div id="photoGrid">${renderPhotoGrid()}</div>
+    <label class="photo-upload-area" for="photoInput">
+      <input type="file" id="photoInput" accept="image/*" multiple style="display:none" onchange="handlePhotoUpload(this)">
+      <div class="photo-upload-prompt">
+        <span class="up-icon">📁</span>
+        <span class="up-label">Haz clic para subir fotos</span>
+        <span class="up-hint">JPG, PNG · puedes seleccionar varias a la vez</span>
+      </div>
+    </label>
   </div>
 
   <div class="fsec">
@@ -562,11 +605,109 @@ function refreshPricing() {
   document.getElementById('priceBox').innerHTML = renderPriceBox();
 }
 
+// ─── PHOTOS ──────────────────────────────────────────────────
+function renderPhotoGrid() {
+  if (!fPhotos.length) return '';
+  return `<div class="photo-grid">${fPhotos.map((p,i)=>`
+    <div class="photo-item">
+      <img src="${p}" alt="Foto ${i+1}">
+      <button type="button" class="photo-remove" onclick="removePhoto(${i})" title="Eliminar foto">✕</button>
+      ${i===0?'<span class="photo-main-badge">Principal</span>':''}
+    </div>`).join('')}</div>`;
+}
+
+function handlePhotoUpload(input) {
+  Array.from(input.files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => compressImage(e.target.result, compressed => {
+      fPhotos.push(compressed);
+      refreshPhotos();
+    });
+    reader.readAsDataURL(file);
+  });
+  input.value = '';
+}
+
+function compressImage(src, cb) {
+  const img = new Image();
+  img.onload = () => {
+    const MAX = 1100;
+    let w = img.width, h = img.height;
+    if (w > MAX || h > MAX) {
+      if (w >= h) { h = Math.round(h * MAX / w); w = MAX; }
+      else { w = Math.round(w * MAX / h); h = MAX; }
+    }
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+    cb(canvas.toDataURL('image/jpeg', 0.82));
+  };
+  img.src = src;
+}
+
+function removePhoto(idx) {
+  fPhotos.splice(idx, 1);
+  refreshPhotos();
+}
+
+function refreshPhotos() {
+  const el = document.getElementById('photoGrid');
+  if (el) el.innerHTML = renderPhotoGrid();
+}
+
+// ─── LIGHTBOX ────────────────────────────────────────────────
+let lbVid = null, lbIdx = 0;
+
+function openLightbox(vid, idx) {
+  lbVid = vid; lbIdx = idx;
+  showLightbox();
+}
+
+function showLightbox() {
+  const v = getVehicles().find(x=>x.id===lbVid);
+  if (!v?.photos?.length) return;
+  const existing = document.getElementById('lightbox');
+  if (existing) { document.removeEventListener('keydown', existing._kh); existing.remove(); }
+  const n = v.photos.length;
+  const lb = document.createElement('div');
+  lb.id = 'lightbox'; lb.className = 'lightbox';
+  lb.innerHTML = `
+    <button class="lb-close" onclick="closeLightbox()">✕</button>
+    ${n>1?`<button class="lb-nav lb-prev" onclick="navLb(-1)">‹</button>`:''}
+    <img src="${v.photos[lbIdx]}" alt="Foto ${lbIdx+1}">
+    ${n>1?`<button class="lb-nav lb-next" onclick="navLb(1)">›</button>`:''}
+    ${n>1?`<div class="lb-count">${lbIdx+1} / ${n}</div>`:''}
+  `;
+  lb._kh = e => {
+    if (e.key==='Escape') closeLightbox();
+    if (e.key==='ArrowLeft') navLb(-1);
+    if (e.key==='ArrowRight') navLb(1);
+  };
+  lb.addEventListener('click', e => { if (e.target===lb) closeLightbox(); });
+  document.addEventListener('keydown', lb._kh);
+  document.body.appendChild(lb);
+}
+
+function navLb(dir) {
+  const v = getVehicles().find(x=>x.id===lbVid);
+  if (!v?.photos) return;
+  lbIdx = (lbIdx + dir + v.photos.length) % v.photos.length;
+  showLightbox();
+}
+
+function closeLightbox() {
+  const lb = document.getElementById('lightbox');
+  if (lb) { document.removeEventListener('keydown', lb._kh); lb.remove(); }
+}
+
 // ─── DETAIL ──────────────────────────────────────────────────
 function renderDetail() {
   const v = getVehicles().find(x=>x.id===S.detailId);
   if(!v){ showDash(); return ''; }
   const c = calc(v);
+  const heroImg = v.photos && v.photos[0]
+    ? `<img class="detail-hero-img" src="${v.photos[0]}" alt="${esc(v.brand)} ${esc(v.model)}">`
+    : `<div style="font-size:44px;line-height:1;flex-shrink:0">🚘</div>`;
   return `
 <div class="page-header">
   <div>
@@ -582,13 +723,13 @@ function renderDetail() {
 <div class="detail-top">
   <div class="detail-head">
     <div style="display:flex;align-items:center;gap:14px">
-      <div style="font-size:44px;line-height:1">🚘</div>
+      ${heroImg}
       <div>
         <div class="detail-name">${esc(v.brand)} ${esc(v.model)}</div>
         <div class="detail-sub">${v.year||''} · ${esc(v.color)||''} ${v.vin?'· <span style="font-family:monospace;font-size:12px">'+esc(v.vin)+'</span>':''}</div>
       </div>
     </div>
-    <span class="badge ${STATUS_BADGE[v.status]}" style="font-size:13px;padding:5px 14px">${STATUS_ICON[v.status]} ${STATUS_LABEL[v.status]}</span>
+    <span class="badge ${STATUS_BADGE[v.status]}" style="font-size:13px;padding:5px 14px">${STATUS_LABEL[v.status]}</span>
   </div>
   <div class="detail-specs">
     <div class="spec"><div class="spec-l">Coste total</div><div class="spec-v num">${eur(c.totalCost)}</div></div>
@@ -609,6 +750,15 @@ function renderDetail() {
           .map(([l,val])=>`<div class="info-row"><span class="info-l">${l}</span><span class="info-v">${val||'—'}</span></div>`).join('')}
       </div>
     </div>
+    ${v.photos && v.photos.length ? `
+    <div class="dcard">
+      <div class="dcard-head">📷 Fotos <span style="font-weight:400;color:var(--text-2)">(${v.photos.length})</span></div>
+      <div class="dcard-body">
+        <div class="photo-gallery">
+          ${v.photos.map((p,i)=>`<img class="gallery-img" src="${p}" alt="Foto ${i+1}" onclick="openLightbox('${v.id}',${i})" title="Ver foto ${i+1}">`).join('')}
+        </div>
+      </div>
+    </div>` : ''}
     ${v.notes?`<div class="dcard">
       <div class="dcard-head">📝 Notas internas</div>
       <div class="dcard-body"><p style="font-size:13px;line-height:1.65;white-space:pre-wrap">${esc(v.notes)}</p></div>
@@ -655,7 +805,7 @@ function renderDetail() {
           ${['available','reserved','sold'].map(st=>`
             <button class="btn ${v.status===st?'btn-primary':'btn-secondary'}" style="justify-content:flex-start"
               onclick="changeStatus('${v.id}','${st}')" ${v.status===st?'disabled':''}>
-              ${STATUS_ICON[st]} Marcar como ${STATUS_LABEL[st]}
+              Marcar como ${STATUS_LABEL[st]}
             </button>`).join('')}
         </div>
       </div>
@@ -665,7 +815,7 @@ function renderDetail() {
 }
 
 // ─── ACTIONS ─────────────────────────────────────────────────
-function showDash() { S.view='dash'; S.editId=null; S.detailId=null; fData={}; fExp=[]; render(); }
+function showDash() { S.view='dash'; S.editId=null; S.detailId=null; fData={}; fExp=[]; fPhotos=[]; render(); }
 
 function showAddForm() {
   S.view='form'; S.editId=null;
@@ -704,7 +854,7 @@ function saveVehicle() {
   if(!d.brand?.trim()||!d.model?.trim()||!d.year) { toast('⚠️ Completa: marca, modelo y año'); return; }
 
   const vs = getVehicles();
-  const prevStatus = S.editId ? vs.find(v=>v.id===S.editId)?.status : null;
+  const prevStatus  = S.editId ? vs.find(v=>v.id===S.editId)?.status : null;
   const prevHistory = S.editId ? (vs.find(v=>v.id===S.editId)?.statusHistory||[]) : [];
   const prevCreated = S.editId ? vs.find(v=>v.id===S.editId)?.createdAt : null;
 
@@ -719,6 +869,7 @@ function saveVehicle() {
     status: d.status||'available',
     notes: d.notes.trim(),
     entryDate: d.entryDate || new Date().toISOString().split('T')[0],
+    photos: fPhotos,
     createdAt: prevCreated || new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     statusHistory: buildHistory(prevHistory, prevStatus, d.status, !S.editId),
@@ -785,36 +936,36 @@ function loadDemo() {
 
   setVehicles([
     { id:uid(), brand:'Volkswagen', model:'Golf 1.6 TDI', year:2018, km:87500, color:'Blanco', vin:'WVWZZZ1KZJM081234',
-      purchasePrice:8500, salePrice:11900, status:'available',
+      purchasePrice:8500, salePrice:11900, status:'available', photos:[],
       expenses:[{id:uid(),concept:'Pintura',amount:350},{id:uid(),concept:'ITV',amount:45},{id:uid(),concept:'Gestoría',amount:120},{id:uid(),concept:'Limpieza',amount:80}],
       notes:'Buen estado general. Revisión reciente.\nPequeño arañazo en puerta trasera derecha ya reparado.',
       entryDate:ago(32), createdAt:agoISO(32), updatedAt:agoISO(32),
       statusHistory:[{date:agoISO(32),from:null,to:'available',text:'Añadido al stock como "Disponible"'}] },
     { id:uid(), brand:'SEAT', model:'León 1.5 TSI FR', year:2020, km:42300, color:'Gris Magnetic', vin:'VSSZZZ5FZKR012345',
-      purchasePrice:14200, salePrice:17500, status:'reserved',
+      purchasePrice:14200, salePrice:17500, status:'reserved', photos:[],
       expenses:[{id:uid(),concept:'Revisión mecánica',amount:180},{id:uid(),concept:'Gestoría',amount:120}],
       notes:'Cliente: Antonio Martínez. Señal de 500€ recibida.\nEntrega prevista para el 20/06/2026.',
       entryDate:ago(18), createdAt:agoISO(18), updatedAt:agoISO(5),
       statusHistory:[{date:agoISO(18),from:null,to:'available',text:'Añadido al stock como "Disponible"'},{date:agoISO(5),from:'available',to:'reserved',text:'Disponible → Reservado'}] },
     { id:uid(), brand:'Toyota', model:'Corolla 1.8 Hybrid', year:2021, km:29800, color:'Blanco Perla', vin:'SB1K55BE00E123456',
-      purchasePrice:19500, salePrice:23900, status:'available',
+      purchasePrice:19500, salePrice:23900, status:'available', photos:[],
       expenses:[{id:uid(),concept:'ITV',amount:45},{id:uid(),concept:'Limpieza detailing',amount:150},{id:uid(),concept:'Gestoría',amount:120}],
       notes:'Perfecto estado. Primera mano. Todos los servicios en Toyota oficial.',
       entryDate:ago(8), createdAt:agoISO(8), updatedAt:agoISO(8),
       statusHistory:[{date:agoISO(8),from:null,to:'available',text:'Añadido al stock como "Disponible"'}] },
     { id:uid(), brand:'BMW', model:'320d xDrive', year:2019, km:68400, color:'Azul Mediterráneo', vin:'WBA8D31050K123789',
-      purchasePrice:22000, salePrice:27500, status:'sold',
+      purchasePrice:22000, salePrice:27500, status:'sold', photos:[],
       expenses:[{id:uid(),concept:'Frenos',amount:420},{id:uid(),concept:'Neumáticos',amount:560},{id:uid(),concept:'Limpieza',amount:120},{id:uid(),concept:'Gestoría',amount:120}],
       notes:'Vendido a María García el 05/06/2026. Pago al contado.',
       entryDate:ago(65), createdAt:agoISO(65), updatedAt:agoISO(7),
       statusHistory:[{date:agoISO(65),from:null,to:'available',text:'Añadido al stock como "Disponible"'},{date:agoISO(10),from:'available',to:'reserved',text:'Disponible → Reservado'},{date:agoISO(7),from:'reserved',to:'sold',text:'Reservado → Vendido'}] },
     { id:uid(), brand:'Renault', model:'Clio 1.0 TCe', year:2022, km:15200, color:'Rojo Flamme', vin:'VF1RHBR0E59123456',
-      purchasePrice:11800, salePrice:14500, status:'available',
+      purchasePrice:11800, salePrice:14500, status:'available', photos:[],
       expenses:[{id:uid(),concept:'Gestoría',amount:120},{id:uid(),concept:'Limpieza',amount:80}],
       notes:'', entryDate:ago(5), createdAt:agoISO(5), updatedAt:agoISO(5),
       statusHistory:[{date:agoISO(5),from:null,to:'available',text:'Añadido al stock como "Disponible"'}] },
     { id:uid(), brand:'Peugeot', model:'308 1.5 BlueHDi', year:2020, km:55100, color:'Gris Platinium', vin:'VF3LBYHZRLS123987',
-      purchasePrice:12800, salePrice:15900, status:'available',
+      purchasePrice:12800, salePrice:15900, status:'available', photos:[],
       expenses:[{id:uid(),concept:'Tapicería',amount:220},{id:uid(),concept:'ITV',amount:45},{id:uid(),concept:'Gestoría',amount:120},{id:uid(),concept:'Transporte',amount:180}],
       notes:'Traído desde Madrid. Pequeño golpe en paragolpes delantero reparado.',
       entryDate:ago(55), createdAt:agoISO(55), updatedAt:agoISO(55),
