@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eurocar Motor — Gestión de Stock</title>
+<style>
+:root {
+  --primary: #2563EB;
+  --primary-hover: #1D4ED8;
+  --primary-light: #EFF6FF;
+  --bg: #F8FAFC;
+  --white: #FFFFFF;
+  --text: #1E293B;
+  --text-2: #64748B;
+  --border: #E2E8F0;
+  --border-light: #F1F5F9;
+  --success: #059669;
+  --success-bg: #ECFDF5;
+  --warning: #D97706;
+  --warning-bg: #FFFBEB;
+  --danger: #DC2626;
+  --danger-bg: #FEF2F2;
+  --shadow: 0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,.07),0 2px 4px -1px rgba(0,0,0,.04);
+  --r: 8px;
+  --r-lg: 12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+
+/* NAV */
+.nav{background:var(--white);border-bottom:1px solid var(--border);height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:100;box-shadow:0 1px 0 var(--border)}
+.nav-brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px}
+.nav-logo{width:34px;height:34px;background:var(--primary);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.nav-sub{font-size:11px;color:var(--text-2);font-weight:400;margin-top:1px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--r);font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .15s;font-family:inherit;text-decoration:none;line-height:1.4}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover:not(:disabled){background:var(--primary-hover)}
+.btn-secondary{background:var(--white);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover:not(:disabled){background:var(--bg)}
+.btn-danger-soft{background:var(--danger-bg);color:var(--danger);border:1px solid #FECACA}
+.btn-danger-soft:hover:not(:disabled){background:#FEE2E2}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn-xs{padding:3px 8px;font-size:12px}
+.btn-icon{width:30px;height:30px;border:none;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:background .15s;flex-shrink:0}
+.btn-icon-del{background:var(--danger-bg);color:var(--danger)}
+.btn-icon-del:hover{background:#FEE2E2}
+.btn-icon-add{background:var(--primary-light);color:var(--primary);width:auto;padding:0 12px;height:30px;border-radius:6px;font-size:13px;font-weight:500}
+.btn-icon-add:hover{background:#DBEAFE}
+
+/* LAYOUT */
+.main{max-width:1280px;margin:0 auto;padding:28px 24px}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;gap:16px}
+.page-title{font-size:22px;font-weight:700}
+.page-sub{font-size:13px;color:var(--text-2);margin-top:3px}
+
+/* METRIC CARDS */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.metric-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px 20px;box-shadow:var(--shadow)}
+.metric-label{font-size:12px;font-weight:500;color:var(--text-2);margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.metric-val{font-size:26px;font-weight:700;line-height:1;letter-spacing:-.5px}
+.metric-val.blue{color:var(--primary)}
+.metric-val.green{color:var(--success)}
+.metric-note{font-size:11px;color:var(--text-2);margin-top:5px}
+
+/* FILTER BAR */
+.filter-bar{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;box-shadow:var(--shadow);flex-wrap:wrap}
+.filter-tabs{display:flex;gap:2px;flex-wrap:wrap}
+.ftab{padding:5px 12px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--text-2);transition:all .15s;font-family:inherit}
+.ftab.active{background:var(--primary-light);color:var(--primary)}
+.ftab:hover:not(.active){background:var(--bg);color:var(--text)}
+.search-wrap{position:relative}
+.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none;color:var(--text-2)}
+.search-inp{padding:7px 12px 7px 32px;border:1px solid var(--border);border-radius:var(--r);font-size:13px;color:var(--text);background:var(--bg);width:240px;outline:none;transition:border-color .15s,box-shadow .15s;font-family:inherit}
+.search-inp:focus{border-color:var(--primary);background:var(--white);box-shadow:0 0 0 3px rgba(37,99,235,.08)}
+
+/* TABLE */
+.table-wrap{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden}
+.table-scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:900px}
+thead{background:var(--bg);border-bottom:1px solid var(--border)}
+th{padding:10px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+td{padding:13px 14px;border-bottom:1px solid var(--border-light);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:#FAFBFF}
+.th-r{text-align:right}
+.td-r{text-align:right}
+
+/* VEHICLE ROW */
+.veh-info{display:flex;align-items:center;gap:10px}
+.veh-thumb{width:52px;height:38px;background:var(--bg);border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.veh-name{font-weight:600;font-size:14px}
+.veh-detail{font-size:11px;color:var(--text-2);margin-top:1px}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge-available{background:var(--success-bg);color:var(--success)}
+.badge-reserved{background:var(--warning-bg);color:var(--warning)}
+.badge-sold{background:#F1F5F9;color:var(--text-2)}
+
+.days-tag{display:inline-block;padding:2px 7px;border-radius:12px;font-size:11px;font-weight:500;background:var(--bg);color:var(--text-2)}
+.days-tag.warn{background:var(--warning-bg);color:var(--warning)}
+.days-tag.alert{background:var(--danger-bg);color:var(--danger)}
+
+.pos{color:var(--success);font-weight:600}
+.neg{color:var(--danger);font-weight:600}
+
+.row-actions{display:flex;gap:5px;align-items:center}
+
+/* EMPTY */
+.empty{text-align:center;padding:56px 20px}
+.empty-icon{font-size:44px;margin-bottom:14px}
+.empty-title{font-size:17px;font-weight:600;margin-bottom:6px}
+.empty-desc{font-size:13px;color:var(--text-2);margin-bottom:20px}
+
+/* FORM */
+.form-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden;margin-bottom:0}
+.fsec{padding:22px 24px;border-bottom:1px solid var(--border)}
+.fsec:last-child{border-bottom:none}
+.fsec-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:7px}
+.fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.fgrid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg.span2{grid-column:span 2}
+.fg.span3{grid-column:1/-1}
+label{font-size:12px;font-weight:500;color:var(--text)}
+label .opt{color:var(--text-2);font-weight:400}
+input[type=text],input[type=number],input[type=date],select,textarea{padding:8px 11px;border:1px solid var(--border);border-radius:var(--r);font-size:13px;color:var(--text);background:var(--white);outline:none;transition:border-color .15s,box-shadow .15s;font-family:inherit;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.08)}
+textarea{resize:vertical;min-height:76px;line-height:1.5}
+.input-hint{font-size:11px;color:var(--text-2);margin-top:2px}
+
+/* EXPENSE LINES */
+.exp-list{display:flex;flex-direction:column;gap:7px;margin-bottom:10px}
+.exp-line{display:grid;grid-template-columns:1fr 140px 30px;gap:8px;align-items:center}
+.exp-footer{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg);border-radius:var(--r);border:1px solid var(--border)}
+.exp-footer-label{font-size:13px;color:var(--text-2)}
+.exp-footer-val{font-size:16px;font-weight:700}
+
+/* PRICING PREVIEW */
+.price-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px}
+.prow{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:13px}
+.prow.sep{border-top:1px solid var(--border);margin-top:6px;padding-top:10px}
+.prow.big{margin-top:8px;padding-top:10px;border-top:2px solid var(--border)}
+.prow .plabel{color:var(--text-2)}
+.prow .pval{font-weight:600}
+.prow.big .plabel{font-weight:700;color:var(--text);font-size:14px}
+.prow.big .pval{font-size:18px}
+
+/* FORM ACTIONS */
+.form-actions{display:flex;justify-content:flex-end;gap:10px;padding:18px 24px;background:var(--bg);border-top:1px solid var(--border)}
+
+/* DETAIL */
+.detail-top{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:22px 24px;margin-bottom:18px;box-shadow:var(--shadow)}
+.detail-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;gap:12px}
+.detail-name{font-size:26px;font-weight:700;line-height:1.1}
+.detail-sub{font-size:14px;color:var(--text-2);margin-top:4px}
+.detail-actions{display:flex;gap:8px;flex-shrink:0}
+.detail-specs{display:flex;gap:20px;flex-wrap:wrap}
+.spec{display:flex;flex-direction:column;gap:2px}
+.spec-l{font-size:10px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em}
+.spec-v{font-size:15px;font-weight:600}
+
+.detail-grid{display:grid;grid-template-columns:1fr 340px;gap:18px;align-items:start}
+.dcard{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden}
+.dcard-head{padding:14px 18px;border-bottom:1px solid var(--border);font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;background:var(--bg)}
+.dcard-body{padding:18px}
+
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border-light);font-size:13px}
+.info-row:last-child{border-bottom:none}
+.info-l{color:var(--text-2)}
+.info-v{font-weight:500;text-align:right}
+
+.exp-item{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border-light);font-size:13px}
+.exp-item:last-child{border-bottom:none}
+.exp-concept{color:var(--text)}
+.exp-amount{font-weight:600}
+
+.exp-subtotal{display:flex;justify-content:space-between;padding:9px 12px;background:var(--bg);border-radius:6px;font-size:13px;font-weight:600;margin-top:8px}
+
+.hist-list{display:flex;flex-direction:column}
+.hist-item{display:flex;gap:11px;padding:10px 0;border-bottom:1px solid var(--border-light)}
+.hist-item:last-child{border-bottom:none}
+.hist-dot{width:8px;height:8px;border-radius:50%;background:var(--primary);margin-top:4px;flex-shrink:0}
+.hist-txt{font-size:13px;color:var(--text)}
+.hist-date{font-size:11px;color:var(--text-2);margin-top:2px}
+
+/* STATUS ACTIONS */
+.status-actions{display:flex;flex-direction:column;gap:7px}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:var(--white);border-radius:var(--r-lg);max-width:380px;width:100%;box-shadow:0 20px 40px rgba(0,0,0,.15)}
+.modal-head{padding:18px 22px;border-bottom:1px solid var(--border);font-size:15px;font-weight:600}
+.modal-body{padding:18px 22px;font-size:13px;color:var(--text-2);line-height:1.6}
+.modal-foot{padding:14px 22px;display:flex;justify-content:flex-end;gap:8px;border-top:1px solid var(--border)}
+
+/* TOAST */
+.toasts{position:fixed;bottom:22px;right:22px;z-index:300;display:flex;flex-direction:column;gap:7px;pointer-events:none}
+.toast{background:#0F172A;color:#fff;padding:11px 16px;border-radius:8px;font-size:13px;box-shadow:var(--shadow-md);animation:toastIn .2s ease;display:flex;align-items:center;gap:6px}
+@keyframes toastIn{from{transform:translateX(110%);opacity:0}to{transform:none;opacity:1}}
+
+/* HIDDEN */
+.hidden{display:none!important}
+
+/* RESPONSIVE */
+@media(max-width:1100px){.metrics{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.detail-grid{grid-template-columns:1fr}}
+@media(max-width:768px){
+  .main{padding:16px}
+  .filter-bar{flex-direction:column;align-items:stretch}
+  .search-inp{width:100%}
+  .fgrid{grid-template-columns:repeat(2,1fr)}
+  .nav{padding:0 16px}
+  .page-header{flex-direction:column}
+}
+@media(max-width:500px){
+  .metrics{grid-template-columns:1fr}
+  .fgrid,.fgrid-2{grid-template-columns:1fr}
+  .fg.span2{grid-column:1}
+  .detail-specs{gap:14px}
+}
+
+/* NUM */
+.num{font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">
+    <div class="nav-logo">🚗</div>
+    <div>
+      <div>Eurocar Motor</div>
+      <div class="nav-sub">Gestión de Stock</div>
+    </div>
+  </div>
+  <button class="btn btn-primary" onclick="showAddForm()">＋ Añadir vehículo</button>
+</nav>
+
+<div class="toasts" id="toasts"></div>
+
+<div class="overlay hidden" id="delModal">
+  <div class="modal">
+    <div class="modal-head">Eliminar vehículo</div>
+    <div class="modal-body">¿Seguro que quieres eliminar este vehículo? Esta acción no se puede deshacer.</div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeDelModal()">Cancelar</button>
+      <button class="btn btn-danger-soft" id="delConfirmBtn">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<main class="main" id="app"></main>
+
+<datalist id="dconcepts">
+  <option value="Pintura"><option value="Mecánico"><option value="ITV"><option value="Gestoría">
+  <option value="Transporte"><option value="Limpieza"><option value="Tapicería"><option value="Neumáticos">
+  <option value="Revisión"><option value="Frenos"><option value="Cristales"><option value="Documentación">
+  <option value="Publicidad"><option value="Seguro temporal"><option value="Ruedas">
+</datalist>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────
+const KEY = 'eurocar_v2';
+const getVehicles = () => { try { return JSON.parse(localStorage.getItem(KEY)||'[]'); } catch { return []; } };
+const setVehicles = v => localStorage.setItem(KEY, JSON.stringify(v));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+
+// ─── STATE ───────────────────────────────────────────────────
+let S = { view:'dash', filter:'all', q:'', editId:null, detailId:null, delId:null };
+let fData = {};          // form vehicle data
+let fExp  = [];          // form expenses
+
+// ─── CALCS ───────────────────────────────────────────────────
+function calc(v) {
+  const totalExp = (v.expenses||[]).reduce((s,e)=>s+(+e.amount||0),0);
+  const totalCost = (+v.purchasePrice||0) + totalExp;
+  const pvp = +v.salePrice||0;
+  const margin = pvp - totalCost;
+  const marginPct = totalCost>0 ? (margin/totalCost)*100 : 0;
+  const entry = v.entryDate ? new Date(v.entryDate) : new Date();
+  const days = Math.max(0, Math.floor((new Date()-entry)/86400000));
+  return { totalExp, totalCost, pvp, margin, marginPct, days };
+}
+
+function summary() {
+  const vs = getVehicles();
+  const active = vs.filter(v=>v.status!=='sold');
+  return {
+    total: vs.filter(v=>v.status!=='sold').length,
+    avail: vs.filter(v=>v.status==='available').length,
+    reserved: vs.filter(v=>v.status==='reserved').length,
+    sold: vs.filter(v=>v.status==='sold').length,
+    cost: active.reduce((s,v)=>s+calc(v).totalCost,0),
+    pvp:  active.reduce((s,v)=>s+calc(v).pvp,0),
+    margin: active.reduce((s,v)=>s+calc(v).margin,0),
+  };
+}
+
+// ─── FORMAT ──────────────────────────────────────────────────
+const eur = n => new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n||0);
+const pct = n => (n||0).toFixed(1)+'%';
+const num = n => new Intl.NumberFormat('es-ES').format(n||0);
+const dt  = d => d ? new Date(d).toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit',year:'numeric'}) : '—';
+const dtm = d => d ? new Date(d).toLocaleString('es-ES',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+const esc = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+const STATUS_LABEL = { available:'Disponible', reserved:'Reservado', sold:'Vendido' };
+const STATUS_BADGE = { available:'badge-available', reserved:'badge-reserved', sold:'badge-sold' };
+const STATUS_ICON  = { available:'✅', reserved:'🔒', sold:'✔' };
+
+// ─── RENDER ──────────────────────────────────────────────────
+function render() {
+  const app = document.getElementById('app');
+  if (S.view==='dash')   app.innerHTML = renderDash();
+  if (S.view==='form')   app.innerHTML = renderForm();
+  if (S.view==='detail') app.innerHTML = renderDetail();
+}
+
+// ─── DASHBOARD ───────────────────────────────────────────────
+function renderDash() {
+  const sm = summary();
+  const vs = filtered();
+  return `
+<div class="page-header">
+  <div>
+    <div class="page-title">Stock de vehículos</div>
+    <div class="page-sub">Inventario actualizado · ${new Date().toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'})}</div>
+  </div>
+</div>
+<div class="metrics">
+  <div class="metric-card">
+    <div class="metric-label">🚗 Vehículos activos</div>
+    <div class="metric-val blue num">${sm.total}</div>
+    <div class="metric-note">${sm.avail} disponibles · ${sm.reserved} reservados · ${sm.sold} vendidos</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">💰 Inversión en stock</div>
+    <div class="metric-val num">${eur(sm.cost)}</div>
+    <div class="metric-note">Coste total de vehículos activos</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">🏷️ Valor de venta estimado</div>
+    <div class="metric-val num">${eur(sm.pvp)}</div>
+    <div class="metric-note">PVP total de vehículos activos</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">📈 Margen bruto estimado</div>
+    <div class="metric-val green num">${eur(sm.margin)}</div>
+    <div class="metric-note">${sm.cost>0?pct((sm.margin/sm.cost)*100):'0%'} sobre coste total</div>
+  </div>
+</div>
+<div class="filter-bar">
+  <div class="filter-tabs">
+    ${[['all','Todos',getVehicles().length],['available','✅ Disponibles',sm.avail],['reserved','🔒 Reservados',sm.reserved],['sold','✔ Vendidos',sm.sold]]
+      .map(([k,l,n])=>`<button class="ftab${S.filter===k?' active':''}" onclick="setFilter('${k}')">${l} <span style="opacity:.6">(${n})</span></button>`).join('')}
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input class="search-inp" type="text" placeholder="Buscar marca, modelo, color…" value="${esc(S.q)}" id="searchInp" oninput="setQ(this.value)">
+  </div>
+</div>
+<div class="table-wrap">
+  ${vs.length ? `<div class="table-scroll"><table><thead><tr>
+    <th>Vehículo</th><th>Año</th><th>Kilómetros</th>
+    <th class="th-r">Coste total</th><th class="th-r">PVP</th>
+    <th class="th-r">Margen</th><th>Días</th><th>Estado</th><th></th>
+  </tr></thead><tbody>${vs.map(renderRow).join('')}</tbody></table></div>`
+  : renderEmpty()}
+</div>`;
+}
+
+function renderRow(v) {
+  const c = calc(v);
+  const dc = c.days>90?'alert':c.days>45?'warn':'';
+  return `<tr>
+    <td><div class="veh-info">
+      <div class="veh-thumb">🚘</div>
+      <div>
+        <div class="veh-name">${esc(v.brand)} ${esc(v.model)}</div>
+        <div class="veh-detail">${esc(v.color)||'—'} · ${v.vin?'···'+v.vin.slice(-5):'Sin VIN'}</div>
+      </div>
+    </div></td>
+    <td>${v.year||'—'}</td>
+    <td class="num">${v.km?num(v.km)+' km':'—'}</td>
+    <td class="td-r num"><strong>${eur(c.totalCost)}</strong></td>
+    <td class="td-r num">${eur(c.pvp)}</td>
+    <td class="td-r">
+      <div class="num ${c.margin>=0?'pos':'neg'}">${eur(c.margin)}</div>
+      <div style="font-size:11px;color:var(--text-2)">${pct(c.marginPct)}</div>
+    </td>
+    <td>${v.status!=='sold'?`<span class="days-tag ${dc}">${c.days}d</span>`:'<span style="color:var(--text-2)">—</span>'}</td>
+    <td><span class="badge ${STATUS_BADGE[v.status]}">${STATUS_ICON[v.status]} ${STATUS_LABEL[v.status]}</span></td>
+    <td><div class="row-actions">
+      <button class="btn btn-secondary btn-xs" onclick="showDetail('${v.id}')">Ver</button>
+      <button class="btn btn-secondary btn-xs" onclick="showEdit('${v.id}')">✏️</button>
+      <button class="btn btn-danger-soft btn-xs" onclick="openDel('${v.id}')">🗑</button>
+    </div></td>
+  </tr>`;
+}
+
+function renderEmpty() {
+  if (S.q||S.filter!=='all') return `<div class="empty">
+    <div class="empty-icon">🔍</div>
+    <div class="empty-title">Sin resultados</div>
+    <div class="empty-desc">No hay vehículos con los filtros actuales.</div>
+    <button class="btn btn-secondary" onclick="S.filter='all';S.q='';render()">Limpiar filtros</button>
+  </div>`;
+  return `<div class="empty">
+    <div class="empty-icon">🚗</div>
+    <div class="empty-title">Sin vehículos en stock</div>
+    <div class="empty-desc">Añade tu primer vehículo para comenzar a gestionar el inventario.</div>
+    <button class="btn btn-primary" onclick="showAddForm()">＋ Añadir primer vehículo</button>
+  </div>`;
+}
+
+// ─── FORM ────────────────────────────────────────────────────
+function initForm(v) {
+  fData = v ? {...v} : {};
+  fExp  = v && v.expenses && v.expenses.length
+    ? v.expenses.map(e=>({...e}))
+    : [{id:uid(),concept:'',amount:''}];
+}
+
+function renderForm() {
+  const isEdit = !!S.editId;
+  const today = new Date().toISOString().split('T')[0];
+  return `
+<div class="page-header">
+  <div>
+    <div class="page-title">${isEdit?'Editar vehículo':'Añadir vehículo'}</div>
+    <div class="page-sub">${isEdit?`Editando: ${esc(fData.brand)||''} ${esc(fData.model)||''}`:'Introduce los datos del nuevo vehículo'}</div>
+  </div>
+</div>
+<form id="vForm" onsubmit="return false">
+<div class="form-card">
+
+  <div class="fsec">
+    <div class="fsec-title">🚗 Datos del vehículo</div>
+    <div class="fgrid">
+      <div class="fg"><label>Marca *</label>
+        <input type="text" name="brand" value="${esc(fData.brand||'')}" placeholder="Volkswagen" required autocomplete="off"></div>
+      <div class="fg"><label>Modelo *</label>
+        <input type="text" name="model" value="${esc(fData.model||'')}" placeholder="Golf 1.6 TDI" required autocomplete="off"></div>
+      <div class="fg"><label>Año *</label>
+        <input type="number" name="year" value="${fData.year||''}" placeholder="2020" min="1980" max="2030" required></div>
+      <div class="fg"><label>Kilometraje</label>
+        <input type="number" name="km" value="${fData.km||''}" placeholder="85000" min="0"></div>
+      <div class="fg"><label>Color</label>
+        <input type="text" name="color" value="${esc(fData.color||'')}" placeholder="Blanco" autocomplete="off"></div>
+      <div class="fg"><label>Nº Bastidor <span class="opt">(opcional)</span></label>
+        <input type="text" name="vin" value="${esc(fData.vin||'')}" placeholder="WVWZZZ1KZ…" autocomplete="off" style="font-family:monospace;font-size:12px"></div>
+      <div class="fg"><label>Fecha de entrada *</label>
+        <input type="date" name="entryDate" value="${fData.entryDate||today}" required></div>
+      <div class="fg"><label>Estado</label>
+        <select name="status">
+          <option value="available"${(fData.status||'available')==='available'?' selected':''}>✅ Disponible</option>
+          <option value="reserved"${fData.status==='reserved'?' selected':''}>🔒 Reservado</option>
+          <option value="sold"${fData.status==='sold'?' selected':''}>✔ Vendido</option>
+        </select></div>
+    </div>
+  </div>
+
+  <div class="fsec">
+    <div class="fsec-title">💰 Precios</div>
+    <div class="fgrid-2">
+      <div class="fg"><label>Precio de compra (€) *</label>
+        <input type="number" name="purchasePrice" id="pp" value="${fData.purchasePrice||''}" placeholder="8500" min="0" step="1" required oninput="refreshPricing()">
+        <div class="input-hint">Precio de adquisición del vehículo</div></div>
+      <div class="fg"><label>Precio de venta objetivo (€)</label>
+        <input type="number" name="salePrice" id="sp" value="${fData.salePrice||''}" placeholder="11500" min="0" step="1" oninput="refreshPricing()">
+        <div class="input-hint">PVP al que planeas vender</div></div>
+    </div>
+  </div>
+
+  <div class="fsec">
+    <div class="fsec-title">🔧 Gastos asociados</div>
+    <div class="exp-list" id="expList">${renderExpLines()}</div>
+    <button type="button" class="btn-icon btn-icon-add" onclick="addExp()" style="margin-bottom:14px">＋ Añadir gasto</button>
+    <div class="exp-footer">
+      <span class="exp-footer-label">Total gastos</span>
+      <span class="exp-footer-val num" id="expTotal">${eur(sumExp())}</span>
+    </div>
+  </div>
+
+  <div class="fsec">
+    <div class="fsec-title">📊 Resumen económico</div>
+    <div class="price-box" id="priceBox">${renderPriceBox()}</div>
+  </div>
+
+  <div class="fsec">
+    <div class="fsec-title">📝 Notas internas <span class="opt" style="font-weight:400"> · visibles solo para ti</span></div>
+    <div class="fg">
+      <textarea name="notes" placeholder="Historial de revisiones, detalles del comprador, pendientes…">${esc(fData.notes||'')}</textarea>
+    </div>
+  </div>
+
+</div>
+<div class="form-actions">
+  <button type="button" class="btn btn-secondary" onclick="showDash()">Cancelar</button>
+  <button type="button" class="btn btn-primary" onclick="saveVehicle()">${isEdit?'💾 Guardar cambios':'✅ Añadir al stock'}</button>
+</div>
+</form>`;
+}
+
+function renderExpLines() {
+  return fExp.map(e=>`
+    <div class="exp-line" data-id="${e.id}">
+      <input type="text" list="dconcepts" placeholder="Concepto (ej: Pintura, ITV…)" value="${esc(e.concept||'')}" oninput="updExp('${e.id}','concept',this.value)">
+      <input type="number" placeholder="€ Importe" min="0" step="1" value="${e.amount||''}" oninput="updExp('${e.id}','amount',this.value)">
+      <button type="button" class="btn-icon btn-icon-del" onclick="delExp('${e.id}')" ${fExp.length===1?'disabled style="opacity:.3"':''}>✕</button>
+    </div>`).join('');
+}
+
+function renderPriceBox() {
+  const pp = +document.getElementById('pp')?.value || +fData.purchasePrice || 0;
+  const sp = +document.getElementById('sp')?.value || +fData.salePrice || 0;
+  const te = sumExp();
+  const tc = pp + te;
+  const mg = sp - tc;
+  const mp = tc>0?(mg/tc)*100:0;
+  return `
+    <div class="prow"><span class="plabel">Precio de compra</span><span class="pval num">${eur(pp)}</span></div>
+    <div class="prow"><span class="plabel">Total gastos</span><span class="pval num">${eur(te)}</span></div>
+    <div class="prow sep"><span class="plabel" style="font-weight:700;color:var(--text)">Coste total</span><span class="pval num" style="font-size:15px">${eur(tc)}</span></div>
+    <div class="prow" style="margin-top:8px"><span class="plabel">Precio de venta</span><span class="pval num">${eur(sp)}</span></div>
+    <div class="prow big">
+      <span class="plabel">Margen bruto</span>
+      <span class="pval num" style="color:${mg>=0?'var(--success)':'var(--danger)'}">${eur(mg)} · ${pct(mp)}</span>
+    </div>`;
+}
+
+const sumExp = () => fExp.reduce((s,e)=>s+(+e.amount||0),0);
+
+function addExp() {
+  fExp.push({id:uid(),concept:'',amount:''});
+  document.getElementById('expList').innerHTML = renderExpLines();
+  refreshPricing();
+}
+
+function delExp(id) {
+  if(fExp.length<=1) return;
+  fExp = fExp.filter(e=>e.id!==id);
+  document.getElementById('expList').innerHTML = renderExpLines();
+  refreshPricing();
+}
+
+function updExp(id,field,val) {
+  const e = fExp.find(x=>x.id===id);
+  if(e) e[field]=val;
+  document.getElementById('expTotal').textContent = eur(sumExp());
+  document.getElementById('priceBox').innerHTML = renderPriceBox();
+}
+
+function refreshPricing() {
+  document.getElementById('expTotal').textContent = eur(sumExp());
+  document.getElementById('priceBox').innerHTML = renderPriceBox();
+}
+
+// ─── DETAIL ──────────────────────────────────────────────────
+function renderDetail() {
+  const v = getVehicles().find(x=>x.id===S.detailId);
+  if(!v){ showDash(); return ''; }
+  const c = calc(v);
+  return `
+<div class="page-header">
+  <div>
+    <button class="btn btn-secondary btn-sm" onclick="showDash()" style="margin-bottom:10px">← Volver al stock</button>
+    <div class="page-title">${esc(v.brand)} ${esc(v.model)}</div>
+    <div class="page-sub">${v.year||'—'} · ${v.km?num(v.km)+' km':'Sin km'} · ${esc(v.color)||'Sin color'}</div>
+  </div>
+  <div class="detail-actions" style="margin-top:28px">
+    <button class="btn btn-secondary" onclick="showEdit('${v.id}')">✏️ Editar</button>
+    <button class="btn btn-danger-soft" onclick="openDel('${v.id}')">🗑 Eliminar</button>
+  </div>
+</div>
+<div class="detail-top">
+  <div class="detail-head">
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="font-size:44px;line-height:1">🚘</div>
+      <div>
+        <div class="detail-name">${esc(v.brand)} ${esc(v.model)}</div>
+        <div class="detail-sub">${v.year||''} · ${esc(v.color)||''} ${v.vin?'· <span style="font-family:monospace;font-size:12px">'+esc(v.vin)+'</span>':''}</div>
+      </div>
+    </div>
+    <span class="badge ${STATUS_BADGE[v.status]}" style="font-size:13px;padding:5px 14px">${STATUS_ICON[v.status]} ${STATUS_LABEL[v.status]}</span>
+  </div>
+  <div class="detail-specs">
+    <div class="spec"><div class="spec-l">Coste total</div><div class="spec-v num">${eur(c.totalCost)}</div></div>
+    <div class="spec"><div class="spec-l">PVP</div><div class="spec-v num">${eur(c.pvp)}</div></div>
+    <div class="spec"><div class="spec-l">Margen</div>
+      <div class="spec-v num" style="color:${c.margin>=0?'var(--success)':'var(--danger)'}">
+        ${eur(c.margin)} · ${pct(c.marginPct)}</div></div>
+    <div class="spec"><div class="spec-l">Días en stock</div><div class="spec-v">${v.status==='sold'?'—':c.days+' días'}</div></div>
+    <div class="spec"><div class="spec-l">Entrada</div><div class="spec-v">${dt(v.entryDate)}</div></div>
+  </div>
+</div>
+<div class="detail-grid">
+  <div style="display:flex;flex-direction:column;gap:16px">
+    <div class="dcard">
+      <div class="dcard-head">🚗 Datos del vehículo</div>
+      <div class="dcard-body">
+        ${[['Marca',v.brand],['Modelo',v.model],['Año',v.year],['Kilometraje',v.km?num(v.km)+' km':'—'],['Color',v.color],['Nº Bastidor',v.vin?`<span style="font-family:monospace;font-size:12px">${esc(v.vin)}</span>`:'—'],['Fecha entrada',dt(v.entryDate)]]
+          .map(([l,val])=>`<div class="info-row"><span class="info-l">${l}</span><span class="info-v">${val||'—'}</span></div>`).join('')}
+      </div>
+    </div>
+    ${v.notes?`<div class="dcard">
+      <div class="dcard-head">📝 Notas internas</div>
+      <div class="dcard-body"><p style="font-size:13px;line-height:1.65;white-space:pre-wrap">${esc(v.notes)}</p></div>
+    </div>`:''}
+    <div class="dcard">
+      <div class="dcard-head">📋 Historial de estados</div>
+      <div class="dcard-body">
+        ${(v.statusHistory||[]).length===0
+          ?`<p style="font-size:13px;color:var(--text-2)">Sin historial registrado.</p>`
+          :`<div class="hist-list">${(v.statusHistory||[]).slice().reverse().map(h=>`
+            <div class="hist-item">
+              <div class="hist-dot"></div>
+              <div><div class="hist-txt">${esc(h.text||formatSC(h.from,h.to))}</div><div class="hist-date">${dtm(h.date)}</div></div>
+            </div>`).join('')}</div>`}
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:16px">
+    <div class="dcard">
+      <div class="dcard-head">💰 Desglose económico</div>
+      <div class="dcard-body">
+        <div class="info-row"><span class="info-l">Precio de compra</span><span class="info-v num">${eur(v.purchasePrice)}</span></div>
+        ${v.expenses&&v.expenses.length?`
+        <div style="margin:12px 0 6px;font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em">Gastos</div>
+        <div>${v.expenses.map(e=>`<div class="exp-item"><span class="exp-concept">${esc(e.concept)||'Sin concepto'}</span><span class="exp-amount num">${eur(e.amount)}</span></div>`).join('')}</div>
+        <div class="exp-subtotal"><span>Total gastos</span><span class="num">${eur(c.totalExp)}</span></div>
+        `:`<p style="font-size:12px;color:var(--text-2);margin:8px 0">Sin gastos registrados.</p>`}
+        <div style="margin-top:14px;padding-top:14px;border-top:2px solid var(--border)">
+          <div class="prow"><span class="plabel" style="font-weight:700;color:var(--text)">Coste total</span><span class="pval num" style="font-size:15px">${eur(c.totalCost)}</span></div>
+          <div class="prow" style="margin-top:6px"><span class="plabel">Precio de venta</span><span class="pval num">${eur(c.pvp)}</span></div>
+          <div class="prow big">
+            <span class="plabel">Margen bruto</span>
+            <span class="pval num" style="color:${c.margin>=0?'var(--success)':'var(--danger)'}">${eur(c.margin)}</span>
+          </div>
+          <div class="prow"><span class="plabel">Margen (%)</span>
+            <span class="pval num" style="color:${c.margin>=0?'var(--success)':'var(--danger)'}">${pct(c.marginPct)}</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="dcard">
+      <div class="dcard-head">⚡ Cambiar estado</div>
+      <div class="dcard-body">
+        <div class="status-actions">
+          ${['available','reserved','sold'].map(st=>`
+            <button class="btn ${v.status===st?'btn-primary':'btn-secondary'}" style="justify-content:flex-start"
+              onclick="changeStatus('${v.id}','${st}')" ${v.status===st?'disabled':''}>
+              ${STATUS_ICON[st]} Marcar como ${STATUS_LABEL[st]}
+            </button>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>`;
+}
+
+// ─── ACTIONS ─────────────────────────────────────────────────
+function showDash() { S.view='dash'; S.editId=null; S.detailId=null; fData={}; fExp=[]; render(); }
+
+function showAddForm() {
+  S.view='form'; S.editId=null;
+  initForm(null);
+  render(); scrollTo(0,0);
+}
+
+function showEdit(id) {
+  const v = getVehicles().find(x=>x.id===id);
+  if(!v) return;
+  S.view='form'; S.editId=id;
+  initForm(v);
+  render(); scrollTo(0,0);
+}
+
+function showDetail(id) { S.view='detail'; S.detailId=id; render(); scrollTo(0,0); }
+function setFilter(f) { S.filter=f; render(); }
+function setQ(q) { S.q=q; render(); setTimeout(()=>{ const i=document.getElementById('searchInp'); if(i){i.focus();i.setSelectionRange(q.length,q.length);} },0); }
+
+function filtered() {
+  let vs = getVehicles();
+  if(S.filter!=='all') vs=vs.filter(v=>v.status===S.filter);
+  if(S.q.trim()) {
+    const q=S.q.toLowerCase();
+    vs=vs.filter(v=>[v.brand,v.model,v.color,v.vin].some(f=>(f||'').toLowerCase().includes(q)));
+  }
+  return vs.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+}
+
+function saveVehicle() {
+  const form = document.getElementById('vForm');
+  if(!form) return;
+  const d = {};
+  form.querySelectorAll('[name]').forEach(el=>d[el.name]=el.value);
+
+  if(!d.brand?.trim()||!d.model?.trim()||!d.year) { toast('⚠️ Completa: marca, modelo y año'); return; }
+
+  const vs = getVehicles();
+  const prevStatus = S.editId ? vs.find(v=>v.id===S.editId)?.status : null;
+  const prevHistory = S.editId ? (vs.find(v=>v.id===S.editId)?.statusHistory||[]) : [];
+  const prevCreated = S.editId ? vs.find(v=>v.id===S.editId)?.createdAt : null;
+
+  const newV = {
+    id: S.editId || uid(),
+    brand: d.brand.trim(), model: d.model.trim(),
+    year: +d.year||null, km: +d.km||null,
+    color: d.color.trim(), vin: d.vin.trim(),
+    purchasePrice: +d.purchasePrice||0,
+    expenses: fExp.filter(e=>e.concept||e.amount).map(e=>({id:e.id,concept:(e.concept||'').trim(),amount:+e.amount||0})),
+    salePrice: +d.salePrice||0,
+    status: d.status||'available',
+    notes: d.notes.trim(),
+    entryDate: d.entryDate || new Date().toISOString().split('T')[0],
+    createdAt: prevCreated || new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    statusHistory: buildHistory(prevHistory, prevStatus, d.status, !S.editId),
+  };
+
+  setVehicles(S.editId ? vs.map(v=>v.id===S.editId?newV:v) : [newV,...vs]);
+  toast(S.editId?`✅ ${newV.brand} ${newV.model} actualizado`:`✅ ${newV.brand} ${newV.model} añadido al stock`);
+  showDash();
+}
+
+function buildHistory(prev, prevStatus, newStatus, isNew) {
+  if(isNew) return [{date:new Date().toISOString(),from:null,to:newStatus,text:`Añadido al stock como "${STATUS_LABEL[newStatus]||newStatus}"`}];
+  if(prevStatus && prevStatus!==newStatus) return [...prev,{date:new Date().toISOString(),from:prevStatus,to:newStatus,text:formatSC(prevStatus,newStatus)}];
+  return prev;
+}
+
+function formatSC(from, to) {
+  if(!from) return `Estado: ${STATUS_LABEL[to]||to}`;
+  return `${STATUS_LABEL[from]||from} → ${STATUS_LABEL[to]||to}`;
+}
+
+function changeStatus(id, newSt) {
+  const vs = getVehicles();
+  const v = vs.find(x=>x.id===id);
+  if(!v||v.status===newSt) return;
+  const old = v.status;
+  v.status=newSt; v.updatedAt=new Date().toISOString();
+  v.statusHistory=[...(v.statusHistory||[]),{date:new Date().toISOString(),from:old,to:newSt,text:formatSC(old,newSt)}];
+  setVehicles(vs);
+  toast(`✅ Estado actualizado a "${STATUS_LABEL[newSt]}"`);
+  render();
+}
+
+function openDel(id) {
+  S.delId=id;
+  document.getElementById('delModal').classList.remove('hidden');
+  document.getElementById('delConfirmBtn').onclick=execDel;
+}
+function closeDelModal() { S.delId=null; document.getElementById('delModal').classList.add('hidden'); }
+function execDel() {
+  const vs = getVehicles();
+  const v = vs.find(x=>x.id===S.delId);
+  setVehicles(vs.filter(x=>x.id!==S.delId));
+  closeDelModal();
+  toast(`🗑 ${v?.brand||'Vehículo'} ${v?.model||''} eliminado`);
+  S.view='dash'; render();
+}
+
+document.getElementById('delModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeDelModal();});
+
+// ─── TOAST ───────────────────────────────────────────────────
+function toast(msg, ms=3000) {
+  const c=document.getElementById('toasts');
+  const t=document.createElement('div');
+  t.className='toast'; t.textContent=msg; c.appendChild(t);
+  setTimeout(()=>{t.style.cssText='opacity:0;transform:translateX(110%);transition:all .2s';setTimeout(()=>t.remove(),200);},ms);
+}
+
+// ─── DEMO DATA ────────────────────────────────────────────────
+function loadDemo() {
+  const today = new Date();
+  const ago = n => { const d=new Date(today); d.setDate(d.getDate()-n); return d.toISOString().split('T')[0]; };
+  const agoISO = n => { const d=new Date(today); d.setDate(d.getDate()-n); return d.toISOString(); };
+
+  setVehicles([
+    { id:uid(), brand:'Volkswagen', model:'Golf 1.6 TDI', year:2018, km:87500, color:'Blanco', vin:'WVWZZZ1KZJM081234',
+      purchasePrice:8500, salePrice:11900, status:'available',
+      expenses:[{id:uid(),concept:'Pintura',amount:350},{id:uid(),concept:'ITV',amount:45},{id:uid(),concept:'Gestoría',amount:120},{id:uid(),concept:'Limpieza',amount:80}],
+      notes:'Buen estado general. Revisión reciente.\nPequeño arañazo en puerta trasera derecha ya reparado.',
+      entryDate:ago(32), createdAt:agoISO(32), updatedAt:agoISO(32),
+      statusHistory:[{date:agoISO(32),from:null,to:'available',text:'Añadido al stock como "Disponible"'}] },
+    { id:uid(), brand:'SEAT', model:'León 1.5 TSI FR', year:2020, km:42300, color:'Gris Magnetic', vin:'VSSZZZ5FZKR012345',
+      purchasePrice:14200, salePrice:17500, status:'reserved',
+      expenses:[{id:uid(),concept:'Revisión mecánica',amount:180},{id:uid(),concept:'Gestoría',amount:120}],
+      notes:'Cliente: Antonio Martínez. Señal de 500€ recibida.\nEntrega prevista para el 20/06/2026.',
+      entryDate:ago(18), createdAt:agoISO(18), updatedAt:agoISO(5),
+      statusHistory:[{date:agoISO(18),from:null,to:'available',text:'Añadido al stock como "Disponible"'},{date:agoISO(5),from:'available',to:'reserved',text:'Disponible → Reservado'}] },
+    { id:uid(), brand:'Toyota', model:'Corolla 1.8 Hybrid', year:2021, km:29800, color:'Blanco Perla', vin:'SB1K55BE00E123456',
+      purchasePrice:19500, salePrice:23900, status:'available',
+      expenses:[{id:uid(),concept:'ITV',amount:45},{id:uid(),concept:'Limpieza detailing',amount:150},{id:uid(),concept:'Gestoría',amount:120}],
+      notes:'Perfecto estado. Primera mano. Todos los servicios en Toyota oficial.',
+      entryDate:ago(8), createdAt:agoISO(8), updatedAt:agoISO(8),
+      statusHistory:[{date:agoISO(8),from:null,to:'available',text:'Añadido al stock como "Disponible"'}] },
+    { id:uid(), brand:'BMW', model:'320d xDrive', year:2019, km:68400, color:'Azul Mediterráneo', vin:'WBA8D31050K123789',
+      purchasePrice:22000, salePrice:27500, status:'sold',
+      expenses:[{id:uid(),concept:'Frenos',amount:420},{id:uid(),concept:'Neumáticos',amount:560},{id:uid(),concept:'Limpieza',amount:120},{id:uid(),concept:'Gestoría',amount:120}],
+      notes:'Vendido a María García el 05/06/2026. Pago al contado.',
+      entryDate:ago(65), createdAt:agoISO(65), updatedAt:agoISO(7),
+      statusHistory:[{date:agoISO(65),from:null,to:'available',text:'Añadido al stock como "Disponible"'},{date:agoISO(10),from:'available',to:'reserved',text:'Disponible → Reservado'},{date:agoISO(7),from:'reserved',to:'sold',text:'Reservado → Vendido'}] },
+    { id:uid(), brand:'Renault', model:'Clio 1.0 TCe', year:2022, km:15200, color:'Rojo Flamme', vin:'VF1RHBR0E59123456',
+      purchasePrice:11800, salePrice:14500, status:'available',
+      expenses:[{id:uid(),concept:'Gestoría',amount:120},{id:uid(),concept:'Limpieza',amount:80}],
+      notes:'', entryDate:ago(5), createdAt:agoISO(5), updatedAt:agoISO(5),
+      statusHistory:[{date:agoISO(5),from:null,to:'available',text:'Añadido al stock como "Disponible"'}] },
+    { id:uid(), brand:'Peugeot', model:'308 1.5 BlueHDi', year:2020, km:55100, color:'Gris Platinium', vin:'VF3LBYHZRLS123987',
+      purchasePrice:12800, salePrice:15900, status:'available',
+      expenses:[{id:uid(),concept:'Tapicería',amount:220},{id:uid(),concept:'ITV',amount:45},{id:uid(),concept:'Gestoría',amount:120},{id:uid(),concept:'Transporte',amount:180}],
+      notes:'Traído desde Madrid. Pequeño golpe en paragolpes delantero reparado.',
+      entryDate:ago(55), createdAt:agoISO(55), updatedAt:agoISO(55),
+      statusHistory:[{date:agoISO(55),from:null,to:'available',text:'Añadido al stock como "Disponible"'}] },
+  ]);
+}
+
+// ─── INIT ─────────────────────────────────────────────────────
+if(!getVehicles().length) loadDemo();
+render();
+</script>
+</body>
+</html>
