@@ -437,6 +437,40 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   /* ── LIGHTBOX: botones más grandes ─────────────────────── */
   .lb-nav { width:44px; height:44px; }
   .lb-close { padding:10px; font-size:22px; }
+
+  /* ── DETAIL: foto cabecera + badge en su propia línea ───── */
+  .detail-head { flex-direction:column; align-items:flex-start; gap:8px; }
+  .detail-head .badge { flex-shrink:0; }
+  .detail-media-row {
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:stretch!important;
+    gap:0!important;
+    width:100%;
+  }
+  .detail-hero-img {
+    width:100%;
+    height:auto;
+    aspect-ratio:16/9;
+    object-fit:cover;
+    border-radius:var(--r) var(--r) 0 0;
+    flex-shrink:unset;
+  }
+  .detail-hero-placeholder {
+    width:100%;
+    height:auto;
+    aspect-ratio:16/9;
+    border-radius:var(--r) var(--r) 0 0;
+    flex-shrink:unset;
+  }
+  .detail-media-row > div { padding:10px 0 4px; }
+
+  /* ── BOTÓN ELIMINAR EN TARJETAS: mostrar texto ──────────── */
+  td:nth-child(9) .row-actions .btn-danger-soft::after { content:'Eliminar'; }
+
+  /* ── FORMULARIO: reducir espaciado vertical en móvil ────── */
+  .page-header { margin-bottom:10px; }
+  .fsec { padding:14px 16px; }
 }
 </style>
 </head>
@@ -1251,7 +1285,7 @@ function renderDetail() {
 </div>
 <div class="detail-top">
   <div class="detail-head">
-    <div style="display:flex;align-items:center;gap:14px">
+    <div class="detail-media-row" style="display:flex;align-items:center;gap:14px">
       ${heroImg}
       <div>
         <div class="detail-name">${esc(v.brand)} ${esc(v.model)}</div>
