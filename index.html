@@ -302,6 +302,142 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   .fgrid,.fgrid-2{grid-template-columns:1fr}
   .detail-specs{gap:14px}
 }
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE ADDITIONS — max-width 768px
+   ═══════════════════════════════════════════════════════════ */
+@media(max-width:768px){
+
+  /* ── NAV: solo logo + botón añadir ──────────────────────── */
+  .nav-actions > .btn-secondary,
+  .nav-actions > .nav-sep { display:none!important; }
+
+  /* ── MODALES: full-screen bottom sheet ──────────────────── */
+  .overlay { padding:0; align-items:flex-end; }
+  .modal {
+    max-width:100%;
+    border-radius:var(--r-lg) var(--r-lg) 0 0;
+    max-height:92vh;
+    overflow-y:auto;
+  }
+
+  /* ── TABLA → TARJETAS APILADAS ──────────────────────────── */
+  .table-wrap { border-left:none; border-right:none; border-radius:0; box-shadow:none; background:transparent; }
+  .table-scroll { overflow:visible; }
+  table { display:block; min-width:0; }
+  thead { display:none; }
+  tbody { display:flex; flex-direction:column; gap:10px; }
+
+  tbody tr {
+    display:block;
+    border:1px solid var(--border);
+    border-radius:var(--r);
+    background:var(--white);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    cursor:pointer;
+  }
+  tbody tr:hover td { background:transparent!important; }
+
+  /* Reset base de celdas */
+  td { display:block; padding:0; border-bottom:none; }
+  td.td-r { text-align:left; }
+
+  /* Cabecera de tarjeta: foto + nombre (celda 1) */
+  td:nth-child(1) {
+    padding:12px 14px;
+    background:var(--bg);
+    border-bottom:1px solid var(--border);
+  }
+
+  /* Celdas de datos: grid 2 columnas con etiqueta via ::before */
+  td:nth-child(2),td:nth-child(3),
+  td:nth-child(4),td:nth-child(5),
+  td:nth-child(6),td:nth-child(7) {
+    display:inline-block;
+    width:50%;
+    padding:9px 14px 8px;
+    vertical-align:top;
+    font-size:14px;
+    box-sizing:border-box;
+  }
+  /* Separadores de filas internas */
+  td:nth-child(4),td:nth-child(5) { border-top:1px solid var(--border-light); }
+  td:nth-child(6),td:nth-child(7) { border-top:1px solid var(--border-light); }
+
+  /* Estado (celda 8): ancho completo */
+  td:nth-child(8) {
+    display:block;
+    padding:9px 14px 8px;
+    border-top:1px solid var(--border-light);
+    font-size:14px;
+  }
+
+  /* Etiquetas de columna via CSS */
+  td:nth-child(2)::before { content:'Año'; }
+  td:nth-child(3)::before { content:'Kilómetros'; }
+  td:nth-child(4)::before { content:'Coste total'; }
+  td:nth-child(5)::before { content:'Precio venta'; }
+  td:nth-child(6)::before { content:'Margen'; }
+  td:nth-child(7)::before { content:'Días'; }
+  td:nth-child(8)::before { content:'Estado'; }
+  td:nth-child(2)::before,td:nth-child(3)::before,
+  td:nth-child(4)::before,td:nth-child(5)::before,
+  td:nth-child(6)::before,td:nth-child(7)::before,
+  td:nth-child(8)::before {
+    display:block;
+    font-size:10px;
+    font-weight:600;
+    color:var(--text-2);
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    margin-bottom:3px;
+  }
+
+  /* Botones de acción (celda 9): fila completa */
+  td:nth-child(9) {
+    display:flex!important;
+    padding:10px 14px;
+    border-top:1px solid var(--border);
+    background:var(--bg);
+  }
+  td:nth-child(9) .row-actions {
+    display:flex!important;
+    gap:8px;
+    width:100%;
+  }
+  td:nth-child(9) .row-actions .btn {
+    flex:1;
+    justify-content:center;
+    min-height:44px;
+    font-size:14px;
+  }
+
+  /* ── FORMULARIOS: mínimo 44px en elementos táctiles ────── */
+  input[type=text],input[type=number],input[type=date],
+  input[type=email],input[type=password],select {
+    min-height:44px;
+    font-size:16px; /* evita el zoom automático en iOS */
+  }
+  textarea { font-size:16px; }
+  .btn { min-height:44px; }
+  .btn-sm { min-height:38px; }
+  .btn-xs { min-height:44px; padding:8px 12px; }
+  .btn-icon-del { width:44px; height:44px; }
+  .btn-icon-add { height:44px; padding:0 16px; }
+
+  /* Botones del formulario: sticky al pie de la pantalla */
+  .form-actions {
+    position:sticky;
+    bottom:0;
+    z-index:10;
+    box-shadow:0 -2px 8px rgba(0,0,0,.07);
+  }
+
+  /* ── LIGHTBOX: botones más grandes ─────────────────────── */
+  .lb-nav { width:44px; height:44px; }
+  .lb-close { padding:10px; font-size:22px; }
+}
 </style>
 </head>
 <body>
