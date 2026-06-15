@@ -733,7 +733,7 @@ async function loadVehicles() {
   try {
     const { data, error } = await sb
       .from('vehiculos')
-      .select('id, marca, modelo, anio, kilometraje, color, precio_venta')
+      .select('id, marca, modelo, anio, kilometraje, color, precio_venta, fotos')
       .eq('estado', 'disponible')
       .gt('precio_venta', 0)
       .order('created_at', { ascending: false });
@@ -748,6 +748,7 @@ async function loadVehicles() {
       km:        row.kilometraje,
       color:     row.color          || '',
       price:     row.precio_venta   || 0,
+      thumb:     (row.fotos && row.fotos.length > 0) ? row.fotos[0] : null,
     }));
 
     applyFilters();
@@ -815,7 +816,9 @@ function renderGrid() {
   count.textContent = `${filtered.length} vehículo${filtered.length !== 1 ? 's' : ''}`;
 
   grid.innerHTML = filtered.map((v, i) => {
-    const thumb = `<div class="card-placeholder">
+    const thumb = v.thumb
+      ? `<img src="${esc(v.thumb)}" alt="${esc(v.brand)} ${esc(v.model)}" style="width:100%;height:100%;object-fit:cover">`
+      : `<div class="card-placeholder">
            <svg viewBox="0 0 24 24" width="52" height="52" fill="none" stroke="#CCC" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
              <path d="M5 17H3v-5l2.5-5h13L21 12v5h-2"/><circle cx="7.5" cy="17.5" r="1.5"/>
              <circle cx="16.5" cy="17.5" r="1.5"/><line x1="3" y1="12" x2="21" y2="12"/>
