@@ -620,7 +620,7 @@ let S = {
   view:'dash', filter:'all', q:'', editId:null, detailId:null, delId:null,
   sortCol:null, sortDir:'desc', soldTargetId:null, importPending:null
 };
-let fData={}, fExp=[], fPhotos=[];
+let fData={}, fExp=[], fPhotos=[], fStorageToDelete=[];
 let dragSrcIdx = null;
 
 const getVehicles = () => vehiclesCache;
@@ -951,11 +951,12 @@ function renderEmpty() {
 
 // ─── FORM ────────────────────────────────────────────────────
 function initForm(v) {
-  fData   = v ? {...v} : {};
-  fExp    = v && v.expenses && v.expenses.length
+  fData            = v ? {...v} : {};
+  fExp             = v && v.expenses && v.expenses.length
     ? v.expenses.map(e => ({...e}))
     : [{id:uid(),concept:'',amount:'',categoria:''}];
-  fPhotos = v && v.photos ? [...v.photos] : [];
+  fPhotos          = v && v.photos ? [...v.photos] : [];
+  fStorageToDelete = [];
 }
 
 function renderForm() {
@@ -1147,7 +1148,9 @@ function refreshPricing() {
 // ─── PHOTOS + DRAG & DROP ────────────────────────────────────
 function renderPhotoGrid() {
   if (!fPhotos.length) return '';
-  return `<div class="photo-grid">${fPhotos.map((p,i) => `
+  return `<div class="photo-grid">${fPhotos.map((p,i) => {
+    const src = (typeof p === 'object' && p !== null) ? p.preview : p;
+    return `
     <div class="photo-item" draggable="true"
          ondragstart="photoDragStart(event,${i})"
          ondragover="photoDragOver(event)"
@@ -1159,13 +1162,13 @@ function renderPhotoGrid() {
          ontouchmove="photoTouchMove(event)"
          ontouchend="photoTouchEnd(event)"
          ontouchcancel="photoTouchEnd(event)">
-      <img src="${p}" alt="Foto ${i+1}">
+      <img src="${src}" alt="Foto ${i+1}">
       <button type="button" class="photo-remove" onclick="removePhoto(${i})" title="Eliminar">
         <svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
       <div class="photo-drag-hint">${IC.grip}</div>
       ${i===0?'<span class="photo-main-badge">Principal</span>':''}
-    </div>`).join('')}</div>`;
+    </div>`; }).join('')}</div>`;
 }
 
 function photoDragStart(e, idx) {
@@ -1251,7 +1254,10 @@ function photoTouchEnd(e) {
 function handlePhotoUpload(input) {
   Array.from(input.files).forEach(file => {
     const reader = new FileReader();
-    reader.onload = e => compressImage(e.target.result, compressed => { fPhotos.push(compressed); refreshPhotos(); });
+    reader.onload = e => compressImage(e.target.result, preview => {
+      fPhotos.push({ preview, file });
+      refreshPhotos();
+    });
     reader.readAsDataURL(file);
   });
   input.value='';
@@ -1267,7 +1273,15 @@ function compressImage(src, cb) {
   };
   img.src=src;
 }
-function removePhoto(idx) { fPhotos.splice(idx,1); refreshPhotos(); }
+function removePhoto(idx) {
+  const item = fPhotos[idx];
+  if (typeof item === 'string' && item.includes('supabase.co/storage')) {
+    const m = item.match(/\/vehiculos-fotos\/(.+)$/);
+    if (m) fStorageToDelete.push(m[1]);
+  }
+  fPhotos.splice(idx, 1);
+  refreshPhotos();
+}
 function refreshPhotos()  { const el=document.getElementById('photoGrid'); if(el) el.innerHTML=renderPhotoGrid(); }
 
 // ─── LIGHTBOX ────────────────────────────────────────────────
@@ -1450,7 +1464,7 @@ function renderDetail() {
 }
 
 // ─── NAVIGATION ───────────────────────────────────────────────
-function showDash()  { S.view='dash';S.editId=null;S.detailId=null;fData={};fExp=[];fPhotos=[];render(); }
+function showDash()  { S.view='dash';S.editId=null;S.detailId=null;fData={};fExp=[];fPhotos=[];fStorageToDelete=[];render(); }
 function showAddForm() { S.view='form';S.editId=null;initForm(null);render();scrollTo(0,0); }
 function showEdit(id)  {
   const v=vehiclesCache.find(x=>x.id===id); if(!v) return;
@@ -1488,37 +1502,71 @@ function filtered() {
 }
 
 // ─── SAVE VEHICLE ─────────────────────────────────────────────
+async function uploadPendingPhotos(vehiculoId) {
+  const pending = fPhotos
+    .map((p, idx) => ({ p, idx }))
+    .filter(({ p }) => typeof p === 'object' && p !== null);
+  if (!pending.length) return;
+  await Promise.all(pending.map(async ({ p, idx }) => {
+    const ts   = Date.now();
+    const rand = Math.random().toString(36).slice(2, 8);
+    const ext  = (p.file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');
+    const path = `vehiculos/${vehiculoId}/${ts}_${rand}.${ext || 'jpg'}`;
+    const { error } = await sb.storage.from('vehiculos-fotos').upload(path, p.file, {
+      contentType: p.file.type || 'image/jpeg',
+      cacheControl: '3600',
+    });
+    if (error) throw error;
+    const { data: urlData } = sb.storage.from('vehiculos-fotos').getPublicUrl(path);
+    fPhotos[idx] = urlData.publicUrl;
+  }));
+}
+
+function buildVehicleRow(d, isSold, fotos) {
+  return {
+    marca:              d.brand.trim(),       modelo:   d.model.trim(),
+    matricula:          d.matricula?.trim().toUpperCase() || null,
+    anio:               +d.year || null,       kilometraje: +d.km || null,
+    color:              d.color?.trim() || null, bastidor: d.vin?.trim() || null,
+    proveedor:          d.proveedor?.trim() || null, origen: d.origen || null,
+    fecha_entrada:      d.entryDate || new Date().toISOString().split('T')[0],
+    precio_compra:      +d.purchasePrice || 0,
+    precio_venta:       +d.salePrice || 0,
+    precio_venta_final: isSold ? (+d.saleRealPrice || null) : null,
+    fecha_venta:        isSold ? (d.saleDate || null) : null,
+    estado:             d.status || 'disponible',
+    notas:              d.notes?.trim() || null,
+    fotos,
+    updated_at:         new Date().toISOString(),
+  };
+}
+
 async function saveVehicle() {
   const form=document.getElementById('vForm'); if(!form) return;
   const d={}; form.querySelectorAll('[name]').forEach(el=>d[el.name]=el.value);
   if (!d.brand?.trim()||!d.model?.trim()||!d.year) { toast('Completa: marca, modelo y año',3500,'error'); return; }
 
-  const isSold   = d.status==='vendido';
-  const expenses = fExp.filter(e=>e.concept||e.amount).map(e=>({concept:(e.concept||'').trim(),amount:+e.amount||0,categoria:e.categoria||null}));
-
-  const vehicleRow = {
-    marca: d.brand.trim(), modelo: d.model.trim(),
-    matricula: d.matricula?.trim().toUpperCase()||null,
-    anio: +d.year||null, kilometraje: +d.km||null,
-    color: d.color?.trim()||null, bastidor: d.vin?.trim()||null,
-    proveedor: d.proveedor?.trim()||null, origen: d.origen||null,
-    fecha_entrada:     d.entryDate || new Date().toISOString().split('T')[0],
-    precio_compra:     +d.purchasePrice||0,
-    precio_venta:      +d.salePrice||0,
-    precio_venta_final: isSold?(+d.saleRealPrice||null):null,
-    fecha_venta:       isSold?(d.saleDate||null):null,
-    estado:            d.status||'disponible',
-    notas:             d.notes?.trim()||null,
-    fotos:             fPhotos,
-    updated_at:        new Date().toISOString(),
-  };
+  const isSold     = d.status==='vendido';
+  const expenses   = fExp.filter(e=>e.concept||e.amount).map(e=>({concept:(e.concept||'').trim(),amount:+e.amount||0,categoria:e.categoria||null}));
+  const hasPending = fPhotos.some(p => typeof p === 'object' && p !== null);
 
   const saveBtn=document.getElementById('saveBtn'); if(saveBtn) saveBtn.disabled=true;
-  setLoading(true, S.editId?'Guardando cambios...':'Añadiendo vehículo...');
+  setLoading(true, hasPending ? 'Subiendo fotos...' : (S.editId?'Guardando cambios...':'Añadiendo vehículo...'));
 
   try {
     if (S.editId) {
-      const {error:ve}=await sb.from('vehiculos').update(vehicleRow).eq('id',S.editId);
+      // Borrar del Storage las fotos eliminadas
+      if (fStorageToDelete.length) {
+        await sb.storage.from('vehiculos-fotos').remove(fStorageToDelete);
+        fStorageToDelete = [];
+      }
+      // Subir fotos nuevas con el ID ya conocido
+      if (hasPending) {
+        setLoading(true,'Subiendo fotos...');
+        await uploadPendingPhotos(S.editId);
+        setLoading(true,'Guardando cambios...');
+      }
+      const {error:ve}=await sb.from('vehiculos').update(buildVehicleRow(d,isSold,fPhotos)).eq('id',S.editId);
       if(ve) throw ve;
       await sb.from('gastos').delete().eq('vehiculo_id',S.editId);
       if(expenses.length){
@@ -1530,9 +1578,16 @@ async function saveVehicle() {
         await sb.from('historial_estados').insert({vehiculo_id:S.editId,estado_anterior:prevV.status,estado_nuevo:d.status,nota:formatSC(prevV.status,d.status)});
       }
     } else {
-      const {data:newRow,error:ve}=await sb.from('vehiculos').insert(vehicleRow).select().single();
+      // INSERT con solo las fotos ya guardadas (strings); las pendientes van después de tener el ID
+      const fotosStr = fPhotos.filter(p => typeof p === 'string');
+      const {data:newRow,error:ve}=await sb.from('vehiculos').insert(buildVehicleRow(d,isSold,fotosStr)).select().single();
       if(ve) throw ve;
       const vid=newRow.id;
+      // Subir fotos pendientes y actualizar fotos en BD si las hay
+      if (hasPending) {
+        await uploadPendingPhotos(vid);
+        await sb.from('vehiculos').update({fotos:fPhotos,updated_at:new Date().toISOString()}).eq('id',vid);
+      }
       if(expenses.length){
         const {error:ee}=await sb.from('gastos').insert(expenses.map(e=>({vehiculo_id:vid,concepto:e.concept,importe:e.amount,categoria:e.categoria})));
         if(ee) throw ee;
@@ -1562,6 +1617,14 @@ async function execDel() {
   const id=S.delId, v=vehiclesCache.find(x=>x.id===id);
   closeDelModal(); setLoading(true,'Eliminando...');
   try {
+    // Borrar fotos del Storage (no bloqueante: si falla, seguimos con la BD)
+    if (v?.photos?.length) {
+      const paths = v.photos
+        .filter(p => typeof p === 'string' && p.includes('supabase.co/storage'))
+        .map(p => { const m=p.match(/\/vehiculos-fotos\/(.+)$/); return m?.[1]; })
+        .filter(Boolean);
+      if (paths.length) await sb.storage.from('vehiculos-fotos').remove(paths).catch(()=>{});
+    }
     const {error}=await sb.from('vehiculos').delete().eq('id',id); if(error) throw error;
     await loadData();
     toast(`${v?.brand||''} ${v?.model||''} eliminado`,3000,'success');
