@@ -172,6 +172,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .photo-item img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
 .photo-item.dragging{opacity:.35;border-color:var(--primary);border-style:dashed}
 .photo-item.drag-over{border-color:var(--primary);background:var(--primary-light);transform:scale(1.04)}
+.photo-item.touch-dragging{transition:none!important;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:.55;z-index:200}
 .photo-remove{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;border:none;cursor:pointer;font-size:10px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;line-height:1}
 .photo-item:hover .photo-remove{opacity:1}
 .photo-drag-hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;pointer-events:none;background:rgba(0,0,0,.2);border-radius:4px}
@@ -1153,7 +1154,11 @@ function renderPhotoGrid() {
          ondragenter="photoDragEnter(event)"
          ondragleave="photoDragLeave(event)"
          ondrop="photoDrop(event,${i})"
-         ondragend="photoDragEnd(event)">
+         ondragend="photoDragEnd(event)"
+         ontouchstart="photoTouchStart(event,${i})"
+         ontouchmove="photoTouchMove(event)"
+         ontouchend="photoTouchEnd(event)"
+         ontouchcancel="photoTouchEnd(event)">
       <img src="${p}" alt="Foto ${i+1}">
       <button type="button" class="photo-remove" onclick="removePhoto(${i})" title="Eliminar">
         <svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -1184,6 +1189,63 @@ function photoDrop(e, targetIdx) {
 function photoDragEnd() {
   dragSrcIdx=null;
   document.querySelectorAll('.photo-item').forEach(el=>el.classList.remove('dragging','drag-over'));
+}
+
+// ── TOUCH DRAG & DROP ──────────────────────────────────────────
+let _tdActive=false, _tdSrcIdx=null, _tdEl=null;
+let _tdStartX=0, _tdStartY=0, _tdTimer=null, _tdTargetIdx=null;
+
+function photoTouchStart(e, idx) {
+  if (e.touches.length > 1) return;
+  const t = e.touches[0];
+  _tdSrcIdx = idx; _tdEl = e.currentTarget;
+  _tdStartX = t.clientX; _tdStartY = t.clientY;
+  _tdActive = false; _tdTargetIdx = null;
+  _tdTimer = setTimeout(() => {
+    _tdActive = true;
+    _tdEl.classList.add('dragging', 'touch-dragging');
+    if (navigator.vibrate) navigator.vibrate(50);
+  }, 300);
+}
+
+function photoTouchMove(e) {
+  const t = e.touches[0];
+  if (!_tdActive) {
+    if (Math.abs(t.clientX - _tdStartX) > 8 || Math.abs(t.clientY - _tdStartY) > 8) {
+      clearTimeout(_tdTimer); _tdTimer = null;
+    }
+    return;
+  }
+  e.preventDefault();
+  const dx = t.clientX - _tdStartX, dy = t.clientY - _tdStartY;
+  _tdEl.style.transform = `translate(${dx}px,${dy}px) scale(1.08)`;
+  _tdEl.style.zIndex = '200';
+  _tdEl.style.pointerEvents = 'none';
+  const over = document.elementFromPoint(t.clientX, t.clientY)?.closest('.photo-item');
+  _tdEl.style.pointerEvents = '';
+  document.querySelectorAll('#photoGrid .photo-item').forEach(el =>
+    el.classList.toggle('drag-over', el === over && el !== _tdEl)
+  );
+  _tdTargetIdx = (over && over !== _tdEl)
+    ? [...document.querySelectorAll('#photoGrid .photo-item')].indexOf(over)
+    : null;
+}
+
+function photoTouchEnd(e) {
+  clearTimeout(_tdTimer); _tdTimer = null;
+  if (_tdActive && _tdSrcIdx !== null && _tdTargetIdx !== null && _tdSrcIdx !== _tdTargetIdx) {
+    const ph = [...fPhotos];
+    const [moved] = ph.splice(_tdSrcIdx, 1);
+    ph.splice(_tdTargetIdx, 0, moved);
+    fPhotos = ph;
+    refreshPhotos();
+  } else if (_tdEl) {
+    _tdEl.style.transform = '';
+    _tdEl.style.zIndex = '';
+    _tdEl.classList.remove('dragging', 'touch-dragging');
+    document.querySelectorAll('#photoGrid .photo-item').forEach(el => el.classList.remove('drag-over'));
+  }
+  _tdActive = false; _tdSrcIdx = null; _tdEl = null; _tdTargetIdx = null;
 }
 
 function handlePhotoUpload(input) {
