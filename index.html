@@ -49,9 +49,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 /* ── NAV ───────────────────────────────────────────────────── */
 .nav{background:var(--white);border-bottom:1px solid var(--border);height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:100;box-shadow:0 1px 0 var(--border)}
 .nav-brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px;cursor:pointer}
-.greeting-bar{background:var(--white);border-bottom:1px solid var(--border);padding:8px 24px;font-size:13px;color:var(--text-2)}
-.nav-logo{width:34px;height:34px;background:var(--primary);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.nav-sub{font-size:11px;color:var(--text-2);font-weight:400;margin-top:1px}
+.nav-greeting{font-size:13px;color:#9CA3AF;white-space:nowrap}
+.nav-sub{font-size:12px;color:#6B7280;font-weight:400;margin-top:1px}
 .nav-actions{display:flex;align-items:center;gap:8px}
 .nav-sep{width:1px;height:22px;background:var(--border);margin:0 4px}
 
@@ -311,6 +310,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 @media(max-width:768px){
 
   /* ── NAV: solo logo + botón añadir ──────────────────────── */
+  .nav-greeting { display:none; }
   .nav-actions > .btn-secondary,
   .nav-actions > .nav-sep { display:none!important; }
 
@@ -470,9 +470,6 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   /* ── BOTÓN ELIMINAR EN TARJETAS: mostrar texto ──────────── */
   td:nth-child(9) .row-actions .btn-danger-soft::after { content:'Eliminar'; }
 
-  /* ── GREETING BAR ───────────────────────────────────────── */
-  .greeting-bar { padding:7px 16px; }
-
   /* ── FORMULARIO: reducir espaciado vertical en móvil ────── */
   .page-header { margin-bottom:10px; }
   .fsec { padding:14px 16px; }
@@ -521,9 +518,14 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 
 <nav class="nav">
   <div class="nav-brand" onclick="showDash()">
-    <img src="logo.png" alt="Eurocar Motor" style="height:40px;width:auto;">
+    <img src="logo.png" alt="Eurocar Motor" style="height:32px;width:auto;">
+    <div>
+      <div style="font-size:16px;font-weight:700;color:#2563EB;line-height:1.2">StockDrive</div>
+      <div class="nav-sub">Eurocar Motor</div>
+    </div>
   </div>
   <div class="nav-actions">
+    <span class="nav-greeting" id="navGreeting"></span>
     <button class="btn btn-secondary btn-sm" onclick="exportData()" title="Descargar copia de seguridad">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       <span>Exportar</span>
@@ -545,7 +547,6 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   </div>
 </nav>
 
-<div class="greeting-bar" id="greetingBar"></div>
 <div class="toasts" id="toasts"></div>
 <main class="main" id="app"></main>
 
@@ -665,9 +666,8 @@ async function initApp() {
 function updateGreeting() {
   const h = new Date().getHours();
   const saludo = h >= 6 && h < 14 ? 'Buenos días' : h >= 14 && h < 21 ? 'Buenas tardes' : 'Buenas noches';
-  const fecha = new Date().toLocaleDateString('es-ES', {weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  const el = document.getElementById('greetingBar');
-  if (el) el.textContent = `${saludo}, Yuriy · ${fecha.charAt(0).toUpperCase()+fecha.slice(1)}`;
+  const el = document.getElementById('navGreeting');
+  if (el) el.textContent = `${saludo}, Yuriy`;
 }
 
 function showApp() {
