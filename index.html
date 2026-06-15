@@ -470,8 +470,8 @@ const IC = {
 };
 
 // ─── CONSTANTS ────────────────────────────────────────────────
-const STATUS_LABEL = { available:'Disponible', reserved:'Reservado', sold:'Vendido' };
-const STATUS_BADGE  = { available:'badge-available', reserved:'badge-reserved', sold:'badge-sold' };
+const STATUS_LABEL = { disponible:'Disponible', reservado:'Reservado', vendido:'Vendido' };
+const STATUS_BADGE  = { disponible:'badge-available', reservado:'badge-reserved', vendido:'badge-sold' };
 const EXP_CATS = ['Entrada en stock', 'Mantenimiento', 'Salida de venta', 'Garantía'];
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
 
@@ -531,7 +531,7 @@ function normalizeV(row, allGastos, allHistorial) {
     salePrice:     row.precio_venta       || 0,
     saleRealPrice: row.precio_venta_final || null,
     saleDate:      row.fecha_venta        || null,
-    status:        row.estado             || 'available',
+    status:        row.estado             || 'disponible',
     notes:         row.notas              || '',
     entryDate:     row.fecha_entrada,
     photos:        row.fotos              || [],
@@ -568,14 +568,14 @@ function calc(v) {
   const totalExp    = (v.expenses||[]).reduce((s,e)=>s+(+e.amount||0),0);
   const totalCost   = (+v.purchasePrice||0)+totalExp;
   const pvp         = +v.salePrice||0;
-  const saleRealPrice = v.status==='sold' && +v.saleRealPrice ? +v.saleRealPrice : null;
+  const saleRealPrice = v.status==='vendido' && +v.saleRealPrice ? +v.saleRealPrice : null;
   const effectivePvp  = saleRealPrice!==null ? saleRealPrice : pvp;
   const margin      = effectivePvp - totalCost;
   const marginPct   = totalCost>0 ? (margin/totalCost)*100 : 0;
   const entry       = v.entryDate ? new Date(v.entryDate) : new Date();
   const days        = Math.max(0, Math.floor((new Date()-entry)/86400000));
   let daysSold = null;
-  if (v.status==='sold' && v.entryDate) {
+  if (v.status==='vendido' && v.entryDate) {
     const soldAt = v.saleDate ? new Date(v.saleDate) : (v.updatedAt ? new Date(v.updatedAt) : null);
     if (soldAt) daysSold = Math.max(0,Math.floor((soldAt-entry)/86400000));
   }
@@ -584,10 +584,10 @@ function calc(v) {
 
 function summary() {
   const vs      = vehiclesCache;
-  const active  = vs.filter(v => v.status!=='sold');
-  const avail   = vs.filter(v => v.status==='available');
-  const reserved = vs.filter(v => v.status==='reserved');
-  const sold    = vs.filter(v => v.status==='sold');
+  const active  = vs.filter(v => v.status!=='vendido');
+  const avail   = vs.filter(v => v.status==='disponible');
+  const reserved = vs.filter(v => v.status==='reservado');
+  const sold    = vs.filter(v => v.status==='vendido');
   const soldWP  = sold.filter(v => +v.saleRealPrice);
   const now     = new Date();
 
@@ -704,7 +704,7 @@ function renderDash() {
 
 <div class="filter-bar">
   <div class="filter-tabs">
-    ${[['all','Todos',all.length],['available','Disponibles',sm.availCount],['reserved','Reservados',sm.reservedCount],['sold','Vendidos',sm.soldCount]]
+    ${[['all','Todos',all.length],['disponible','Disponibles',sm.availCount],['reservado','Reservados',sm.reservedCount],['vendido','Vendidos',sm.soldCount]]
       .map(([k,l,n])=>`<button class="ftab${S.filter===k?' active':''}" onclick="setFilter('${k}')">${l} <span style="opacity:.6">(${n})</span></button>`).join('')}
   </div>
   <input class="search-inp" type="text" placeholder="Marca, modelo, matrícula..." value="${esc(S.q)}" id="searchInp" oninput="setQ(this.value)">
@@ -727,12 +727,12 @@ function renderDash() {
 
 function renderRow(v) {
   const c  = calc(v);
-  const dc = v.status!=='sold'?(c.days>90?'alert':c.days>45?'warn':''):'';
+  const dc = v.status!=='vendido'?(c.days>90?'alert':c.days>45?'warn':''):'';
   const thumb = v.photos && v.photos[0]
     ? `<div class="veh-thumb"><img src="${v.photos[0]}" alt="foto"></div>`
     : `<div class="veh-thumb">${IC.carGray}</div>`;
   let daysCell;
-  if (v.status==='sold') {
+  if (v.status==='vendido') {
     daysCell = c.daysSold!==null ? `<span class="days-tag sold-days">${c.daysSold}d</span>` : `<span style="color:var(--text-2)">—</span>`;
   } else {
     daysCell = `<span class="days-tag ${dc}">${c.days}d</span>`;
@@ -790,7 +790,7 @@ function initForm(v) {
 function renderForm() {
   const isEdit = !!S.editId;
   const today  = new Date().toISOString().split('T')[0];
-  const isSold = (fData.status||'available')==='sold';
+  const isSold = (fData.status||'disponible')==='vendido';
   const origenOpts = ['Particular','Profesional','Subasta','Otro'];
   return `
 <div class="page-header">
@@ -823,9 +823,9 @@ function renderForm() {
         <input type="date" name="entryDate" value="${fData.entryDate||today}" required></div>
       <div class="fg"><label>Estado</label>
         <select name="status" onchange="updateSoldFields(this.value)">
-          <option value="available"${(fData.status||'available')==='available'?' selected':''}>Disponible</option>
-          <option value="reserved"${fData.status==='reserved'?' selected':''}>Reservado</option>
-          <option value="sold"${fData.status==='sold'?' selected':''}>Vendido</option>
+          <option value="disponible"${(fData.status||'disponible')==='disponible'?' selected':''}>Disponible</option>
+          <option value="reservado"${fData.status==='reservado'?' selected':''}>Reservado</option>
+          <option value="vendido"${fData.status==='vendido'?' selected':''}>Vendido</option>
         </select></div>
     </div>
   </div>
@@ -912,7 +912,7 @@ function renderForm() {
 
 function updateSoldFields(status) {
   const el=document.getElementById('soldPriceFields');
-  if (el) { if(status==='sold') el.classList.remove('hidden'); else el.classList.add('hidden'); }
+  if (el) { if(status==='vendido') el.classList.remove('hidden'); else el.classList.add('hidden'); }
   refreshPricing();
 }
 
@@ -936,7 +936,7 @@ function renderPriceBox() {
   const sp     = +document.getElementById('sp')?.value    || +fData.salePrice      || 0;
   const realSp = +document.getElementById('realsp')?.value || +fData.saleRealPrice || 0;
   const statusEl = document.querySelector('[name="status"]');
-  const isSold   = statusEl ? statusEl.value==='sold' : fData.status==='sold';
+  const isSold   = statusEl ? statusEl.value==='vendido' : fData.status==='vendido';
   const effectiveSp = isSold && realSp ? realSp : sp;
   const te = sumExp(), tc = pp+te, mg = effectiveSp-tc, mp = tc>0?(mg/tc)*100:0;
   const pvpRow = (isSold && realSp)
@@ -1086,8 +1086,8 @@ function renderDetail() {
   const heroImg = v.photos && v.photos[0]
     ? `<img class="detail-hero-img" src="${v.photos[0]}" alt="${esc(v.brand)}">`
     : `<div class="detail-hero-placeholder">${IC.carGrayLg}</div>`;
-  const daysLabel = v.status==='sold'?'Días hasta venta':'Días en stock';
-  const daysVal   = v.status==='sold'?(c.daysSold!==null?c.daysSold+' días':'—'):c.days+' días';
+  const daysLabel = v.status==='vendido'?'Días hasta venta':'Días en stock';
+  const daysVal   = v.status==='vendido'?(c.daysSold!==null?c.daysSold+' días':'—'):c.days+' días';
 
   const infoRows = [
     ['Marca', v.brand], ['Modelo', v.model],
@@ -1193,7 +1193,7 @@ function renderDetail() {
           </div>
           <div class="prow"><span class="plabel">Margen (%)</span>
             <span class="pval num" style="color:${c.margin>=0?'var(--success)':'var(--danger)'}">${pct(c.marginPct)}</span></div>
-          ${v.status==='sold'&&c.daysSold!==null?`
+          ${v.status==='vendido'&&c.daysSold!==null?`
           <div class="prow" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-light)">
             <span class="plabel">Vendido en</span>
             <span class="pval" style="color:var(--text-2)">${c.daysSold} día${c.daysSold!==1?'s':''}</span>
@@ -1205,7 +1205,7 @@ function renderDetail() {
       <div class="dcard-head">Cambiar estado</div>
       <div class="dcard-body">
         <div class="status-actions">
-          ${['available','reserved','sold'].map(st=>`
+          ${['disponible','reservado','vendido'].map(st=>`
             <button class="btn ${v.status===st?'btn-primary':'btn-secondary'}" style="justify-content:flex-start"
               onclick="changeStatus('${v.id}','${st}')" ${v.status===st?'disabled':''}>
               Marcar como ${STATUS_LABEL[st]}
@@ -1261,7 +1261,7 @@ async function saveVehicle() {
   const d={}; form.querySelectorAll('[name]').forEach(el=>d[el.name]=el.value);
   if (!d.brand?.trim()||!d.model?.trim()||!d.year) { toast('Completa: marca, modelo y año',3500,'error'); return; }
 
-  const isSold   = d.status==='sold';
+  const isSold   = d.status==='vendido';
   const expenses = fExp.filter(e=>e.concept||e.amount).map(e=>({concept:(e.concept||'').trim(),amount:+e.amount||0,categoria:e.categoria||null}));
 
   const vehicleRow = {
@@ -1275,7 +1275,7 @@ async function saveVehicle() {
     precio_venta:      +d.salePrice||0,
     precio_venta_final: isSold?(+d.saleRealPrice||null):null,
     fecha_venta:       isSold?(d.saleDate||null):null,
-    estado:            d.status||'available',
+    estado:            d.status||'disponible',
     notas:             d.notes?.trim()||null,
     fotos:             fPhotos,
     updated_at:        new Date().toISOString(),
@@ -1305,7 +1305,7 @@ async function saveVehicle() {
         const {error:ee}=await sb.from('gastos').insert(expenses.map(e=>({vehiculo_id:vid,concepto:e.concept,importe:e.amount,categoria:e.categoria})));
         if(ee) throw ee;
       }
-      await sb.from('historial_estados').insert({vehiculo_id:vid,estado_anterior:null,estado_nuevo:d.status||'available',nota:`Añadido al stock como "${STATUS_LABEL[d.status||'available']}"`});
+      await sb.from('historial_estados').insert({vehiculo_id:vid,estado_anterior:null,estado_nuevo:d.status||'disponible',nota:`Añadido al stock como "${STATUS_LABEL[d.status||'disponible']}"`});
     }
     await loadData();
     toast(S.editId?'Vehículo actualizado':'Vehículo añadido al stock',3500,'success');
@@ -1342,14 +1342,14 @@ document.getElementById('delModal').addEventListener('click',e=>{if(e.target===e
 // ─── CHANGE STATUS ────────────────────────────────────────────
 function changeStatus(id, newSt) {
   const v=vehiclesCache.find(x=>x.id===id); if(!v||v.status===newSt) return;
-  if(newSt==='sold'){openSoldModal(id);return;}
+  if(newSt==='vendido'){openSoldModal(id);return;}
   doChangeStatus(id,v.status,newSt,null,null);
 }
 async function doChangeStatus(id, oldSt, newSt, salePrice, saleDate) {
   setLoading(true,'Actualizando estado...');
   try {
     const upd={estado:newSt,updated_at:new Date().toISOString()};
-    if(newSt==='sold'){upd.precio_venta_final=salePrice||null;upd.fecha_venta=saleDate||null;}
+    if(newSt==='vendido'){upd.precio_venta_final=salePrice||null;upd.fecha_venta=saleDate||null;}
     const {error:ve}=await sb.from('vehiculos').update(upd).eq('id',id); if(ve) throw ve;
     const nota=formatSC(oldSt,newSt)+(salePrice?' · '+eur(salePrice):'');
     const {error:he}=await sb.from('historial_estados').insert({vehiculo_id:id,estado_anterior:oldSt,estado_nuevo:newSt,nota}); if(he) throw he;
@@ -1372,7 +1372,7 @@ function closeSoldModal() { S.soldTargetId=null; document.getElementById('soldMo
 function confirmSold() {
   const id=S.soldTargetId, price=+document.getElementById('soldPriceInp').value||null, date=document.getElementById('soldDateInp').value||null;
   const v=vehiclesCache.find(x=>x.id===id); closeSoldModal();
-  doChangeStatus(id,v.status,'sold',price,date);
+  doChangeStatus(id,v.status,'vendido',price,date);
 }
 document.getElementById('soldModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeSoldModal();});
 
@@ -1415,13 +1415,13 @@ async function confirmImport() {
         proveedor:v.proveedor||null,origen:v.origen||null,
         fecha_entrada:v.entryDate||null,precio_compra:v.purchasePrice||0,precio_venta:v.salePrice||0,
         precio_venta_final:v.saleRealPrice||null,fecha_venta:v.saleDate||null,
-        estado:v.status||'available',notas:v.notes||null,fotos:v.photos||[],
+        estado:v.status||'disponible',notas:v.notes||null,fotos:v.photos||[],
         updated_at:new Date().toISOString(),
       }).select().single();
       if(ve) throw ve;
       const vid=newRow.id;
       if(v.expenses?.length) await sb.from('gastos').insert(v.expenses.map(e=>({vehiculo_id:vid,concepto:e.concept||'',importe:e.amount||0,categoria:e.categoria||null})));
-      if(v.statusHistory?.length) await sb.from('historial_estados').insert(v.statusHistory.map(h=>({vehiculo_id:vid,estado_anterior:h.from||null,estado_nuevo:h.to||'available',nota:h.text||formatSC(h.from,h.to)})));
+      if(v.statusHistory?.length) await sb.from('historial_estados').insert(v.statusHistory.map(h=>({vehiculo_id:vid,estado_anterior:h.from||null,estado_nuevo:h.to||'disponible',nota:h.text||formatSC(h.from,h.to)})));
       imported++;
     }
     await loadData(); toast(`${imported} vehículos importados correctamente`,3500,'success');
