@@ -33,7 +33,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .login-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
 .login-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:40px 36px;width:100%;max-width:380px;box-shadow:var(--shadow-md);text-align:center}
 .login-logo-wrap{margin-bottom:16px;display:flex;justify-content:center}
-.login-logo-icon{width:52px;height:52px;background:var(--primary);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px}
+.login-logo-icon{width:52px;height:52px;background:var(--primary);border-radius:12px;display:flex;align-items:center;justify-content:center}
 .login-title{font-size:22px;font-weight:700;margin-bottom:4px}
 .login-sub{font-size:13px;color:var(--text-2);margin-bottom:28px}
 .login-form{text-align:left;display:flex;flex-direction:column;gap:14px}
@@ -49,7 +49,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 /* ── NAV ───────────────────────────────────────────────────── */
 .nav{background:var(--white);border-bottom:1px solid var(--border);height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:100;box-shadow:0 1px 0 var(--border)}
 .nav-brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px}
-.nav-logo{width:34px;height:34px;background:var(--primary);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.nav-logo{width:34px;height:34px;background:var(--primary);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .nav-sub{font-size:11px;color:var(--text-2);font-weight:400;margin-top:1px}
 .nav-actions{display:flex;align-items:center;gap:8px}
 .nav-sep{width:1px;height:22px;background:var(--border);margin:0 4px}
@@ -64,11 +64,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .btn-danger-soft{background:var(--danger-bg);color:var(--danger);border:1px solid #FECACA}
 .btn-danger-soft:hover:not(:disabled){background:#FEE2E2}
 .btn-sm{padding:5px 10px;font-size:12px}
-.btn-xs{padding:3px 8px;font-size:12px}
-.btn-icon{width:30px;height:30px;border:none;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:background .15s;flex-shrink:0}
-.btn-icon-del{background:var(--danger-bg);color:var(--danger)}
-.btn-icon-del:hover{background:#FEE2E2}
-.btn-icon-add{background:var(--primary-light);color:var(--primary);width:auto;padding:0 12px;height:30px;border-radius:6px;font-size:13px;font-weight:500}
+.btn-xs{padding:4px 8px;font-size:12px;gap:4px}
+.btn-icon-del{background:var(--danger-bg);color:var(--danger);border:1px solid #FECACA;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:background .15s;width:28px;height:28px}
+.btn-icon-del:hover:not(:disabled){background:#FEE2E2}
+.btn-icon-del:disabled{opacity:.3;cursor:not-allowed}
+.btn-icon-add{background:var(--primary-light);color:var(--primary);border:none;padding:0 12px;height:30px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .15s;font-family:inherit}
 .btn-icon-add:hover{background:#DBEAFE}
 
 /* ── LAYOUT ────────────────────────────────────────────────── */
@@ -79,13 +79,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 /* ── METRICS ───────────────────────────────────────────────── */
 .metrics-section-label{font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
-.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.metrics{display:grid;gap:14px;margin-bottom:20px}
+.metrics.four-col{grid-template-columns:repeat(4,1fr)}
+.metrics.three-col{grid-template-columns:repeat(3,1fr)}
 .metrics.two-col{grid-template-columns:repeat(2,1fr)}
 .metric-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px 20px;box-shadow:var(--shadow)}
 .metric-label{font-size:12px;font-weight:500;color:var(--text-2);margin-bottom:8px}
 .metric-val{font-size:26px;font-weight:700;line-height:1;letter-spacing:-.5px}
 .metric-val.blue{color:var(--primary)}
 .metric-val.green{color:var(--success)}
+.metric-val.warn{color:var(--warning)}
 .metric-note{font-size:11px;color:var(--text-2);margin-top:5px}
 
 /* ── FILTER BAR ────────────────────────────────────────────── */
@@ -100,7 +103,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 /* ── TABLE ─────────────────────────────────────────────────── */
 .table-wrap{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden}
 .table-scroll{overflow-x:auto}
-table{width:100%;border-collapse:collapse;min-width:900px}
+table{width:100%;border-collapse:collapse;min-width:940px}
 thead{background:var(--bg);border-bottom:1px solid var(--border)}
 th{padding:10px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
 th.sortable{cursor:pointer;user-select:none}
@@ -108,7 +111,7 @@ th.sortable:hover{color:var(--text)}
 th.sorted{color:var(--primary)}
 .sort-arr{display:inline-block;margin-left:3px;opacity:.4;font-size:10px}
 th.sorted .sort-arr{opacity:1;color:var(--primary)}
-td{padding:13px 14px;border-bottom:1px solid var(--border-light);vertical-align:middle}
+td{padding:12px 14px;border-bottom:1px solid var(--border-light);vertical-align:middle}
 tr:last-child td{border-bottom:none}
 tbody tr{cursor:pointer}
 tbody tr:hover td{background:#FAFBFF}
@@ -121,6 +124,7 @@ tbody tr:hover td{background:#FAFBFF}
 .veh-thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .veh-name{font-weight:600;font-size:14px}
 .veh-detail{font-size:11px;color:var(--text-2);margin-top:1px}
+.matricula-tag{display:inline-block;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-size:11px;font-family:monospace;font-weight:600;color:var(--text);letter-spacing:.04em;margin-right:4px}
 
 /* ── BADGES ────────────────────────────────────────────────── */
 .badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
@@ -137,13 +141,13 @@ tbody tr:hover td{background:#FAFBFF}
 
 /* ── EMPTY ─────────────────────────────────────────────────── */
 .empty{text-align:center;padding:56px 20px}
-.empty-icon{font-size:44px;margin-bottom:14px}
+.empty-icon{display:flex;justify-content:center;margin-bottom:14px}
 .empty-title{font-size:17px;font-weight:600;margin-bottom:6px}
 .empty-desc{font-size:13px;color:var(--text-2);margin-bottom:20px}
 .empty-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 
 /* ── FORM ──────────────────────────────────────────────────── */
-.form-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden;margin-bottom:0}
+.form-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden}
 .fsec{padding:22px 24px;border-bottom:1px solid var(--border)}
 .fsec:last-child{border-bottom:none}
 .fsec-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:16px}
@@ -164,10 +168,14 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .photo-upload-prompt .up-label{font-size:13px;font-weight:500;color:var(--text-2)}
 .photo-upload-prompt .up-hint{font-size:11px;color:var(--text-2)}
 .photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;margin-bottom:10px}
-.photo-item{position:relative;aspect-ratio:4/3;border-radius:6px;overflow:hidden;border:1px solid var(--border);background:var(--bg)}
-.photo-item img{width:100%;height:100%;object-fit:cover;display:block}
-.photo-remove{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;border:none;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;line-height:1}
+.photo-item{position:relative;aspect-ratio:4/3;border-radius:6px;overflow:hidden;border:2px solid transparent;background:var(--bg);cursor:grab;transition:border-color .15s,opacity .15s,transform .15s;user-select:none}
+.photo-item img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+.photo-item.dragging{opacity:.35;border-color:var(--primary);border-style:dashed}
+.photo-item.drag-over{border-color:var(--primary);background:var(--primary-light);transform:scale(1.04)}
+.photo-remove{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;border:none;cursor:pointer;font-size:10px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;line-height:1}
 .photo-item:hover .photo-remove{opacity:1}
+.photo-drag-hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;pointer-events:none;background:rgba(0,0,0,.2);border-radius:4px}
+.photo-item:hover .photo-drag-hint{opacity:1}
 .photo-main-badge{position:absolute;bottom:4px;left:4px;background:rgba(37,99,235,.85);color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;letter-spacing:.04em;text-transform:uppercase}
 .photo-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
 .gallery-img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:6px;cursor:zoom-in;border:1px solid var(--border);transition:opacity .15s;display:block}
@@ -186,10 +194,17 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 
 /* ── EXPENSE LINES ─────────────────────────────────────────── */
 .exp-list{display:flex;flex-direction:column;gap:7px;margin-bottom:10px}
-.exp-line{display:grid;grid-template-columns:1fr 140px 30px;gap:8px;align-items:center}
+.exp-line{display:grid;grid-template-columns:1fr 148px 120px 28px;gap:8px;align-items:center}
 .exp-footer{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg);border-radius:var(--r);border:1px solid var(--border)}
 .exp-footer-label{font-size:13px;color:var(--text-2)}
 .exp-footer-val{font-size:16px;font-weight:700}
+
+/* ── GROUPED EXPENSES ──────────────────────────────────────── */
+.exp-group{margin-bottom:12px}
+.exp-group:last-child{margin-bottom:0}
+.exp-group-header{display:flex;justify-content:space-between;align-items:center;padding:4px 0 6px;border-bottom:1px solid var(--border);margin-bottom:4px}
+.exp-group-name{font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em}
+.exp-group-sub{font-size:12px;font-weight:600;color:var(--text)}
 
 /* ── PRICE BOX ─────────────────────────────────────────────── */
 .price-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px}
@@ -225,11 +240,11 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .info-row:last-child{border-bottom:none}
 .info-l{color:var(--text-2)}
 .info-v{font-weight:500;text-align:right}
-.exp-item{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border-light);font-size:13px}
+.exp-item{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border-light);font-size:13px}
 .exp-item:last-child{border-bottom:none}
 .exp-concept{color:var(--text)}
 .exp-amount{font-weight:600}
-.exp-subtotal{display:flex;justify-content:space-between;padding:9px 12px;background:var(--bg);border-radius:6px;font-size:13px;font-weight:600;margin-top:8px}
+.exp-total-row{display:flex;justify-content:space-between;padding:9px 12px;background:var(--bg);border-radius:6px;font-size:13px;font-weight:600;margin-top:10px}
 .hist-list{display:flex;flex-direction:column}
 .hist-item{display:flex;gap:11px;padding:10px 0;border-bottom:1px solid var(--border-light)}
 .hist-item:last-child{border-bottom:none}
@@ -247,7 +262,9 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 
 /* ── TOAST ─────────────────────────────────────────────────── */
 .toasts{position:fixed;bottom:22px;right:22px;z-index:300;display:flex;flex-direction:column;gap:7px;pointer-events:none}
-.toast{background:#0F172A;color:#fff;padding:11px 16px;border-radius:8px;font-size:13px;box-shadow:var(--shadow-md);animation:toastIn .2s ease;display:flex;align-items:center;gap:6px}
+.toast{background:#0F172A;color:#fff;padding:11px 16px;border-radius:8px;font-size:13px;box-shadow:var(--shadow-md);animation:toastIn .2s ease;border-left:3px solid transparent}
+.toast.success{border-left-color:var(--success)}
+.toast.error{border-left-color:var(--danger)}
 @keyframes toastIn{from{transform:translateX(110%);opacity:0}to{transform:none;opacity:1}}
 
 /* ── MISC ──────────────────────────────────────────────────── */
@@ -255,8 +272,14 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .num{font-variant-numeric:tabular-nums}
 
 /* ── RESPONSIVE ────────────────────────────────────────────── */
-@media(max-width:1100px){.metrics{grid-template-columns:repeat(2,1fr)}.metrics.two-col{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:900px){.detail-grid{grid-template-columns:1fr}}
+@media(max-width:1200px){
+  .metrics.four-col{grid-template-columns:repeat(2,1fr)}
+  .metrics.three-col{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:900px){
+  .detail-grid{grid-template-columns:1fr}
+  .metrics.three-col{grid-template-columns:repeat(2,1fr)}
+}
 @media(max-width:768px){
   .main{padding:16px}
   .filter-bar{flex-direction:column;align-items:stretch}
@@ -265,9 +288,17 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   .nav{padding:0 16px}
   .page-header{flex-direction:column}
   .nav-actions .btn-sm span{display:none}
+  .metrics.four-col{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:640px){
+  .exp-line{grid-template-columns:1fr 1fr 28px;grid-template-rows:auto auto}
+  .exp-line input[type=text]{grid-column:1/3}
+  .exp-line .exp-del-btn{grid-column:3;grid-row:1}
+  .exp-line select{grid-column:1;grid-row:2}
+  .exp-line input[type=number]{grid-column:2;grid-row:2}
 }
 @media(max-width:500px){
-  .metrics,.metrics.two-col{grid-template-columns:1fr}
+  .metrics.four-col,.metrics.three-col,.metrics.two-col{grid-template-columns:1fr}
   .fgrid,.fgrid-2{grid-template-columns:1fr}
   .detail-specs{gap:14px}
 }
@@ -279,7 +310,9 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 <div id="loginScreen" class="login-screen">
   <div class="login-card">
     <div class="login-logo-wrap">
-      <div class="login-logo-icon">🚗</div>
+      <div class="login-logo-icon">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3v-5l2.5-5h13L21 12v5h-2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
+      </div>
     </div>
     <div class="login-title">Eurocar Motor</div>
     <div class="login-sub">Accede para gestionar el stock</div>
@@ -313,7 +346,9 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 
 <nav class="nav">
   <div class="nav-brand">
-    <div class="nav-logo">🚗</div>
+    <div class="nav-logo">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3v-5l2.5-5h13L21 12v5h-2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
+    </div>
     <div>
       <div>Eurocar Motor</div>
       <div class="nav-sub">Gestión de Stock</div>
@@ -334,7 +369,10 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       <span>Salir</span>
     </button>
-    <button class="btn btn-primary" onclick="showAddForm()">＋ Añadir vehículo</button>
+    <button class="btn btn-primary" onclick="showAddForm()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Añadir vehículo
+    </button>
   </div>
 </nav>
 
@@ -381,7 +419,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 <div class="overlay hidden" id="importModal">
   <div class="modal">
     <div class="modal-head">Importar copia de seguridad</div>
-    <div class="modal-body" id="importModalBody">Se importarán los datos del archivo. Esta acción añadirá los vehículos a los ya existentes.</div>
+    <div class="modal-body" id="importModalBody">Se importarán los datos del archivo.</div>
     <div class="modal-foot">
       <button class="btn btn-secondary" onclick="closeImportModal()">Cancelar</button>
       <button class="btn btn-danger-soft" onclick="confirmImport()">Importar datos</button>
@@ -411,46 +449,46 @@ let S = {
   view:'dash', filter:'all', q:'', editId:null, detailId:null, delId:null,
   sortCol:null, sortDir:'desc', soldTargetId:null, importPending:null
 };
-let fData   = {};
-let fExp    = [];
-let fPhotos = [];
+let fData={}, fExp=[], fPhotos=[];
+let dragSrcIdx = null;
 
 const getVehicles = () => vehiclesCache;
 
+// ─── SVG ICONS ────────────────────────────────────────────────
+const IC = {
+  carGray:   `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3v-5l2.5-5h13L21 12v5h-2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/><line x1="3" y1="12" x2="21" y2="12"/></svg>`,
+  carGrayLg: `<svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#CBD5E1" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3v-5l2.5-5h13L21 12v5h-2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/><line x1="3" y1="12" x2="21" y2="12"/></svg>`,
+  searchLg:  `<svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="#CBD5E1" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`,
+  edit:      `<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`,
+  trash:     `<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`,
+  plus:      `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`,
+  save:      `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>`,
+  check:     `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 13 4 10"/></svg>`,
+  arrowLeft: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>`,
+  grip:      `<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="2" stroke-linecap="round"><line x1="9" y1="5" x2="9" y2="19"/><line x1="15" y1="5" x2="15" y2="19"/></svg>`,
+  camera:    `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`,
+};
+
 // ─── CONSTANTS ────────────────────────────────────────────────
-const CAM_SVG    = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`;
-const CAM_SVG_LG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#CBD5E1" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`;
 const STATUS_LABEL = { available:'Disponible', reserved:'Reservado', sold:'Vendido' };
 const STATUS_BADGE  = { available:'badge-available', reserved:'badge-reserved', sold:'badge-sold' };
+const EXP_CATS = ['Entrada en stock', 'Mantenimiento', 'Salida de venta', 'Garantía'];
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
 
 // ─── LOADING ──────────────────────────────────────────────────
 function setLoading(on, text) {
   const el = document.getElementById('loadingOverlay');
-  if (on) {
-    document.getElementById('loadingText').textContent = text || 'Guardando...';
-    el.classList.remove('hidden');
-  } else {
-    el.classList.add('hidden');
-  }
+  if (on) { document.getElementById('loadingText').textContent = text||'Guardando...'; el.classList.remove('hidden'); }
+  else el.classList.add('hidden');
 }
 
 // ─── AUTH ─────────────────────────────────────────────────────
 async function initApp() {
   const { data: { session } } = await sb.auth.getSession();
-  if (session) {
-    showApp();
-    await loadData();
-  }
-  // else: login screen already visible by default
-
-  sb.auth.onAuthStateChange((event, _session) => {
+  if (session) { showApp(); await loadData(); }
+  sb.auth.onAuthStateChange((event, _s) => {
     if (event === 'SIGNED_IN')  { showApp(); loadData(); }
-    if (event === 'SIGNED_OUT') {
-      vehiclesCache = [];
-      document.getElementById('appContainer').classList.add('hidden');
-      document.getElementById('loginScreen').classList.remove('hidden');
-    }
+    if (event === 'SIGNED_OUT') { vehiclesCache=[]; document.getElementById('appContainer').classList.add('hidden'); document.getElementById('loginScreen').classList.remove('hidden'); }
   });
 }
 
@@ -461,63 +499,46 @@ function showApp() {
 
 async function handleLogin(e) {
   e.preventDefault();
-  const email    = document.getElementById('loginEmail').value;
-  const password = document.getElementById('loginPassword').value;
-  const btn      = document.getElementById('loginBtn');
-  const errEl    = document.getElementById('loginError');
-
-  btn.disabled     = true;
-  btn.textContent  = 'Iniciando sesión...';
-  errEl.classList.add('hidden');
-
+  const email=document.getElementById('loginEmail').value, password=document.getElementById('loginPassword').value;
+  const btn=document.getElementById('loginBtn'), errEl=document.getElementById('loginError');
+  btn.disabled=true; btn.textContent='Iniciando sesión...'; errEl.classList.add('hidden');
   const { error } = await sb.auth.signInWithPassword({ email, password });
-
-  btn.disabled    = false;
-  btn.textContent = 'Iniciar sesión';
-
+  btn.disabled=false; btn.textContent='Iniciar sesión';
   if (error) {
-    errEl.textContent = (error.message || '').includes('Invalid login credentials')
-      ? 'Email o contraseña incorrectos'
-      : (error.message || 'Error al iniciar sesión');
+    errEl.textContent=(error.message||'').includes('Invalid login credentials')?'Email o contraseña incorrectos':(error.message||'Error al iniciar sesión');
     errEl.classList.remove('hidden');
   }
 }
 
-async function handleLogout() {
-  await sb.auth.signOut();
-}
+async function handleLogout() { await sb.auth.signOut(); }
 
 // ─── DATA LAYER ───────────────────────────────────────────────
 function normalizeV(row, allGastos, allHistorial) {
-  const gastos   = allGastos.filter(g => g.vehiculo_id === row.id);
-  const historial = allHistorial
-    .filter(h => h.vehiculo_id === row.id)
-    .sort((a,b) => new Date(a.created_at) - new Date(b.created_at));
+  const gastos    = allGastos.filter(g => g.vehiculo_id === row.id);
+  const historial = allHistorial.filter(h => h.vehiculo_id === row.id).sort((a,b) => new Date(a.created_at)-new Date(b.created_at));
   return {
     id:            row.id,
-    brand:         row.marca        || '',
-    model:         row.modelo       || '',
+    brand:         row.marca              || '',
+    model:         row.modelo             || '',
+    matricula:     row.matricula          || '',
     year:          row.anio,
     km:            row.kilometraje,
-    color:         row.color        || '',
-    vin:           row.bastidor     || '',
-    purchasePrice: row.precio_compra  || 0,
-    salePrice:     row.precio_venta   || 0,
+    color:         row.color              || '',
+    vin:           row.bastidor           || '',
+    proveedor:     row.proveedor          || '',
+    origen:        row.origen             || '',
+    purchasePrice: row.precio_compra      || 0,
+    salePrice:     row.precio_venta       || 0,
     saleRealPrice: row.precio_venta_final || null,
-    saleDate:      row.fecha_venta    || null,
-    status:        row.estado         || 'available',
-    notes:         row.notas          || '',
+    saleDate:      row.fecha_venta        || null,
+    status:        row.estado             || 'available',
+    notes:         row.notas              || '',
     entryDate:     row.fecha_entrada,
-    photos:        row.fotos          || [],
-    expenses:      gastos.map(g => ({ id: g.id, concept: g.concepto || '', amount: g.importe || 0 })),
-    statusHistory: historial.map(h => ({
-      date: h.created_at,
-      from: h.estado_anterior,
-      to:   h.estado_nuevo,
-      text: h.nota || formatSC(h.estado_anterior, h.estado_nuevo),
-    })),
-    createdAt:  row.created_at,
-    updatedAt:  row.updated_at,
+    photos:        row.fotos              || [],
+    expenses:      gastos.map(g => ({ id:g.id, concept:g.concepto||'', amount:g.importe||0, categoria:g.categoria||'' })),
+    statusHistory: historial.map(h => ({ date:h.created_at, from:h.estado_anterior, to:h.estado_nuevo, text:h.nota||formatSC(h.estado_anterior,h.estado_nuevo) })),
+    createdAt:     row.created_at,
+    updatedAt:     row.updated_at,
   };
 }
 
@@ -525,61 +546,74 @@ async function loadData() {
   setLoading(true, 'Cargando vehículos...');
   try {
     const [
-      { data: vehicles, error: ve },
-      { data: gastos,   error: ge },
-      { data: historial, error: he },
+      { data:vehicles, error:ve },
+      { data:gastos,   error:ge },
+      { data:historial, error:he },
     ] = await Promise.all([
-      sb.from('vehiculos').select('*').order('created_at', { ascending: false }),
+      sb.from('vehiculos').select('*').order('created_at',{ascending:false}),
       sb.from('gastos').select('*'),
-      sb.from('historial_estados').select('*').order('created_at', { ascending: true }),
+      sb.from('historial_estados').select('*').order('created_at',{ascending:true}),
     ]);
-    if (ve) throw ve;
-    if (ge) throw ge;
-    if (he) throw he;
-    vehiclesCache = (vehicles || []).map(v => normalizeV(v, gastos || [], historial || []));
+    if (ve) throw ve; if (ge) throw ge; if (he) throw he;
+    vehiclesCache = (vehicles||[]).map(v => normalizeV(v, gastos||[], historial||[]));
     render();
   } catch (err) {
-    toast('⚠️ Error al cargar datos: ' + (err.message || err));
+    toast('Error al cargar datos: '+(err.message||err), 4000, 'error');
     render();
-  } finally {
-    setLoading(false);
-  }
+  } finally { setLoading(false); }
 }
 
 // ─── CALCS ───────────────────────────────────────────────────
 function calc(v) {
-  const totalExp    = (v.expenses||[]).reduce((s,e) => s + (+e.amount||0), 0);
-  const totalCost   = (+v.purchasePrice||0) + totalExp;
+  const totalExp    = (v.expenses||[]).reduce((s,e)=>s+(+e.amount||0),0);
+  const totalCost   = (+v.purchasePrice||0)+totalExp;
   const pvp         = +v.salePrice||0;
   const saleRealPrice = v.status==='sold' && +v.saleRealPrice ? +v.saleRealPrice : null;
-  const effectivePvp  = saleRealPrice !== null ? saleRealPrice : pvp;
+  const effectivePvp  = saleRealPrice!==null ? saleRealPrice : pvp;
   const margin      = effectivePvp - totalCost;
-  const marginPct   = totalCost > 0 ? (margin/totalCost)*100 : 0;
+  const marginPct   = totalCost>0 ? (margin/totalCost)*100 : 0;
   const entry       = v.entryDate ? new Date(v.entryDate) : new Date();
   const days        = Math.max(0, Math.floor((new Date()-entry)/86400000));
   let daysSold = null;
   if (v.status==='sold' && v.entryDate) {
     const soldAt = v.saleDate ? new Date(v.saleDate) : (v.updatedAt ? new Date(v.updatedAt) : null);
-    if (soldAt) daysSold = Math.max(0, Math.floor((soldAt-entry)/86400000));
+    if (soldAt) daysSold = Math.max(0,Math.floor((soldAt-entry)/86400000));
   }
   return { totalExp, totalCost, pvp, saleRealPrice, effectivePvp, margin, marginPct, days, daysSold };
 }
 
 function summary() {
-  const vs     = vehiclesCache;
-  const active = vs.filter(v => v.status !== 'sold');
-  const sold   = vs.filter(v => v.status === 'sold');
-  const soldWP = sold.filter(v => +v.saleRealPrice);
+  const vs      = vehiclesCache;
+  const active  = vs.filter(v => v.status!=='sold');
+  const avail   = vs.filter(v => v.status==='available');
+  const reserved = vs.filter(v => v.status==='reserved');
+  const sold    = vs.filter(v => v.status==='sold');
+  const soldWP  = sold.filter(v => +v.saleRealPrice);
+  const now     = new Date();
+
+  const stuck = avail.filter(v => {
+    if (!v.entryDate) return false;
+    return Math.floor((now-new Date(v.entryDate))/86400000) > 60;
+  });
+
+  const thisMonthSold = soldWP.filter(v => {
+    if (!v.saleDate) return false;
+    const d = new Date(v.saleDate);
+    return d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth();
+  });
+
+  const margins = soldWP.map(v => calc(v).marginPct);
+  const avgRealMargin = margins.length ? margins.reduce((s,m)=>s+m,0)/margins.length : 0;
+
   return {
-    total:        active.length,
-    avail:        vs.filter(v => v.status === 'available').length,
-    reserved:     vs.filter(v => v.status === 'reserved').length,
-    soldCount:    sold.length,
-    soldWithPrice: soldWP.length,
-    cost:         active.reduce((s,v) => s+calc(v).totalCost, 0),
-    pvp:          active.reduce((s,v) => s+calc(v).pvp, 0),
-    margin:       active.reduce((s,v) => s+calc(v).margin, 0),
-    realProfit:   soldWP.reduce((s,v) => s+calc(v).margin, 0),
+    total: active.length, availCount: avail.length, reservedCount: reserved.length,
+    soldCount: sold.length, soldWithPrice: soldWP.length,
+    invested:        active.reduce((s,v)=>s+calc(v).totalCost,0),
+    potentialMargin: active.reduce((s,v)=>s+calc(v).margin,0),
+    stuckCount:      stuck.length,
+    thisMonthProfit: thisMonthSold.reduce((s,v)=>s+calc(v).margin,0),
+    realProfit:      soldWP.reduce((s,v)=>s+calc(v).margin,0),
+    avgRealMargin,
   };
 }
 
@@ -593,22 +627,20 @@ const esc = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g
 
 // ─── SORT ────────────────────────────────────────────────────
 function setSort(col) {
-  if (S.sortCol === col) S.sortDir = S.sortDir === 'asc' ? 'desc' : 'asc';
-  else { S.sortCol = col; S.sortDir = 'desc'; }
+  if (S.sortCol===col) S.sortDir=S.sortDir==='asc'?'desc':'asc'; else { S.sortCol=col; S.sortDir='desc'; }
   render();
 }
 function sortArrow(col) {
-  if (S.sortCol !== col) return `<span class="sort-arr">↕</span>`;
+  if (S.sortCol!==col) return `<span class="sort-arr">↕</span>`;
   return `<span class="sort-arr">${S.sortDir==='asc'?'↑':'↓'}</span>`;
 }
 
 // ─── RENDER ──────────────────────────────────────────────────
 function render() {
-  const app = document.getElementById('app');
-  if (!app) return;
-  if (S.view === 'dash')   app.innerHTML = renderDash();
-  if (S.view === 'form')   app.innerHTML = renderForm();
-  if (S.view === 'detail') app.innerHTML = renderDetail();
+  const app = document.getElementById('app'); if (!app) return;
+  if (S.view==='dash')   app.innerHTML = renderDash();
+  if (S.view==='form')   app.innerHTML = renderForm();
+  if (S.view==='detail') app.innerHTML = renderDetail();
 }
 
 // ─── DASHBOARD ───────────────────────────────────────────────
@@ -616,65 +648,73 @@ function renderDash() {
   const sm  = summary();
   const vs  = filtered();
   const all = vehiclesCache;
+  const now = new Date();
+  const mesActual = now.toLocaleString('es-ES',{month:'long',year:'numeric'});
+
   return `
 <div class="page-header">
   <div>
     <div class="page-title">Stock de vehículos</div>
-    <div class="page-sub">Inventario actualizado · ${new Date().toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'})}</div>
+    <div class="page-sub">Inventario actualizado · ${now.toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'})}</div>
   </div>
 </div>
 
 <div class="metrics-section-label">Stock activo</div>
-<div class="metrics">
+<div class="metrics four-col">
+  <div class="metric-card">
+    <div class="metric-label">Dinero inmovilizado</div>
+    <div class="metric-val num">${eur(sm.invested)}</div>
+    <div class="metric-note">Coste total del stock activo</div>
+  </div>
   <div class="metric-card">
     <div class="metric-label">Vehículos en stock</div>
     <div class="metric-val blue num">${sm.total}</div>
-    <div class="metric-note">${sm.avail} disponibles · ${sm.reserved} reservados</div>
+    <div class="metric-note">${sm.availCount} disponibles · ${sm.reservedCount} reservados</div>
   </div>
   <div class="metric-card">
-    <div class="metric-label">Inversión en stock</div>
-    <div class="metric-val num">${eur(sm.cost)}</div>
-    <div class="metric-note">Coste total de vehículos activos</div>
-  </div>
-  <div class="metric-card">
-    <div class="metric-label">Valor de venta estimado</div>
-    <div class="metric-val num">${eur(sm.pvp)}</div>
-    <div class="metric-note">PVP total de vehículos activos</div>
+    <div class="metric-label">Parados más de 60 días</div>
+    <div class="metric-val num ${sm.stuckCount>0?'warn':''}">${sm.stuckCount}</div>
+    <div class="metric-note">${sm.stuckCount>0?'Vehículos disponibles sin movimiento':'Todos en rotación'}</div>
   </div>
   <div class="metric-card">
     <div class="metric-label">Margen potencial</div>
-    <div class="metric-val green num">${eur(sm.margin)}</div>
-    <div class="metric-note">${sm.cost>0?pct((sm.margin/sm.cost)*100):'0%'} sobre coste total</div>
+    <div class="metric-val green num">${eur(sm.potentialMargin)}</div>
+    <div class="metric-note">Si se venden todos al PVP</div>
   </div>
 </div>
 
 <div class="metrics-section-label">Ventas realizadas</div>
-<div class="metrics two-col" style="margin-bottom:24px">
+<div class="metrics three-col" style="margin-bottom:24px">
   <div class="metric-card">
-    <div class="metric-label">Vehículos vendidos</div>
-    <div class="metric-val num">${sm.soldCount}</div>
-    <div class="metric-note">${sm.soldWithPrice} con precio final registrado</div>
+    <div class="metric-label">Beneficio del mes</div>
+    <div class="metric-val ${sm.thisMonthProfit>=0?'green':''} num">${eur(sm.thisMonthProfit)}</div>
+    <div class="metric-note">${mesActual}</div>
   </div>
   <div class="metric-card">
     <div class="metric-label">Beneficio real acumulado</div>
     <div class="metric-val ${sm.realProfit>=0?'green':''} num">${eur(sm.realProfit)}</div>
-    <div class="metric-note">${sm.soldWithPrice>0?`Basado en ${sm.soldWithPrice} venta${sm.soldWithPrice>1?'s':''} con precio real`:'Sin ventas con precio real registrado'}</div>
+    <div class="metric-note">${sm.soldWithPrice} venta${sm.soldWithPrice!==1?'s':''} con precio final</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">Margen medio real</div>
+    <div class="metric-val num">${pct(sm.avgRealMargin)}</div>
+    <div class="metric-note">Promedio de ventas realizadas</div>
   </div>
 </div>
 
 <div class="filter-bar">
   <div class="filter-tabs">
-    ${[['all','Todos',all.length],['available','Disponibles',sm.avail],['reserved','Reservados',sm.reserved],['sold','Vendidos',sm.soldCount]]
+    ${[['all','Todos',all.length],['available','Disponibles',sm.availCount],['reserved','Reservados',sm.reservedCount],['sold','Vendidos',sm.soldCount]]
       .map(([k,l,n])=>`<button class="ftab${S.filter===k?' active':''}" onclick="setFilter('${k}')">${l} <span style="opacity:.6">(${n})</span></button>`).join('')}
   </div>
-  <input class="search-inp" type="text" placeholder="Buscar marca, modelo..." value="${esc(S.q)}" id="searchInp" oninput="setQ(this.value)">
+  <input class="search-inp" type="text" placeholder="Marca, modelo, matrícula..." value="${esc(S.q)}" id="searchInp" oninput="setQ(this.value)">
 </div>
 
 <div class="table-wrap">
   ${vs.length ? `<div class="table-scroll"><table><thead><tr>
     <th>Vehículo</th>
     <th class="sortable${S.sortCol==='year'?' sorted':''}" onclick="setSort('year')">Año ${sortArrow('year')}</th>
-    <th class="sortable${S.sortCol==='km'?' sorted':''}" onclick="setSort('km')">Kilómetros ${sortArrow('km')}</th>
+    <th class="sortable${S.sortCol==='km'?' sorted':''}" onclick="setSort('km')">Km ${sortArrow('km')}</th>
     <th class="sortable th-r${S.sortCol==='cost'?' sorted':''}" onclick="setSort('cost')">Coste total ${sortArrow('cost')}</th>
     <th class="sortable th-r${S.sortCol==='pvp'?' sorted':''}" onclick="setSort('pvp')">P. Venta ${sortArrow('pvp')}</th>
     <th class="sortable th-r${S.sortCol==='margin'?' sorted':''}" onclick="setSort('margin')">Margen ${sortArrow('margin')}</th>
@@ -687,24 +727,23 @@ function renderDash() {
 
 function renderRow(v) {
   const c  = calc(v);
-  const dc = v.status !== 'sold' ? (c.days>90?'alert':c.days>45?'warn':'') : '';
+  const dc = v.status!=='sold'?(c.days>90?'alert':c.days>45?'warn':''):'';
   const thumb = v.photos && v.photos[0]
     ? `<div class="veh-thumb"><img src="${v.photos[0]}" alt="foto"></div>`
-    : `<div class="veh-thumb">${CAM_SVG}</div>`;
+    : `<div class="veh-thumb">${IC.carGray}</div>`;
   let daysCell;
-  if (v.status === 'sold') {
-    daysCell = c.daysSold !== null
-      ? `<span class="days-tag sold-days">${c.daysSold}d</span>`
-      : `<span style="color:var(--text-2)">—</span>`;
+  if (v.status==='sold') {
+    daysCell = c.daysSold!==null ? `<span class="days-tag sold-days">${c.daysSold}d</span>` : `<span style="color:var(--text-2)">—</span>`;
   } else {
     daysCell = `<span class="days-tag ${dc}">${c.days}d</span>`;
   }
+  const matTag = v.matricula ? `<span class="matricula-tag">${esc(v.matricula)}</span>` : '';
   return `<tr onclick="showDetail('${v.id}')">
     <td><div class="veh-info">
       ${thumb}
       <div>
         <div class="veh-name">${esc(v.brand)} ${esc(v.model)}</div>
-        <div class="veh-detail">${esc(v.color)||'—'} · ${v.vin?'···'+v.vin.slice(-5):'Sin VIN'}</div>
+        <div class="veh-detail">${matTag}${esc(v.color)||'—'}</div>
       </div>
     </div></td>
     <td>${v.year||'—'}</td>
@@ -718,26 +757,24 @@ function renderRow(v) {
     <td>${daysCell}</td>
     <td><span class="badge ${STATUS_BADGE[v.status]}">${STATUS_LABEL[v.status]}</span></td>
     <td onclick="event.stopPropagation()"><div class="row-actions">
-      <button class="btn btn-secondary btn-xs" onclick="showEdit('${v.id}')">✏️</button>
-      <button class="btn btn-danger-soft btn-xs" onclick="openDel('${v.id}')">🗑</button>
+      <button class="btn btn-secondary btn-xs" onclick="showEdit('${v.id}')" title="Editar">${IC.edit} Editar</button>
+      <button class="btn btn-danger-soft btn-xs" onclick="openDel('${v.id}')" title="Eliminar">${IC.trash}</button>
     </div></td>
   </tr>`;
 }
 
 function renderEmpty() {
-  if (S.q || S.filter !== 'all') return `<div class="empty">
-    <div class="empty-icon">🔍</div>
+  if (S.q||S.filter!=='all') return `<div class="empty">
+    <div class="empty-icon">${IC.searchLg}</div>
     <div class="empty-title">Sin resultados</div>
     <div class="empty-desc">No hay vehículos con los filtros actuales.</div>
     <button class="btn btn-secondary" onclick="S.filter='all';S.q='';render()">Limpiar filtros</button>
   </div>`;
   return `<div class="empty">
-    <div class="empty-icon">🚗</div>
+    <div class="empty-icon">${IC.carGrayLg}</div>
     <div class="empty-title">Sin vehículos en stock</div>
     <div class="empty-desc">Añade el primer vehículo para comenzar a gestionar el inventario.</div>
-    <div class="empty-actions">
-      <button class="btn btn-primary" onclick="showAddForm()">＋ Añadir vehículo</button>
-    </div>
+    <div class="empty-actions"><button class="btn btn-primary" onclick="showAddForm()">${IC.plus} Añadir vehículo</button></div>
   </div>`;
 }
 
@@ -746,14 +783,15 @@ function initForm(v) {
   fData   = v ? {...v} : {};
   fExp    = v && v.expenses && v.expenses.length
     ? v.expenses.map(e => ({...e}))
-    : [{id:uid(),concept:'',amount:''}];
+    : [{id:uid(),concept:'',amount:'',categoria:''}];
   fPhotos = v && v.photos ? [...v.photos] : [];
 }
 
 function renderForm() {
   const isEdit = !!S.editId;
   const today  = new Date().toISOString().split('T')[0];
-  const isSold = (fData.status || 'available') === 'sold';
+  const isSold = (fData.status||'available')==='sold';
+  const origenOpts = ['Particular','Profesional','Subasta','Otro'];
   return `
 <div class="page-header">
   <div>
@@ -771,6 +809,8 @@ function renderForm() {
         <input type="text" name="brand" value="${esc(fData.brand||'')}" placeholder="Volkswagen" required autocomplete="off"></div>
       <div class="fg"><label>Modelo *</label>
         <input type="text" name="model" value="${esc(fData.model||'')}" placeholder="Golf 1.6 TDI" required autocomplete="off"></div>
+      <div class="fg"><label>Matrícula</label>
+        <input type="text" name="matricula" value="${esc(fData.matricula||'')}" placeholder="1234 ABC" autocomplete="off" style="font-family:monospace;letter-spacing:.06em;text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"></div>
       <div class="fg"><label>Año *</label>
         <input type="number" name="year" value="${fData.year||''}" placeholder="2020" min="1980" max="2030" required></div>
       <div class="fg"><label>Kilometraje</label>
@@ -791,16 +831,27 @@ function renderForm() {
   </div>
 
   <div class="fsec">
-    <div class="fsec-title">Fotos <span class="opt" style="font-weight:400;font-size:12px">· se guardan en la base de datos</span></div>
+    <div class="fsec-title">Origen del vehículo</div>
+    <div class="fgrid-2">
+      <div class="fg"><label>Proveedor <span class="opt">(opcional)</span></label>
+        <input type="text" name="proveedor" value="${esc(fData.proveedor||'')}" placeholder="Nombre del vendedor o empresa" autocomplete="off"></div>
+      <div class="fg"><label>Tipo de origen</label>
+        <select name="origen">
+          <option value="" ${!fData.origen?'selected':''}>Seleccionar...</option>
+          ${origenOpts.map(o=>`<option value="${o}" ${fData.origen===o?'selected':''}>${o}</option>`).join('')}
+        </select></div>
+    </div>
+  </div>
+
+  <div class="fsec">
+    <div class="fsec-title">Fotos <span class="opt" style="font-weight:400;font-size:12px">· arrastra para reordenar</span></div>
     <div id="photoGrid">${renderPhotoGrid()}</div>
     <label class="photo-upload-area" for="photoInput">
       <input type="file" id="photoInput" accept="image/*" multiple style="display:none" onchange="handlePhotoUpload(this)">
       <div class="photo-upload-prompt">
-        <span style="color:var(--text-2)">
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-        </span>
+        <span style="color:var(--text-2)">${IC.camera}</span>
         <span class="up-label">Haz clic para subir fotos</span>
-        <span class="up-hint">JPG, PNG · puedes seleccionar varias a la vez</span>
+        <span class="up-hint">JPG, PNG · puedes seleccionar varias</span>
       </div>
     </label>
   </div>
@@ -830,7 +881,7 @@ function renderForm() {
   <div class="fsec">
     <div class="fsec-title">Gastos asociados</div>
     <div class="exp-list" id="expList">${renderExpLines()}</div>
-    <button type="button" class="btn-icon btn-icon-add" onclick="addExp()" style="margin-bottom:14px">＋ Añadir gasto</button>
+    <button type="button" class="btn-icon-add" onclick="addExp()" style="margin-bottom:14px">${IC.plus} Añadir gasto</button>
     <div class="exp-footer">
       <span class="exp-footer-label">Total gastos</span>
       <span class="exp-footer-val num" id="expTotal">${eur(sumExp())}</span>
@@ -852,14 +903,16 @@ function renderForm() {
 </div>
 <div class="form-actions">
   <button type="button" class="btn btn-secondary" onclick="showDash()">Cancelar</button>
-  <button type="button" class="btn btn-primary" id="saveBtn" onclick="saveVehicle()">${isEdit?'💾 Guardar cambios':'✅ Añadir al stock'}</button>
+  <button type="button" class="btn btn-primary" id="saveBtn" onclick="saveVehicle()">
+    ${isEdit?IC.save+' Guardar cambios':IC.check+' Añadir al stock'}
+  </button>
 </div>
 </form>`;
 }
 
 function updateSoldFields(status) {
-  const el = document.getElementById('soldPriceFields');
-  if (el) { if (status==='sold') el.classList.remove('hidden'); else el.classList.add('hidden'); }
+  const el=document.getElementById('soldPriceFields');
+  if (el) { if(status==='sold') el.classList.remove('hidden'); else el.classList.add('hidden'); }
   refreshPricing();
 }
 
@@ -867,22 +920,25 @@ function renderExpLines() {
   return fExp.map(e => `
     <div class="exp-line" data-id="${e.id}">
       <input type="text" list="dconcepts" placeholder="Concepto (ej: Pintura, ITV…)" value="${esc(e.concept||'')}" oninput="updExp('${e.id}','concept',this.value)">
+      <select class="exp-cat-sel" onchange="updExp('${e.id}','categoria',this.value)">
+        <option value="" ${!e.categoria?'selected':''}>Categoría…</option>
+        ${EXP_CATS.map(c=>`<option value="${c}" ${e.categoria===c?'selected':''}>${c}</option>`).join('')}
+      </select>
       <input type="number" placeholder="€ Importe" min="0" step="1" value="${e.amount||''}" oninput="updExp('${e.id}','amount',this.value)">
-      <button type="button" class="btn-icon btn-icon-del" onclick="delExp('${e.id}')" ${fExp.length===1?'disabled style="opacity:.3"':''}>✕</button>
+      <button type="button" class="btn-icon-del exp-del-btn" onclick="delExp('${e.id}')" ${fExp.length===1?'disabled':''} title="Eliminar gasto">
+        <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>`).join('');
 }
 
 function renderPriceBox() {
-  const pp   = +document.getElementById('pp')?.value    || +fData.purchasePrice  || 0;
-  const sp   = +document.getElementById('sp')?.value    || +fData.salePrice      || 0;
+  const pp     = +document.getElementById('pp')?.value    || +fData.purchasePrice  || 0;
+  const sp     = +document.getElementById('sp')?.value    || +fData.salePrice      || 0;
   const realSp = +document.getElementById('realsp')?.value || +fData.saleRealPrice || 0;
   const statusEl = document.querySelector('[name="status"]');
   const isSold   = statusEl ? statusEl.value==='sold' : fData.status==='sold';
   const effectiveSp = isSold && realSp ? realSp : sp;
-  const te = sumExp();
-  const tc = pp + te;
-  const mg = effectiveSp - tc;
-  const mp = tc > 0 ? (mg/tc)*100 : 0;
+  const te = sumExp(), tc = pp+te, mg = effectiveSp-tc, mp = tc>0?(mg/tc)*100:0;
   const pvpRow = (isSold && realSp)
     ? `<div class="prow" style="margin-top:8px"><span class="plabel">PVP objetivo</span><span class="pval num" style="color:var(--text-2)">${eur(sp)}</span></div>
        <div class="prow"><span class="plabel" style="font-weight:600;color:var(--text)">Precio venta real</span><span class="pval num">${eur(realSp)}</span></div>`
@@ -898,39 +954,66 @@ function renderPriceBox() {
     </div>`;
 }
 
-const sumExp = () => fExp.reduce((s,e) => s + (+e.amount||0), 0);
-
-function addExp() { fExp.push({id:uid(),concept:'',amount:''}); document.getElementById('expList').innerHTML=renderExpLines(); refreshPricing(); }
-
+const sumExp = () => fExp.reduce((s,e)=>s+(+e.amount||0),0);
+function addExp()  { fExp.push({id:uid(),concept:'',amount:'',categoria:''}); document.getElementById('expList').innerHTML=renderExpLines(); refreshPricing(); }
 function delExp(id) {
-  if (fExp.length <= 1) return;
+  if (fExp.length<=1) return;
   if (S.editId && !confirm('¿Eliminar esta línea de gasto?')) return;
-  fExp = fExp.filter(e => e.id !== id);
-  document.getElementById('expList').innerHTML = renderExpLines();
+  fExp=fExp.filter(e=>e.id!==id);
+  document.getElementById('expList').innerHTML=renderExpLines();
   refreshPricing();
 }
-
-function updExp(id, field, val) {
-  const e = fExp.find(x => x.id===id);
-  if (e) e[field] = val;
-  document.getElementById('expTotal').textContent = eur(sumExp());
-  document.getElementById('priceBox').innerHTML = renderPriceBox();
+function updExp(id,field,val) {
+  const e=fExp.find(x=>x.id===id); if(e) e[field]=val;
+  document.getElementById('expTotal').textContent=eur(sumExp());
+  document.getElementById('priceBox').innerHTML=renderPriceBox();
 }
-
 function refreshPricing() {
-  document.getElementById('expTotal').textContent = eur(sumExp());
-  document.getElementById('priceBox').innerHTML = renderPriceBox();
+  document.getElementById('expTotal').textContent=eur(sumExp());
+  document.getElementById('priceBox').innerHTML=renderPriceBox();
 }
 
-// ─── PHOTOS ──────────────────────────────────────────────────
+// ─── PHOTOS + DRAG & DROP ────────────────────────────────────
 function renderPhotoGrid() {
   if (!fPhotos.length) return '';
   return `<div class="photo-grid">${fPhotos.map((p,i) => `
-    <div class="photo-item">
+    <div class="photo-item" draggable="true"
+         ondragstart="photoDragStart(event,${i})"
+         ondragover="photoDragOver(event)"
+         ondragenter="photoDragEnter(event)"
+         ondragleave="photoDragLeave(event)"
+         ondrop="photoDrop(event,${i})"
+         ondragend="photoDragEnd(event)">
       <img src="${p}" alt="Foto ${i+1}">
-      <button type="button" class="photo-remove" onclick="removePhoto(${i})" title="Eliminar foto">✕</button>
+      <button type="button" class="photo-remove" onclick="removePhoto(${i})" title="Eliminar">
+        <svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="photo-drag-hint">${IC.grip}</div>
       ${i===0?'<span class="photo-main-badge">Principal</span>':''}
     </div>`).join('')}</div>`;
+}
+
+function photoDragStart(e, idx) {
+  dragSrcIdx = idx;
+  e.dataTransfer.effectAllowed = 'move';
+  setTimeout(() => e.target.closest('.photo-item').classList.add('dragging'), 0);
+}
+function photoDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect='move'; }
+function photoDragEnter(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+function photoDragLeave(e) { if (!e.currentTarget.contains(e.relatedTarget)) e.currentTarget.classList.remove('drag-over'); }
+function photoDrop(e, targetIdx) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  if (dragSrcIdx===null || dragSrcIdx===targetIdx) { dragSrcIdx=null; return; }
+  const ph=[...fPhotos];
+  const [moved]=ph.splice(dragSrcIdx,1);
+  ph.splice(targetIdx,0,moved);
+  fPhotos=ph; dragSrcIdx=null;
+  refreshPhotos();
+}
+function photoDragEnd() {
+  dragSrcIdx=null;
+  document.querySelectorAll('.photo-item').forEach(el=>el.classList.remove('dragging','drag-over'));
 }
 
 function handlePhotoUpload(input) {
@@ -939,75 +1022,95 @@ function handlePhotoUpload(input) {
     reader.onload = e => compressImage(e.target.result, compressed => { fPhotos.push(compressed); refreshPhotos(); });
     reader.readAsDataURL(file);
   });
-  input.value = '';
+  input.value='';
 }
-
 function compressImage(src, cb) {
-  const img = new Image();
-  img.onload = () => {
-    const MAX = 800;
-    let w = img.width, h = img.height;
-    if (w > MAX || h > MAX) {
-      if (w >= h) { h = Math.round(h*MAX/w); w = MAX; }
-      else { w = Math.round(w*MAX/h); h = MAX; }
-    }
-    const canvas = document.createElement('canvas');
-    canvas.width = w; canvas.height = h;
-    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-    cb(canvas.toDataURL('image/jpeg', 0.7));
+  const img=new Image();
+  img.onload=()=>{
+    const MAX=800; let w=img.width, h=img.height;
+    if(w>MAX||h>MAX){ if(w>=h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;} }
+    const c=document.createElement('canvas'); c.width=w; c.height=h;
+    c.getContext('2d').drawImage(img,0,0,w,h);
+    cb(c.toDataURL('image/jpeg',.7));
   };
-  img.src = src;
+  img.src=src;
 }
-
 function removePhoto(idx) { fPhotos.splice(idx,1); refreshPhotos(); }
-function refreshPhotos() { const el=document.getElementById('photoGrid'); if(el) el.innerHTML=renderPhotoGrid(); }
+function refreshPhotos()  { const el=document.getElementById('photoGrid'); if(el) el.innerHTML=renderPhotoGrid(); }
 
 // ─── LIGHTBOX ────────────────────────────────────────────────
 let lbVid=null, lbIdx=0;
 function openLightbox(vid,idx) { lbVid=vid; lbIdx=idx; showLightbox(); }
 function showLightbox() {
-  const v = vehiclesCache.find(x => x.id===lbVid);
-  if (!v?.photos?.length) return;
-  const existing = document.getElementById('lightbox');
-  if (existing) { document.removeEventListener('keydown',existing._kh); existing.remove(); }
-  const n = v.photos.length;
-  const lb = document.createElement('div');
+  const v=vehiclesCache.find(x=>x.id===lbVid); if(!v?.photos?.length) return;
+  const existing=document.getElementById('lightbox');
+  if(existing){document.removeEventListener('keydown',existing._kh);existing.remove();}
+  const n=v.photos.length, lb=document.createElement('div');
   lb.id='lightbox'; lb.className='lightbox';
-  lb.innerHTML=`<button class="lb-close" onclick="closeLightbox()">✕</button>
-    ${n>1?`<button class="lb-nav lb-prev" onclick="navLb(-1)">‹</button>`:''}
+  lb.innerHTML=`<button class="lb-close" onclick="closeLightbox()">&#x2715;</button>
+    ${n>1?`<button class="lb-nav lb-prev" onclick="navLb(-1)">&#x2039;</button>`:''}
     <img src="${v.photos[lbIdx]}" alt="Foto ${lbIdx+1}">
-    ${n>1?`<button class="lb-nav lb-next" onclick="navLb(1)">›</button>`:''}
+    ${n>1?`<button class="lb-nav lb-next" onclick="navLb(1)">&#x203A;</button>`:''}
     ${n>1?`<div class="lb-count">${lbIdx+1} / ${n}</div>`:''}`;
-  lb._kh = e => { if(e.key==='Escape') closeLightbox(); if(e.key==='ArrowLeft') navLb(-1); if(e.key==='ArrowRight') navLb(1); };
-  lb.addEventListener('click', e => { if(e.target===lb) closeLightbox(); });
-  document.addEventListener('keydown', lb._kh);
+  lb._kh=e=>{if(e.key==='Escape')closeLightbox();if(e.key==='ArrowLeft')navLb(-1);if(e.key==='ArrowRight')navLb(1);};
+  lb.addEventListener('click',e=>{if(e.target===lb)closeLightbox();});
+  document.addEventListener('keydown',lb._kh);
   document.body.appendChild(lb);
 }
-function navLb(dir) { const v=vehiclesCache.find(x=>x.id===lbVid); if(!v?.photos) return; lbIdx=(lbIdx+dir+v.photos.length)%v.photos.length; showLightbox(); }
-function closeLightbox() { const lb=document.getElementById('lightbox'); if(lb){document.removeEventListener('keydown',lb._kh);lb.remove();} }
+function navLb(dir) { const v=vehiclesCache.find(x=>x.id===lbVid);if(!v?.photos)return;lbIdx=(lbIdx+dir+v.photos.length)%v.photos.length;showLightbox(); }
+function closeLightbox() { const lb=document.getElementById('lightbox');if(lb){document.removeEventListener('keydown',lb._kh);lb.remove();} }
 
 // ─── DETAIL ──────────────────────────────────────────────────
+function renderExpensesGrouped(expenses, totalExp) {
+  if (!expenses?.length) return `<p style="font-size:12px;color:var(--text-2);margin:8px 0">Sin gastos registrados.</p>`;
+  const groups = {};
+  expenses.forEach(e => { const k=e.categoria||''; if(!groups[k])groups[k]=[]; groups[k].push(e); });
+  const order = [...EXP_CATS, ''].filter(k => groups[k]?.length);
+  let html = order.map(k => {
+    const exps=groups[k], sub=exps.reduce((s,e)=>s+(+e.amount||0),0);
+    return `<div class="exp-group">
+      <div class="exp-group-header">
+        <span class="exp-group-name">${k||'Sin categoría'}</span>
+        <span class="exp-group-sub num">${eur(sub)}</span>
+      </div>
+      ${exps.map(e=>`<div class="exp-item"><span class="exp-concept">${esc(e.concept)||'Sin concepto'}</span><span class="exp-amount num">${eur(e.amount)}</span></div>`).join('')}
+    </div>`;
+  }).join('');
+  html += `<div class="exp-total-row"><span>Total gastos</span><span class="num">${eur(totalExp)}</span></div>`;
+  return html;
+}
+
 function renderDetail() {
-  const v = vehiclesCache.find(x => x.id===S.detailId);
-  if (!v) { showDash(); return ''; }
-  const c = calc(v);
+  const v=vehiclesCache.find(x=>x.id===S.detailId); if(!v){showDash();return '';}
+  const c=calc(v);
   const heroImg = v.photos && v.photos[0]
     ? `<img class="detail-hero-img" src="${v.photos[0]}" alt="${esc(v.brand)}">`
-    : `<div class="detail-hero-placeholder">${CAM_SVG_LG}</div>`;
-  const daysLabel = v.status==='sold' ? 'Días hasta venta' : 'Días en stock';
-  const daysVal   = v.status==='sold'
-    ? (c.daysSold!==null ? c.daysSold+' días' : '—')
-    : c.days+' días';
+    : `<div class="detail-hero-placeholder">${IC.carGrayLg}</div>`;
+  const daysLabel = v.status==='sold'?'Días hasta venta':'Días en stock';
+  const daysVal   = v.status==='sold'?(c.daysSold!==null?c.daysSold+' días':'—'):c.days+' días';
+
+  const infoRows = [
+    ['Marca', v.brand], ['Modelo', v.model],
+    ['Matrícula', v.matricula ? `<span style="font-family:monospace;font-weight:700;letter-spacing:.04em">${esc(v.matricula)}</span>` : '—'],
+    ['Año', v.year], ['Kilometraje', v.km?num(v.km)+' km':'—'],
+    ['Color', v.color],
+    ['Nº Bastidor', v.vin?`<span style="font-family:monospace;font-size:12px">${esc(v.vin)}</span>`:'—'],
+    ['Fecha entrada', dt(v.entryDate)],
+    ...(v.proveedor ? [['Proveedor', esc(v.proveedor)]] : []),
+    ...(v.origen    ? [['Origen',    esc(v.origen)]]    : []),
+    ...(v.saleDate  ? [['Fecha venta', dt(v.saleDate)]] : []),
+  ];
+
   return `
 <div class="page-header">
   <div>
-    <button class="btn btn-secondary btn-sm" onclick="showDash()" style="margin-bottom:10px">← Volver al stock</button>
+    <button class="btn btn-secondary btn-sm" onclick="showDash()" style="margin-bottom:10px">${IC.arrowLeft} Volver al stock</button>
     <div class="page-title">${esc(v.brand)} ${esc(v.model)}</div>
-    <div class="page-sub">${v.year||'—'} · ${v.km?num(v.km)+' km':'Sin km'} · ${esc(v.color)||'Sin color'}</div>
+    <div class="page-sub">${v.matricula?`<span class="matricula-tag" style="font-size:13px">${esc(v.matricula)}</span> · `:''}${v.year||'—'} · ${v.km?num(v.km)+' km':'Sin km'} · ${esc(v.color)||'Sin color'}</div>
   </div>
   <div class="detail-actions" style="margin-top:28px">
-    <button class="btn btn-secondary" onclick="showEdit('${v.id}')">✏️ Editar</button>
-    <button class="btn btn-danger-soft" onclick="openDel('${v.id}')">🗑 Eliminar</button>
+    <button class="btn btn-secondary" onclick="showEdit('${v.id}')">${IC.edit} Editar</button>
+    <button class="btn btn-danger-soft" onclick="openDel('${v.id}')">${IC.trash} Eliminar</button>
   </div>
 </div>
 <div class="detail-top">
@@ -1024,16 +1127,15 @@ function renderDetail() {
   <div class="detail-specs">
     <div class="spec"><div class="spec-l">Coste total</div><div class="spec-v num">${eur(c.totalCost)}</div></div>
     <div class="spec">
-      <div class="spec-l">${c.saleRealPrice ? 'Precio venta real' : 'PVP objetivo'}</div>
+      <div class="spec-l">${c.saleRealPrice?'Precio venta real':'PVP objetivo'}</div>
       <div class="spec-v num">${eur(c.effectivePvp)}</div>
-      ${c.saleRealPrice ? `<div style="font-size:11px;color:var(--text-2);font-weight:400">PVP obj: ${eur(c.pvp)}</div>` : ''}
+      ${c.saleRealPrice?`<div style="font-size:11px;color:var(--text-2);font-weight:400">PVP obj: ${eur(c.pvp)}</div>`:''}
     </div>
     <div class="spec"><div class="spec-l">Margen</div>
       <div class="spec-v num" style="color:${c.margin>=0?'var(--success)':'var(--danger)'}">
         ${eur(c.margin)} · ${pct(c.marginPct)}</div></div>
     <div class="spec"><div class="spec-l">${daysLabel}</div><div class="spec-v">${daysVal}</div></div>
     <div class="spec"><div class="spec-l">Entrada</div><div class="spec-v">${dt(v.entryDate)}</div></div>
-    ${v.saleDate ? `<div class="spec"><div class="spec-l">Fecha venta</div><div class="spec-v">${dt(v.saleDate)}</div></div>` : ''}
   </div>
 </div>
 <div class="detail-grid">
@@ -1041,29 +1143,28 @@ function renderDetail() {
     <div class="dcard">
       <div class="dcard-head">Datos del vehículo</div>
       <div class="dcard-body">
-        ${[['Marca',v.brand],['Modelo',v.model],['Año',v.year],['Kilometraje',v.km?num(v.km)+' km':'—'],['Color',v.color],['Nº Bastidor',v.vin?`<span style="font-family:monospace;font-size:12px">${esc(v.vin)}</span>`:'—'],['Fecha entrada',dt(v.entryDate)]]
-          .map(([l,val]) => `<div class="info-row"><span class="info-l">${l}</span><span class="info-v">${val||'—'}</span></div>`).join('')}
+        ${infoRows.map(([l,val])=>`<div class="info-row"><span class="info-l">${l}</span><span class="info-v">${val||'—'}</span></div>`).join('')}
       </div>
     </div>
-    ${v.photos && v.photos.length ? `
+    ${v.photos&&v.photos.length?`
     <div class="dcard">
       <div class="dcard-head">Fotos <span style="font-weight:400;color:var(--text-2)">(${v.photos.length})</span></div>
       <div class="dcard-body">
         <div class="photo-gallery">
-          ${v.photos.map((p,i) => `<img class="gallery-img" src="${p}" alt="Foto ${i+1}" onclick="openLightbox('${v.id}',${i})" title="Ver foto ${i+1}">`).join('')}
+          ${v.photos.map((p,i)=>`<img class="gallery-img" src="${p}" alt="Foto ${i+1}" onclick="openLightbox('${v.id}',${i})">`).join('')}
         </div>
       </div>
-    </div>` : ''}
-    ${v.notes ? `<div class="dcard">
+    </div>`:''}
+    ${v.notes?`<div class="dcard">
       <div class="dcard-head">Notas internas</div>
       <div class="dcard-body"><p style="font-size:13px;line-height:1.65;white-space:pre-wrap">${esc(v.notes)}</p></div>
-    </div>` : ''}
+    </div>`:''}
     <div class="dcard">
       <div class="dcard-head">Historial de estados</div>
       <div class="dcard-body">
         ${!(v.statusHistory||[]).length
-          ? `<p style="font-size:13px;color:var(--text-2)">Sin historial registrado.</p>`
-          : `<div class="hist-list">${(v.statusHistory||[]).slice().reverse().map(h=>`
+          ?`<p style="font-size:13px;color:var(--text-2)">Sin historial registrado.</p>`
+          :`<div class="hist-list">${(v.statusHistory||[]).slice().reverse().map(h=>`
             <div class="hist-item">
               <div class="hist-dot"></div>
               <div><div class="hist-txt">${esc(h.text||formatSC(h.from,h.to))}</div><div class="hist-date">${dtm(h.date)}</div></div>
@@ -1076,28 +1177,27 @@ function renderDetail() {
       <div class="dcard-head">Desglose económico</div>
       <div class="dcard-body">
         <div class="info-row"><span class="info-l">Precio de compra</span><span class="info-v num">${eur(v.purchasePrice)}</span></div>
-        ${v.expenses && v.expenses.length ? `
+        ${v.expenses&&v.expenses.length?`
         <div style="margin:12px 0 6px;font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em">Gastos</div>
-        <div>${v.expenses.map(e=>`<div class="exp-item"><span class="exp-concept">${esc(e.concept)||'Sin concepto'}</span><span class="exp-amount num">${eur(e.amount)}</span></div>`).join('')}</div>
-        <div class="exp-subtotal"><span>Total gastos</span><span class="num">${eur(c.totalExp)}</span></div>
-        ` : `<p style="font-size:12px;color:var(--text-2);margin:8px 0">Sin gastos registrados.</p>`}
+        ${renderExpensesGrouped(v.expenses, c.totalExp)}
+        `:`<p style="font-size:12px;color:var(--text-2);margin:8px 0">Sin gastos registrados.</p>`}
         <div style="margin-top:14px;padding-top:14px;border-top:2px solid var(--border)">
           <div class="prow"><span class="plabel" style="font-weight:700;color:var(--text)">Coste total</span><span class="pval num" style="font-size:15px">${eur(c.totalCost)}</span></div>
-          ${c.saleRealPrice ? `
+          ${c.saleRealPrice?`
           <div class="prow" style="margin-top:6px"><span class="plabel">PVP objetivo</span><span class="pval num" style="color:var(--text-2)">${eur(c.pvp)}</span></div>
           <div class="prow"><span class="plabel" style="font-weight:600;color:var(--text)">Precio venta real</span><span class="pval num">${eur(c.saleRealPrice)}</span></div>
-          ` : `<div class="prow" style="margin-top:6px"><span class="plabel">Precio de venta</span><span class="pval num">${eur(c.pvp)}</span></div>`}
+          `:`<div class="prow" style="margin-top:6px"><span class="plabel">Precio de venta</span><span class="pval num">${eur(c.pvp)}</span></div>`}
           <div class="prow big">
             <span class="plabel">Margen bruto</span>
             <span class="pval num" style="color:${c.margin>=0?'var(--success)':'var(--danger)'}">${eur(c.margin)}</span>
           </div>
           <div class="prow"><span class="plabel">Margen (%)</span>
             <span class="pval num" style="color:${c.margin>=0?'var(--success)':'var(--danger)'}">${pct(c.marginPct)}</span></div>
-          ${v.status==='sold' && c.daysSold!==null ? `
+          ${v.status==='sold'&&c.daysSold!==null?`
           <div class="prow" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-light)">
             <span class="plabel">Vendido en</span>
             <span class="pval" style="color:var(--text-2)">${c.daysSold} día${c.daysSold!==1?'s':''}</span>
-          </div>` : ''}
+          </div>`:''}
         </div>
       </div>
     </div>
@@ -1118,337 +1218,229 @@ function renderDetail() {
 }
 
 // ─── NAVIGATION ───────────────────────────────────────────────
-function showDash()  { S.view='dash'; S.editId=null; S.detailId=null; fData={}; fExp=[]; fPhotos=[]; render(); }
-function showAddForm() { S.view='form'; S.editId=null; initForm(null); render(); scrollTo(0,0); }
-function showEdit(id) {
-  const v = vehiclesCache.find(x => x.id===id);
-  if (!v) return;
-  S.view='form'; S.editId=id; initForm(v); render(); scrollTo(0,0);
+function showDash()  { S.view='dash';S.editId=null;S.detailId=null;fData={};fExp=[];fPhotos=[];render(); }
+function showAddForm() { S.view='form';S.editId=null;initForm(null);render();scrollTo(0,0); }
+function showEdit(id)  {
+  const v=vehiclesCache.find(x=>x.id===id); if(!v) return;
+  S.view='form';S.editId=id;initForm(v);render();scrollTo(0,0);
 }
-function showDetail(id) { S.view='detail'; S.detailId=id; render(); scrollTo(0,0); }
-function setFilter(f)   { S.filter=f; render(); }
+function showDetail(id) { S.view='detail';S.detailId=id;render();scrollTo(0,0); }
+function setFilter(f)   { S.filter=f;render(); }
 function setQ(q) {
-  S.q=q; render();
-  setTimeout(() => { const i=document.getElementById('searchInp'); if(i){i.focus();i.setSelectionRange(q.length,q.length);} }, 0);
+  S.q=q;render();
+  setTimeout(()=>{const i=document.getElementById('searchInp');if(i){i.focus();i.setSelectionRange(q.length,q.length);}},0);
 }
 
 function filtered() {
-  let vs = [...vehiclesCache];
-  if (S.filter !== 'all') vs = vs.filter(v => v.status === S.filter);
+  let vs=[...vehiclesCache];
+  if (S.filter!=='all') vs=vs.filter(v=>v.status===S.filter);
   if (S.q.trim()) {
-    const q = S.q.toLowerCase();
-    vs = vs.filter(v => [v.brand,v.model,v.color,v.vin].some(f => (f||'').toLowerCase().includes(q)));
+    const q=S.q.toLowerCase();
+    vs=vs.filter(v=>[v.brand,v.model,v.matricula,v.color,v.vin].some(f=>(f||'').toLowerCase().includes(q)));
   }
   if (S.sortCol) {
-    vs.sort((a,b) => {
-      let va=0, vb=0;
-      const ca=calc(a), cb=calc(b);
-      if (S.sortCol==='year')   { va=+a.year||0; vb=+b.year||0; }
-      if (S.sortCol==='km')     { va=+a.km||0;   vb=+b.km||0; }
-      if (S.sortCol==='cost')   { va=ca.totalCost; vb=cb.totalCost; }
-      if (S.sortCol==='pvp')    { va=ca.effectivePvp; vb=cb.effectivePvp; }
-      if (S.sortCol==='margin') { va=ca.margin; vb=cb.margin; }
-      if (S.sortCol==='days')   { va=ca.days;   vb=cb.days; }
-      return S.sortDir==='asc' ? va-vb : vb-va;
+    vs.sort((a,b)=>{
+      let va=0,vb=0; const ca=calc(a),cb=calc(b);
+      if(S.sortCol==='year'){va=+a.year||0;vb=+b.year||0;}
+      if(S.sortCol==='km'){va=+a.km||0;vb=+b.km||0;}
+      if(S.sortCol==='cost'){va=ca.totalCost;vb=cb.totalCost;}
+      if(S.sortCol==='pvp'){va=ca.effectivePvp;vb=cb.effectivePvp;}
+      if(S.sortCol==='margin'){va=ca.margin;vb=cb.margin;}
+      if(S.sortCol==='days'){va=ca.days;vb=cb.days;}
+      return S.sortDir==='asc'?va-vb:vb-va;
     });
   } else {
-    vs.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+    vs.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
   }
   return vs;
 }
 
 // ─── SAVE VEHICLE ─────────────────────────────────────────────
 async function saveVehicle() {
-  const form = document.getElementById('vForm');
-  if (!form) return;
-  const d = {};
-  form.querySelectorAll('[name]').forEach(el => d[el.name] = el.value);
+  const form=document.getElementById('vForm'); if(!form) return;
+  const d={}; form.querySelectorAll('[name]').forEach(el=>d[el.name]=el.value);
+  if (!d.brand?.trim()||!d.model?.trim()||!d.year) { toast('Completa: marca, modelo y año',3500,'error'); return; }
 
-  if (!d.brand?.trim() || !d.model?.trim() || !d.year) {
-    toast('⚠️ Completa: marca, modelo y año');
-    return;
-  }
-
-  const isSold   = d.status === 'sold';
-  const expenses = fExp
-    .filter(e => e.concept || e.amount)
-    .map(e => ({ concept: (e.concept||'').trim(), amount: +e.amount||0 }));
+  const isSold   = d.status==='sold';
+  const expenses = fExp.filter(e=>e.concept||e.amount).map(e=>({concept:(e.concept||'').trim(),amount:+e.amount||0,categoria:e.categoria||null}));
 
   const vehicleRow = {
-    marca:             d.brand.trim(),
-    modelo:            d.model.trim(),
-    anio:              +d.year    || null,
-    kilometraje:       +d.km      || null,
-    color:             d.color?.trim()  || null,
-    bastidor:          d.vin?.trim()    || null,
+    marca: d.brand.trim(), modelo: d.model.trim(),
+    matricula: d.matricula?.trim().toUpperCase()||null,
+    anio: +d.year||null, kilometraje: +d.km||null,
+    color: d.color?.trim()||null, bastidor: d.vin?.trim()||null,
+    proveedor: d.proveedor?.trim()||null, origen: d.origen||null,
     fecha_entrada:     d.entryDate || new Date().toISOString().split('T')[0],
-    precio_compra:     +d.purchasePrice || 0,
-    precio_venta:      +d.salePrice     || 0,
-    precio_venta_final: isSold ? (+d.saleRealPrice||null) : null,
-    fecha_venta:       isSold ? (d.saleDate||null) : null,
-    estado:            d.status || 'available',
-    notas:             d.notes?.trim() || null,
+    precio_compra:     +d.purchasePrice||0,
+    precio_venta:      +d.salePrice||0,
+    precio_venta_final: isSold?(+d.saleRealPrice||null):null,
+    fecha_venta:       isSold?(d.saleDate||null):null,
+    estado:            d.status||'available',
+    notas:             d.notes?.trim()||null,
     fotos:             fPhotos,
     updated_at:        new Date().toISOString(),
   };
 
-  const saveBtn = document.getElementById('saveBtn');
-  if (saveBtn) saveBtn.disabled = true;
-  setLoading(true, S.editId ? 'Guardando cambios...' : 'Añadiendo vehículo...');
+  const saveBtn=document.getElementById('saveBtn'); if(saveBtn) saveBtn.disabled=true;
+  setLoading(true, S.editId?'Guardando cambios...':'Añadiendo vehículo...');
 
   try {
     if (S.editId) {
-      const { error: ve } = await sb.from('vehiculos').update(vehicleRow).eq('id', S.editId);
-      if (ve) throw ve;
-
-      await sb.from('gastos').delete().eq('vehiculo_id', S.editId);
-      if (expenses.length) {
-        const { error: ee } = await sb.from('gastos').insert(
-          expenses.map(e => ({ vehiculo_id: S.editId, concepto: e.concept, importe: e.amount }))
-        );
-        if (ee) throw ee;
+      const {error:ve}=await sb.from('vehiculos').update(vehicleRow).eq('id',S.editId);
+      if(ve) throw ve;
+      await sb.from('gastos').delete().eq('vehiculo_id',S.editId);
+      if(expenses.length){
+        const {error:ee}=await sb.from('gastos').insert(expenses.map(e=>({vehiculo_id:S.editId,concepto:e.concept,importe:e.amount,categoria:e.categoria})));
+        if(ee) throw ee;
       }
-
-      const prevV = vehiclesCache.find(v => v.id === S.editId);
-      if (prevV && prevV.status !== d.status) {
-        await sb.from('historial_estados').insert({
-          vehiculo_id:    S.editId,
-          estado_anterior: prevV.status,
-          estado_nuevo:    d.status,
-          nota:            formatSC(prevV.status, d.status),
-        });
+      const prevV=vehiclesCache.find(v=>v.id===S.editId);
+      if(prevV&&prevV.status!==d.status){
+        await sb.from('historial_estados').insert({vehiculo_id:S.editId,estado_anterior:prevV.status,estado_nuevo:d.status,nota:formatSC(prevV.status,d.status)});
       }
     } else {
-      const { data: newRow, error: ve } = await sb.from('vehiculos').insert(vehicleRow).select().single();
-      if (ve) throw ve;
-      const vid = newRow.id;
-
-      if (expenses.length) {
-        const { error: ee } = await sb.from('gastos').insert(
-          expenses.map(e => ({ vehiculo_id: vid, concepto: e.concept, importe: e.amount }))
-        );
-        if (ee) throw ee;
+      const {data:newRow,error:ve}=await sb.from('vehiculos').insert(vehicleRow).select().single();
+      if(ve) throw ve;
+      const vid=newRow.id;
+      if(expenses.length){
+        const {error:ee}=await sb.from('gastos').insert(expenses.map(e=>({vehiculo_id:vid,concepto:e.concept,importe:e.amount,categoria:e.categoria})));
+        if(ee) throw ee;
       }
-
-      await sb.from('historial_estados').insert({
-        vehiculo_id:    vid,
-        estado_anterior: null,
-        estado_nuevo:    d.status || 'available',
-        nota:            `Añadido al stock como "${STATUS_LABEL[d.status||'available']}"`,
-      });
+      await sb.from('historial_estados').insert({vehiculo_id:vid,estado_anterior:null,estado_nuevo:d.status||'available',nota:`Añadido al stock como "${STATUS_LABEL[d.status||'available']}"`});
     }
-
     await loadData();
-    toast(S.editId ? '✅ Vehículo actualizado' : '✅ Vehículo añadido al stock');
+    toast(S.editId?'Vehículo actualizado':'Vehículo añadido al stock',3500,'success');
     showDash();
-  } catch (err) {
-    toast('⚠️ Error al guardar: ' + (err.message || err));
-    if (saveBtn) saveBtn.disabled = false;
-  } finally {
-    setLoading(false);
-  }
+  } catch(err) {
+    toast('Error al guardar: '+(err.message||err),4000,'error');
+    if(saveBtn) saveBtn.disabled=false;
+  } finally { setLoading(false); }
 }
 
 // ─── DELETE ───────────────────────────────────────────────────
 function openDel(id) {
-  S.delId = id;
-  const v    = vehiclesCache.find(x => x.id===id);
-  const name = v ? `${v.brand} ${v.model}` : 'este vehículo';
-  document.getElementById('delModalHead').textContent  = `Eliminar ${name}`;
-  document.getElementById('delModalBody').textContent  = `¿Seguro que quieres eliminar ${name}? Esta acción no se puede deshacer.`;
+  S.delId=id;
+  const v=vehiclesCache.find(x=>x.id===id), name=v?`${v.brand} ${v.model}`:'este vehículo';
+  document.getElementById('delModalHead').textContent=`Eliminar ${name}`;
+  document.getElementById('delModalBody').textContent=`¿Seguro que quieres eliminar ${name}? Esta acción no se puede deshacer.`;
   document.getElementById('delModal').classList.remove('hidden');
-  document.getElementById('delConfirmBtn').onclick = execDel;
+  document.getElementById('delConfirmBtn').onclick=execDel;
 }
 function closeDelModal() { S.delId=null; document.getElementById('delModal').classList.add('hidden'); }
-
 async function execDel() {
-  const id = S.delId;
-  const v  = vehiclesCache.find(x => x.id===id);
-  closeDelModal();
-  setLoading(true, 'Eliminando...');
+  const id=S.delId, v=vehiclesCache.find(x=>x.id===id);
+  closeDelModal(); setLoading(true,'Eliminando...');
   try {
-    const { error } = await sb.from('vehiculos').delete().eq('id', id);
-    if (error) throw error;
+    const {error}=await sb.from('vehiculos').delete().eq('id',id); if(error) throw error;
     await loadData();
-    toast(`🗑 ${v?.brand||''} ${v?.model||''} eliminado`);
-    S.view = 'dash';
-    render();
-  } catch (err) {
-    toast('⚠️ Error al eliminar: ' + (err.message || err));
-  } finally {
-    setLoading(false);
-  }
+    toast(`${v?.brand||''} ${v?.model||''} eliminado`,3000,'success');
+    S.view='dash'; render();
+  } catch(err) { toast('Error al eliminar: '+(err.message||err),4000,'error'); }
+  finally { setLoading(false); }
 }
-
-document.getElementById('delModal').addEventListener('click', e => { if(e.target===e.currentTarget) closeDelModal(); });
+document.getElementById('delModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeDelModal();});
 
 // ─── CHANGE STATUS ────────────────────────────────────────────
 function changeStatus(id, newSt) {
-  const v = vehiclesCache.find(x => x.id===id);
-  if (!v || v.status === newSt) return;
-  if (newSt === 'sold') { openSoldModal(id); return; }
-  doChangeStatus(id, v.status, newSt, null, null);
+  const v=vehiclesCache.find(x=>x.id===id); if(!v||v.status===newSt) return;
+  if(newSt==='sold'){openSoldModal(id);return;}
+  doChangeStatus(id,v.status,newSt,null,null);
 }
-
 async function doChangeStatus(id, oldSt, newSt, salePrice, saleDate) {
-  setLoading(true, 'Actualizando estado...');
+  setLoading(true,'Actualizando estado...');
   try {
-    const upd = { estado: newSt, updated_at: new Date().toISOString() };
-    if (newSt === 'sold') {
-      upd.precio_venta_final = salePrice || null;
-      upd.fecha_venta        = saleDate  || null;
-    }
-    const { error: ve } = await sb.from('vehiculos').update(upd).eq('id', id);
-    if (ve) throw ve;
-
-    const nota = formatSC(oldSt, newSt) + (salePrice ? ' · ' + eur(salePrice) : '');
-    const { error: he } = await sb.from('historial_estados').insert({
-      vehiculo_id:    id,
-      estado_anterior: oldSt,
-      estado_nuevo:    newSt,
-      nota,
-    });
-    if (he) throw he;
-
+    const upd={estado:newSt,updated_at:new Date().toISOString()};
+    if(newSt==='sold'){upd.precio_venta_final=salePrice||null;upd.fecha_venta=saleDate||null;}
+    const {error:ve}=await sb.from('vehiculos').update(upd).eq('id',id); if(ve) throw ve;
+    const nota=formatSC(oldSt,newSt)+(salePrice?' · '+eur(salePrice):'');
+    const {error:he}=await sb.from('historial_estados').insert({vehiculo_id:id,estado_anterior:oldSt,estado_nuevo:newSt,nota}); if(he) throw he;
     await loadData();
-    toast(`✅ Estado actualizado a "${STATUS_LABEL[newSt]}"`);
+    toast(`Estado actualizado a "${STATUS_LABEL[newSt]}"`,3000,'success');
     render();
-  } catch (err) {
-    toast('⚠️ Error: ' + (err.message || err));
-  } finally {
-    setLoading(false);
-  }
+  } catch(err) { toast('Error: '+(err.message||err),4000,'error'); }
+  finally { setLoading(false); }
 }
 
 // ─── SOLD MODAL ───────────────────────────────────────────────
 function openSoldModal(id) {
-  S.soldTargetId = id;
-  document.getElementById('soldPriceInp').value = '';
-  document.getElementById('soldDateInp').value  = new Date().toISOString().split('T')[0];
+  S.soldTargetId=id;
+  document.getElementById('soldPriceInp').value='';
+  document.getElementById('soldDateInp').value=new Date().toISOString().split('T')[0];
   document.getElementById('soldModal').classList.remove('hidden');
-  setTimeout(() => document.getElementById('soldPriceInp').focus(), 100);
+  setTimeout(()=>document.getElementById('soldPriceInp').focus(),100);
 }
 function closeSoldModal() { S.soldTargetId=null; document.getElementById('soldModal').classList.add('hidden'); }
 function confirmSold() {
-  const id    = S.soldTargetId;
-  const price = +document.getElementById('soldPriceInp').value || null;
-  const date  = document.getElementById('soldDateInp').value || null;
-  const v     = vehiclesCache.find(x => x.id===id);
-  closeSoldModal();
-  doChangeStatus(id, v.status, 'sold', price, date);
+  const id=S.soldTargetId, price=+document.getElementById('soldPriceInp').value||null, date=document.getElementById('soldDateInp').value||null;
+  const v=vehiclesCache.find(x=>x.id===id); closeSoldModal();
+  doChangeStatus(id,v.status,'sold',price,date);
 }
-document.getElementById('soldModal').addEventListener('click', e => { if(e.target===e.currentTarget) closeSoldModal(); });
+document.getElementById('soldModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeSoldModal();});
 
 // ─── EXPORT ───────────────────────────────────────────────────
 function exportData() {
-  const date = new Date().toISOString().split('T')[0];
-  const blob = new Blob(
-    [JSON.stringify({version:1, exportDate:new Date().toISOString(), vehicles:vehiclesCache},null,2)],
-    {type:'application/json'}
-  );
-  const a = document.createElement('a');
-  a.href     = URL.createObjectURL(blob);
-  a.download = `eurocar-backup-${date}.json`;
-  a.click();
-  URL.revokeObjectURL(a.href);
-  toast('✅ Copia exportada correctamente');
+  const date=new Date().toISOString().split('T')[0];
+  const blob=new Blob([JSON.stringify({version:1,exportDate:new Date().toISOString(),vehicles:vehiclesCache},null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`eurocar-backup-${date}.json`; a.click(); URL.revokeObjectURL(a.href);
+  toast('Copia exportada correctamente',3000,'success');
 }
 
 // ─── IMPORT ───────────────────────────────────────────────────
 function importData() { document.getElementById('importFileInput').click(); }
-
 function handleImport(input) {
-  const file = input.files[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
     try {
-      const parsed   = JSON.parse(e.target.result);
-      const vehicles = parsed.vehicles || (Array.isArray(parsed) ? parsed : null);
-      if (!vehicles || !Array.isArray(vehicles)) { toast('⚠️ Archivo no válido'); return; }
-      S.importPending = vehicles;
-      const n = vehicles.length;
-      document.getElementById('importModalBody').textContent =
-        `Se importarán ${n} vehículo${n!==1?'s':''} desde "${file.name}". Se añadirán a los vehículos ya existentes.`;
+      const parsed=JSON.parse(e.target.result);
+      const vehicles=parsed.vehicles||(Array.isArray(parsed)?parsed:null);
+      if(!vehicles||!Array.isArray(vehicles)){toast('Archivo no válido',4000,'error');return;}
+      S.importPending=vehicles;
+      document.getElementById('importModalBody').textContent=`Se importarán ${vehicles.length} vehículo${vehicles.length!==1?'s':''} desde "${file.name}". Se añadirán a los vehículos ya existentes.`;
       document.getElementById('importModal').classList.remove('hidden');
-    } catch { toast('⚠️ Error al leer el archivo'); }
+    } catch { toast('Error al leer el archivo',4000,'error'); }
   };
-  reader.readAsText(file);
-  input.value = '';
+  reader.readAsText(file); input.value='';
 }
-
 function closeImportModal() { S.importPending=null; document.getElementById('importModal').classList.add('hidden'); }
-
 async function confirmImport() {
-  if (!S.importPending) return;
-  const vehicles = S.importPending;
-  closeImportModal();
-  setLoading(true, `Importando ${vehicles.length} vehículos...`);
-
-  let imported = 0;
+  if(!S.importPending) return;
+  const vehicles=S.importPending; closeImportModal();
+  setLoading(true,`Importando ${vehicles.length} vehículos...`);
+  let imported=0;
   try {
     for (const v of vehicles) {
-      const { data: newRow, error: ve } = await sb.from('vehiculos').insert({
-        marca:             v.brand  || '',
-        modelo:            v.model  || '',
-        anio:              v.year   || null,
-        kilometraje:       v.km     || null,
-        color:             v.color  || null,
-        bastidor:          v.vin    || null,
-        fecha_entrada:     v.entryDate || null,
-        precio_compra:     v.purchasePrice  || 0,
-        precio_venta:      v.salePrice      || 0,
-        precio_venta_final: v.saleRealPrice || null,
-        fecha_venta:       v.saleDate       || null,
-        estado:            v.status         || 'available',
-        notas:             v.notes          || null,
-        fotos:             v.photos         || [],
-        updated_at:        new Date().toISOString(),
+      const {data:newRow,error:ve}=await sb.from('vehiculos').insert({
+        marca:v.brand||'',modelo:v.model||'',matricula:(v.matricula||'').toUpperCase()||null,
+        anio:v.year||null,kilometraje:v.km||null,color:v.color||null,bastidor:v.vin||null,
+        proveedor:v.proveedor||null,origen:v.origen||null,
+        fecha_entrada:v.entryDate||null,precio_compra:v.purchasePrice||0,precio_venta:v.salePrice||0,
+        precio_venta_final:v.saleRealPrice||null,fecha_venta:v.saleDate||null,
+        estado:v.status||'available',notas:v.notes||null,fotos:v.photos||[],
+        updated_at:new Date().toISOString(),
       }).select().single();
-      if (ve) throw ve;
-
-      const vid = newRow.id;
-      if (v.expenses?.length) {
-        await sb.from('gastos').insert(
-          v.expenses.map(e => ({ vehiculo_id: vid, concepto: e.concept||'', importe: e.amount||0 }))
-        );
-      }
-      if (v.statusHistory?.length) {
-        await sb.from('historial_estados').insert(
-          v.statusHistory.map(h => ({
-            vehiculo_id:    vid,
-            estado_anterior: h.from  || null,
-            estado_nuevo:    h.to    || 'available',
-            nota:            h.text  || formatSC(h.from, h.to),
-          }))
-        );
-      }
+      if(ve) throw ve;
+      const vid=newRow.id;
+      if(v.expenses?.length) await sb.from('gastos').insert(v.expenses.map(e=>({vehiculo_id:vid,concepto:e.concept||'',importe:e.amount||0,categoria:e.categoria||null})));
+      if(v.statusHistory?.length) await sb.from('historial_estados').insert(v.statusHistory.map(h=>({vehiculo_id:vid,estado_anterior:h.from||null,estado_nuevo:h.to||'available',nota:h.text||formatSC(h.from,h.to)})));
       imported++;
     }
-    await loadData();
-    toast(`✅ ${imported} vehículos importados correctamente`);
-  } catch (err) {
-    toast(`⚠️ Error en la importación (${imported}/${vehicles.length}): ` + (err.message||err));
-    await loadData();
-  } finally {
-    S.importPending = null;
-    setLoading(false);
-  }
+    await loadData(); toast(`${imported} vehículos importados correctamente`,3500,'success');
+  } catch(err) { toast(`Error en importación (${imported}/${vehicles.length}): `+(err.message||err),5000,'error'); await loadData(); }
+  finally { S.importPending=null; setLoading(false); }
 }
-
-document.getElementById('importModal').addEventListener('click', e => { if(e.target===e.currentTarget) closeImportModal(); });
+document.getElementById('importModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeImportModal();});
 
 // ─── HELPERS ─────────────────────────────────────────────────
 function formatSC(from, to) {
-  if (!from) return `Estado: ${STATUS_LABEL[to]||to}`;
+  if(!from) return `Estado: ${STATUS_LABEL[to]||to}`;
   return `${STATUS_LABEL[from]||from} → ${STATUS_LABEL[to]||to}`;
 }
 
 // ─── TOAST ───────────────────────────────────────────────────
-function toast(msg, ms=3500) {
-  const c = document.getElementById('toasts');
-  const t = document.createElement('div');
-  t.className='toast'; t.textContent=msg; c.appendChild(t);
-  setTimeout(() => { t.style.cssText='opacity:0;transform:translateX(110%);transition:all .2s'; setTimeout(()=>t.remove(),200); }, ms);
+function toast(msg, ms=3500, type='') {
+  const c=document.getElementById('toasts'), t=document.createElement('div');
+  t.className='toast'+(type?' '+type:''); t.textContent=msg; c.appendChild(t);
+  setTimeout(()=>{t.style.cssText='opacity:0;transform:translateX(110%);transition:all .2s';setTimeout(()=>t.remove(),200);},ms);
 }
 
 // ─── INIT ─────────────────────────────────────────────────────
