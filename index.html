@@ -499,6 +499,31 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .stock-table-sep-title{font-size:14px;font-weight:600;color:var(--text)}
 .stock-table-sep-sub{font-size:12px;color:var(--text-2)}
 
+/* ── VEHICLE CARDS ─────────────────────────────────────────── */
+.vcard-list{display:flex;flex-direction:column;gap:6px}
+.vcard{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow);transition:box-shadow .15s,border-color .15s}
+.vcard:hover{box-shadow:var(--shadow-md)}
+.vcard.expanded{border-color:var(--primary)}
+.vcard-summary{display:flex;align-items:center;gap:12px;padding:11px 14px;cursor:pointer;user-select:none}
+.vcard-thumb{width:52px;height:38px;flex-shrink:0;background:var(--border-light);border-radius:6px;overflow:hidden;border:1px solid var(--border);display:flex;align-items:center;justify-content:center}
+.vcard-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.vcard-info{flex:1;min-width:0}
+.vcard-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vcard-sub{font-size:11px;color:var(--text-2);margin-top:2px}
+.vcard-price{font-size:14px;font-weight:700;color:var(--primary);white-space:nowrap;margin-right:4px}
+.vcard-chevron{color:#CBD5E1;font-size:20px;font-weight:300;transition:transform .25s ease;flex-shrink:0;line-height:1}
+.vcard.expanded .vcard-chevron{transform:rotate(90deg);color:var(--primary)}
+.vcard-detail{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.vcard-detail.open{max-height:400px}
+.vcard-detail-inner{padding:0 14px 12px;border-top:1px solid var(--border)}
+.vcard-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 20px;padding:12px 0}
+.vstat{display:flex;flex-direction:column;gap:2px}
+.vstat-l{font-size:10px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em}
+.vstat-v{font-size:13px;font-weight:500}
+.vcard-actions{display:flex;gap:8px;padding-top:10px;border-top:1px solid var(--border-light)}
+.vcard-actions .btn{flex:1;justify-content:center}
+@media(max-width:480px){.vcard-stats{grid-template-columns:repeat(2,1fr)}}
+
 /* ── COMING SOON ────────────────────────────────────────────── */
 .comingsoon-wrap{text-align:center;padding:80px 20px}
 .comingsoon-icon{font-size:52px;margin-bottom:18px;line-height:1}
@@ -652,8 +677,8 @@ const sb = createClient(
 // ─── STATE ───────────────────────────────────────────────────
 let vehiclesCache = [];
 let S = {
-  view:'home', homeTab:'metricas', filter:'all', q:'', editId:null, detailId:null, delId:null,
-  sortCol:null, sortDir:'desc', soldTargetId:null, importPending:null,
+  view:'home', homeTab:'metricas', filter:'disponible', q:'', editId:null, detailId:null, delId:null,
+  sortCol:null, sortDir:'desc', soldTargetId:null, importPending:null, expandedCard:null,
 };
 let fData={}, fExp=[], fPhotos=[], fStorageToDelete=[];
 let dragSrcIdx = null;
@@ -673,6 +698,7 @@ const IC = {
   arrowLeft: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>`,
   grip:      `<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="2" stroke-linecap="round"><line x1="9" y1="5" x2="9" y2="19"/><line x1="15" y1="5" x2="15" y2="19"/></svg>`,
   camera:    `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`,
+  eye:       `<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`,
 };
 
 // ─── CONSTANTS ────────────────────────────────────────────────
@@ -846,6 +872,10 @@ function render() {
   const app = document.getElementById('app'); if (!app) return;
   if (S.view==='home' || S.view==='stock' || S.view==='dash') {
     app.innerHTML = renderHome();
+    // Re-apply active tab state after innerHTML update (guards against any paint timing)
+    document.querySelectorAll('.dtab[data-tab]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tab === S.homeTab);
+    });
     if (S.homeTab==='metricas') initHomeCharts();
     return;
   }
@@ -853,33 +883,80 @@ function render() {
   if (S.view==='detail') { app.innerHTML = renderDetail(); return; }
 }
 
-// ─── VEHICLE TABLE ────────────────────────────────────────────
+// ─── VEHICLE CARDS ────────────────────────────────────────────
 function renderDash() {
   const all = vehiclesCache;
   const sm  = summary();
   const vs  = filtered();
-  return `
+
+  const filterBar = `
 <div class="filter-bar">
   <div class="filter-tabs">
-    ${[['all','Todos',all.length],['disponible','Disponibles',sm.availCount],['reservado','Reservados',sm.reservedCount],['vendido','Vendidos',sm.soldCount]]
+    ${[['disponible','Disponibles',sm.availCount],['reservado','Reservados',sm.reservedCount],['vendido','Vendidos',sm.soldCount],['all','Todos',all.length]]
       .map(([k,l,n])=>`<button class="ftab${S.filter===k?' active':''}" onclick="setFilter('${k}')">${l} <span style="opacity:.6">(${n})</span></button>`).join('')}
   </div>
   <input class="search-inp" type="text" placeholder="Marca, modelo, matrícula..." value="${esc(S.q)}" id="searchInp" oninput="setQ(this.value)">
-</div>
-
-<div class="table-wrap">
-  ${vs.length ? `<div class="table-scroll"><table><thead><tr>
-    <th>Vehículo</th>
-    <th class="sortable${S.sortCol==='year'?' sorted':''}" onclick="setSort('year')">Año ${sortArrow('year')}</th>
-    <th class="sortable${S.sortCol==='km'?' sorted':''}" onclick="setSort('km')">Km ${sortArrow('km')}</th>
-    <th class="sortable th-r${S.sortCol==='cost'?' sorted':''}" onclick="setSort('cost')">Coste total ${sortArrow('cost')}</th>
-    <th class="sortable th-r${S.sortCol==='pvp'?' sorted':''}" onclick="setSort('pvp')">P. Venta ${sortArrow('pvp')}</th>
-    <th class="sortable th-r${S.sortCol==='margin'?' sorted':''}" onclick="setSort('margin')">Margen ${sortArrow('margin')}</th>
-    <th class="sortable${S.sortCol==='days'?' sorted':''}" onclick="setSort('days')">Días ${sortArrow('days')}</th>
-    <th>Estado</th><th></th>
-  </tr></thead><tbody>${vs.map(renderRow).join('')}</tbody></table></div>`
-  : renderEmpty()}
 </div>`;
+
+  if (!vs.length) return filterBar + renderEmpty();
+
+  const cards = vs.map(v => {
+    const c = calc(v);
+    const isExpanded = v.id === S.expandedCard;
+    const thumb = v.photos && v.photos[0]
+      ? `<div class="vcard-thumb"><img src="${v.photos[0]}" alt="foto"></div>`
+      : `<div class="vcard-thumb">${IC.carGray}</div>`;
+    const matTag = v.matricula ? `<span class="matricula-tag">${esc(v.matricula)}</span> ` : '';
+    const pvpDisplay = v.status==='vendido'&&c.saleRealPrice ? eur(c.saleRealPrice) : (c.pvp ? eur(c.pvp) : '—');
+    const dc = v.status!=='vendido'?(c.days>90?'alert':c.days>45?'warn':''):'';
+    const daysVal = v.status==='vendido' ? (c.daysSold!==null?c.daysSold+'d':'—') : c.days+'d';
+
+    return `
+<div class="vcard${isExpanded?' expanded':''}" data-id="${v.id}">
+  <div class="vcard-summary" onclick="toggleCard('${v.id}')">
+    ${thumb}
+    <div class="vcard-info">
+      <div class="vcard-name">${esc(v.brand)} ${esc(v.model)}</div>
+      <div class="vcard-sub">${matTag}${v.year?v.year+' · ':''}${v.km?num(v.km)+' km':''}</div>
+    </div>
+    <div class="vcard-price">${pvpDisplay}</div>
+    <div class="vcard-chevron">›</div>
+  </div>
+  <div class="vcard-detail${isExpanded?' open':''}">
+    <div class="vcard-detail-inner">
+      <div class="vcard-stats">
+        <div class="vstat"><div class="vstat-l">Coste total</div><div class="vstat-v num">${eur(c.totalCost)}</div></div>
+        <div class="vstat"><div class="vstat-l">Margen</div><div class="vstat-v num ${c.margin>=0?'pos':'neg'}">${eur(c.margin)} <span style="font-size:11px;font-weight:400;color:var(--text-2)">${pct(c.marginPct)}</span></div></div>
+        <div class="vstat"><div class="vstat-l">Días en stock</div><div class="vstat-v"><span class="days-tag ${dc}">${daysVal}</span></div></div>
+        <div class="vstat"><div class="vstat-l">Año</div><div class="vstat-v">${v.year||'—'}</div></div>
+        <div class="vstat"><div class="vstat-l">Kilómetros</div><div class="vstat-v num">${v.km?num(v.km)+' km':'—'}</div></div>
+        <div class="vstat"><div class="vstat-l">Estado</div><div class="vstat-v"><span class="badge ${STATUS_BADGE[v.status]}">${STATUS_LABEL[v.status]}</span></div></div>
+      </div>
+      <div class="vcard-actions">
+        <button class="btn btn-secondary btn-sm" onclick="showDetail('${v.id}')">${IC.eye} Ver</button>
+        <button class="btn btn-secondary btn-sm" onclick="showEdit('${v.id}')">${IC.edit} Editar</button>
+        <button class="btn btn-danger-soft btn-sm" onclick="openDel('${v.id}')">${IC.trash} Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>`;
+  }).join('');
+
+  return filterBar + `<div class="vcard-list">${cards}</div>`;
+}
+
+function toggleCard(id) {
+  const wasOpen = S.expandedCard === id;
+  document.querySelectorAll('.vcard-detail').forEach(el => el.classList.remove('open'));
+  document.querySelectorAll('.vcard').forEach(el => el.classList.remove('expanded'));
+  S.expandedCard = wasOpen ? null : id;
+  if (!wasOpen) {
+    const vcard = document.querySelector(`.vcard[data-id="${id}"]`);
+    if (vcard) {
+      vcard.classList.add('expanded');
+      vcard.querySelector('.vcard-detail').classList.add('open');
+    }
+  }
 }
 
 function renderRow(v) {
@@ -1438,9 +1515,9 @@ function renderDetail() {
       <div class="dcard-body">
         <div class="status-actions">
           ${['disponible','reservado','vendido'].map(st=>`
-            <button class="btn ${v.status===st?'btn-primary':'btn-secondary'}" style="justify-content:flex-start"
-              onclick="changeStatus('${v.id}','${st}')" ${v.status===st?'disabled':''}>
-              Marcar como ${STATUS_LABEL[st]}
+            <button class="btn ${v.status===st?'btn-primary':'btn-secondary'}" style="justify-content:flex-start${v.status===st?';cursor:default':''}"
+              onclick="changeStatus('${v.id}','${st}')">
+              ${v.status===st?'✓ ':''}${STATUS_LABEL[st]}
             </button>`).join('')}
         </div>
       </div>
@@ -1456,7 +1533,11 @@ function goHome() {
   render(); scrollTo(0,0);
 }
 function showStock() { goHome(); }
-function showDash()  { goHome(); }
+function showDash()  {
+  S.view='home'; S.homeTab='stock'; S.editId=null; S.detailId=null;
+  fData={}; fExp=[]; fPhotos=[]; fStorageToDelete=[];
+  render(); scrollTo(0,0);
+}
 function setHomeTab(tab) {
   S.homeTab=tab; S.view='home'; render(); scrollTo(0,0);
 }
@@ -1471,19 +1552,19 @@ function renderHome() {
   const tabBar = `
 <div class="dtabs-wrap">
   <div class="dtabs">
-    <button class="dtab${S.homeTab==='metricas'?' active':''}" onclick="setHomeTab('metricas')">
+    <button class="dtab${S.homeTab==='metricas'?' active':''}" data-tab="metricas" onclick="setHomeTab('metricas')">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
       Métricas
     </button>
-    <button class="dtab${S.homeTab==='stock'?' active':''}" onclick="setHomeTab('stock')">
+    <button class="dtab${S.homeTab==='stock'?' active':''}" data-tab="stock" onclick="setHomeTab('stock')">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3v-5l2.5-5h13L21 12v5h-2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
       Stock
     </button>
-    <button class="dtab${S.homeTab==='ventas'?' active':''}" onclick="setHomeTab('ventas')">
+    <button class="dtab${S.homeTab==='ventas'?' active':''}" data-tab="ventas" onclick="setHomeTab('ventas')">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
       Ventas &amp; Facturación
     </button>
-    <button class="dtab${S.homeTab==='web'?' active':''}" onclick="setHomeTab('web')">
+    <button class="dtab${S.homeTab==='web'?' active':''}" data-tab="web" onclick="setHomeTab('web')">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
       Web &amp; Visibilidad
     </button>
