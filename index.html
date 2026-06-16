@@ -501,20 +501,19 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 
 /* ── VEHICLE CARDS ─────────────────────────────────────────── */
 .vcard-list{display:flex;flex-direction:column;gap:6px}
-.vcard{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow);transition:box-shadow .15s,border-color .15s}
+.vcard{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow);transition:box-shadow .15s}
 .vcard:hover{box-shadow:var(--shadow-md)}
-.vcard.expanded{border-color:var(--primary)}
 .vcard-summary{display:flex;align-items:center;gap:12px;padding:11px 14px;cursor:pointer;user-select:none}
 .vcard-thumb{width:52px;height:38px;flex-shrink:0;background:var(--border-light);border-radius:6px;overflow:hidden;border:1px solid var(--border);display:flex;align-items:center;justify-content:center}
 .vcard-thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .vcard-info{flex:1;min-width:0}
 .vcard-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.vcard-sub{font-size:11px;color:var(--text-2);margin-top:2px}
+.vcard-sub{font-size:11px;color:var(--text-2);margin-top:2px;display:flex;flex-direction:column;gap:1px}
 .vcard-price{font-size:14px;font-weight:700;color:var(--primary);white-space:nowrap;margin-right:4px}
 .vcard-chevron{color:#CBD5E1;font-size:20px;font-weight:300;transition:transform .25s ease;flex-shrink:0;line-height:1}
-.vcard.expanded .vcard-chevron{transform:rotate(90deg);color:var(--primary)}
-.vcard-detail{max-height:0;overflow:hidden;transition:max-height .3s ease}
-.vcard-detail.open{max-height:400px}
+.vcard.expanded .vcard-chevron{transform:rotate(90deg)}
+.vcard-detail{max-height:0;opacity:0;overflow:hidden;transition:max-height 0.4s cubic-bezier(0.4,0,0.2,1),opacity 0.3s ease}
+.vcard-detail.open{max-height:500px;opacity:1}
 .vcard-detail-inner{padding:0 14px 12px;border-top:1px solid var(--border)}
 .vcard-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 20px;padding:12px 0}
 .vstat{display:flex;flex-direction:column;gap:2px}
@@ -531,6 +530,11 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .comingsoon-sub{font-size:13px;color:var(--primary);font-weight:600;margin:4px 0 12px}
 .comingsoon-desc{font-size:13px;color:var(--text-2);max-width:360px;margin:0 auto 24px;line-height:1.6}
 
+/* ── CHART WRAPPERS ─────────────────────────────────────────── */
+.chart-ranges-wrap{position:relative;height:240px}
+.hcc-age-body{display:flex;align-items:center;gap:20px}
+.chart-age-wrap{width:100px;height:100px;flex-shrink:0;position:relative}
+
 /* ── RESPONSIVE (home/tabs) ─────────────────────────────────── */
 @media(max-width:1024px){.home-metrics{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:900px){
@@ -542,6 +546,9 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   .home-metrics{grid-template-columns:repeat(2,1fr)}
   .home-header{flex-direction:column;gap:12px}
   .home-header .btn{align-self:stretch;justify-content:center}
+  .chart-ranges-wrap{height:180px}
+  .hcc-age-body{flex-direction:column;align-items:center;gap:12px}
+  .chart-age-wrap{width:80px;height:80px}
 }
 @media(max-width:480px){.home-metrics{grid-template-columns:1fr}}
 </style>
@@ -871,14 +878,17 @@ function sortArrow(col) {
 function render() {
   const app = document.getElementById('app'); if (!app) return;
   if (S.view==='home' || S.view==='stock' || S.view==='dash') {
-    app.innerHTML = renderHome();
-    // Re-apply active tab state after innerHTML update (guards against any paint timing)
-    document.querySelectorAll('.dtab[data-tab]').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.tab === S.homeTab);
-    });
+    if (!document.getElementById('homeShell')) {
+      app.innerHTML = renderHome();
+    } else {
+      const c = document.getElementById('homeContent');
+      if (c) c.innerHTML = renderHomeContent();
+    }
+    document.querySelectorAll('.dtab[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === S.homeTab));
     if (S.homeTab==='metricas') initHomeCharts();
     return;
   }
+  app.innerHTML = '';
   if (S.view==='form')   { app.innerHTML = renderForm();   return; }
   if (S.view==='detail') { app.innerHTML = renderDetail(); return; }
 }
@@ -892,7 +902,7 @@ function renderDash() {
   const filterBar = `
 <div class="filter-bar">
   <div class="filter-tabs">
-    ${[['disponible','Disponibles',sm.availCount],['reservado','Reservados',sm.reservedCount],['vendido','Vendidos',sm.soldCount],['all','Todos',all.length]]
+    ${[['all','Todos',all.length],['disponible','Disponibles',sm.availCount],['reservado','Reservados',sm.reservedCount],['vendido','Vendidos',sm.soldCount]]
       .map(([k,l,n])=>`<button class="ftab${S.filter===k?' active':''}" onclick="setFilter('${k}')">${l} <span style="opacity:.6">(${n})</span></button>`).join('')}
   </div>
   <input class="search-inp" type="text" placeholder="Marca, modelo, matrícula..." value="${esc(S.q)}" id="searchInp" oninput="setQ(this.value)">
@@ -917,7 +927,7 @@ function renderDash() {
     ${thumb}
     <div class="vcard-info">
       <div class="vcard-name">${esc(v.brand)} ${esc(v.model)}</div>
-      <div class="vcard-sub">${matTag}${v.year?v.year+' · ':''}${v.km?num(v.km)+' km':''}</div>
+      <div class="vcard-sub">${matTag?`<span>${matTag}</span>`:''}${v.year?`<span>${v.year}</span>`:''}${v.km?`<span>${num(v.km)} km</span>`:''}</div>
     </div>
     <div class="vcard-price">${pvpDisplay}</div>
     <div class="vcard-chevron">›</div>
@@ -1539,46 +1549,24 @@ function showDash()  {
   render(); scrollTo(0,0);
 }
 function setHomeTab(tab) {
-  S.homeTab=tab; S.view='home'; render(); scrollTo(0,0);
+  S.homeTab=tab; S.view='home';
+  const c = document.getElementById('homeContent');
+  if (c) {
+    document.querySelectorAll('.dtab[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    c.innerHTML = renderHomeContent();
+    if (tab==='metricas') initHomeCharts();
+  } else {
+    render();
+  }
+  scrollTo(0,0);
 }
 function showAddForm() { S.view='form';S.editId=null;initForm(null);render();scrollTo(0,0); }
 
 // ─── HOME DASHBOARD ──────────────────────────────────────────
-function renderHome() {
-  const now = new Date();
-  const h = now.getHours();
-  const saludo = h>=6&&h<14?'Buenos días':h>=14&&h<21?'Buenas tardes':'Buenas noches';
+function renderHomeContent() {
+  if (S.homeTab === 'stock') return renderDash();
 
-  const tabBar = `
-<div class="dtabs-wrap">
-  <div class="dtabs">
-    <button class="dtab${S.homeTab==='metricas'?' active':''}" data-tab="metricas" onclick="setHomeTab('metricas')">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-      Métricas
-    </button>
-    <button class="dtab${S.homeTab==='stock'?' active':''}" data-tab="stock" onclick="setHomeTab('stock')">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3v-5l2.5-5h13L21 12v5h-2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
-      Stock
-    </button>
-    <button class="dtab${S.homeTab==='ventas'?' active':''}" data-tab="ventas" onclick="setHomeTab('ventas')">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-      Ventas &amp; Facturación
-    </button>
-    <button class="dtab${S.homeTab==='web'?' active':''}" data-tab="web" onclick="setHomeTab('web')">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-      Web &amp; Visibilidad
-    </button>
-  </div>
-</div>`;
-
-  const header = `
-<div class="home-header">
-  <div><h1 class="home-title">${saludo}, Yuriy 👋</h1><p class="home-subtitle">Principales métricas y evolución de tu negocio</p></div>
-</div>`;
-
-  if (S.homeTab === 'stock') return `${header}${tabBar}${renderDash()}`;
-
-  if (S.homeTab === 'ventas') return `${header}${tabBar}
+  if (S.homeTab === 'ventas') return `
 <div class="comingsoon-wrap">
   <div class="comingsoon-icon">🚀</div>
   <div class="comingsoon-title">Próximamente</div>
@@ -1586,7 +1574,7 @@ function renderHome() {
   <p class="comingsoon-desc">Esta sección estará disponible en breve. Aquí podrás gestionar ventas, facturas y contratos.</p>
 </div>`;
 
-  if (S.homeTab === 'web') return `${header}${tabBar}
+  if (S.homeTab === 'web') return `
 <div class="comingsoon-wrap">
   <div class="comingsoon-icon">🌐</div>
   <div class="comingsoon-title">Próximamente</div>
@@ -1595,7 +1583,8 @@ function renderHome() {
 </div>`;
 
   // ── MÉTRICAS TAB (default) ─────────────────────────────────
-  const sm  = summary();
+  const now  = new Date();
+  const sm   = summary();
   const active = vehiclesCache.filter(v => v.status!=='vendido');
 
   const rangesDef = [
@@ -1626,7 +1615,7 @@ function renderHome() {
   const maxBar = Math.max(sm.availCount, sm.reservedCount, sm.soldCount, 1);
   const barPct = n => ((n/maxBar)*100).toFixed(1)+'%';
 
-  return `${header}${tabBar}
+  return `
 <div class="home-metrics">
   <div class="home-card">
     <div class="hc-label">Stock actual</div>
@@ -1657,7 +1646,7 @@ function renderHome() {
 <div class="home-charts">
   <div class="home-chart-card">
     <div class="hcc-head">Stock por rango de precio</div>
-    <div class="hcc-body"><canvas id="chartRanges"></canvas></div>
+    <div class="hcc-body"><div class="chart-ranges-wrap"><canvas id="chartRanges"></canvas></div></div>
   </div>
   <div style="display:flex;flex-direction:column;gap:16px">
     <div class="home-chart-card">
@@ -1680,8 +1669,8 @@ function renderHome() {
     </div>
     <div class="home-chart-card">
       <div class="hcc-head">Antigüedad del stock</div>
-      <div class="hcc-body" style="display:flex;align-items:center;gap:20px">
-        <canvas id="chartAge" style="width:100px!important;height:100px!important;flex-shrink:0"></canvas>
+      <div class="hcc-body hcc-age-body">
+        <div class="chart-age-wrap"><canvas id="chartAge"></canvas></div>
         <div class="age-legend">
           ${[
             {label:'&lt; 45 días', color:'#059669', count:age1},
@@ -1697,6 +1686,39 @@ function renderHome() {
 <script type="application/json" id="_chartData">${JSON.stringify({rangeCounts,rangeLabels,age1,age2,age3})}<\/script>`;
 }
 
+function renderHome() {
+  const now = new Date();
+  const h = now.getHours();
+  const saludo = h>=6&&h<14?'Buenos días':h>=14&&h<21?'Buenas tardes':'Buenas noches';
+  return `
+<div id="homeShell">
+<div class="home-header">
+  <div><h1 class="home-title">${saludo}, Yuriy 👋</h1><p class="home-subtitle">Principales métricas y evolución de tu negocio</p></div>
+</div>
+<div class="dtabs-wrap">
+  <div class="dtabs">
+    <button class="dtab${S.homeTab==='metricas'?' active':''}" data-tab="metricas" onclick="setHomeTab('metricas')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Métricas
+    </button>
+    <button class="dtab${S.homeTab==='stock'?' active':''}" data-tab="stock" onclick="setHomeTab('stock')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3v-5l2.5-5h13L21 12v5h-2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
+      Stock
+    </button>
+    <button class="dtab${S.homeTab==='ventas'?' active':''}" data-tab="ventas" onclick="setHomeTab('ventas')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      Ventas &amp; Facturación
+    </button>
+    <button class="dtab${S.homeTab==='web'?' active':''}" data-tab="web" onclick="setHomeTab('web')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      Web &amp; Visibilidad
+    </button>
+  </div>
+</div>
+<div id="homeContent">${renderHomeContent()}</div>
+</div>`;
+}
+
 function initHomeCharts() {
   const el=document.getElementById('_chartData'); if(!el) return;
   const {rangeCounts,rangeLabels,age1,age2,age3}=JSON.parse(el.textContent);
@@ -1707,14 +1729,14 @@ function initHomeCharts() {
   const rc=document.getElementById('chartRanges');
   if(rc && typeof Chart!=='undefined') new Chart(rc,{
     type:'bar',
-    data:{labels:rangeLabels,datasets:[{data:rangeCounts,backgroundColor:'#1E2A5E',borderRadius:4,barThickness:14}]},
-    options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{precision:0,font:{size:11}},grid:{color:'#F1F5F9'}},y:{grid:{display:false},ticks:{font:{size:11}}}}}
+    data:{labels:rangeLabels,datasets:[{data:rangeCounts,backgroundColor:'#1E2A5E',borderRadius:4,barThickness:12}]},
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{precision:0,font:{size:11}},grid:{color:'#F1F5F9'}},y:{grid:{display:false},ticks:{font:{size:11}}}}}
   });
   const ac=document.getElementById('chartAge');
   if(ac && typeof Chart!=='undefined' && (age1+age2+age3)>0) new Chart(ac,{
     type:'doughnut',
     data:{labels:['< 45 días','46-90 días','> 91 días'],datasets:[{data:[age1,age2,age3],backgroundColor:['#059669','#1E2A5E','#F97316'],borderWidth:0}]},
-    options:{plugins:{legend:{display:false}},cutout:'68%'}
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'68%'}
   });
 }
 
