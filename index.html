@@ -6,9 +6,9 @@
 <title>StockDrive — Eurocar Motor</title>
 <style>
 :root {
-  --primary: #2563EB;
-  --primary-hover: #1D4ED8;
-  --primary-light: #EFF6FF;
+  --primary: #1E2A5E;
+  --primary-hover: #162248;
+  --primary-light: #ECEEF6;
   --bg: #F8FAFC;
   --white: #FFFFFF;
   --text: #1E293B;
@@ -49,7 +49,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 /* ── NAV ───────────────────────────────────────────────────── */
 .nav{background:var(--white);border-bottom:1px solid var(--border);height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:100;box-shadow:0 1px 0 var(--border)}
 .nav-brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px;cursor:pointer}
-.nav-greeting{font-size:13px;color:#9CA3AF;white-space:nowrap}
 .nav-sub{font-size:12px;color:#6B7280;font-weight:400;margin-top:1px}
 .nav-actions{display:flex;align-items:center;gap:8px}
 .nav-sep{width:1px;height:22px;background:var(--border);margin:0 4px}
@@ -98,7 +97,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .ftab.active{background:var(--primary-light);color:var(--primary)}
 .ftab:hover:not(.active){background:var(--bg);color:var(--text)}
 .search-inp{padding:7px 12px;border:1px solid var(--border);border-radius:var(--r);font-size:13px;color:var(--text);background:var(--bg);width:240px;outline:none;transition:border-color .15s,box-shadow .15s;font-family:inherit}
-.search-inp:focus{border-color:var(--primary);background:var(--white);box-shadow:0 0 0 3px rgba(37,99,235,.08)}
+.search-inp:focus{border-color:var(--primary);background:var(--white);box-shadow:0 0 0 3px rgba(30,42,94,.08)}
 
 /* ── TABLE ─────────────────────────────────────────────────── */
 .table-wrap{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden}
@@ -157,7 +156,7 @@ tbody tr:hover td{background:#FAFBFF}
 label{font-size:12px;font-weight:500;color:var(--text)}
 label .opt{color:var(--text-2);font-weight:400}
 input[type=text],input[type=number],input[type=date],input[type=email],input[type=password],select,textarea{padding:8px 11px;border:1px solid var(--border);border-radius:var(--r);font-size:13px;color:var(--text);background:var(--white);outline:none;transition:border-color .15s,box-shadow .15s;font-family:inherit;width:100%}
-input:focus,select:focus,textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.08)}
+input:focus,select:focus,textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(30,42,94,.08)}
 textarea{resize:vertical;min-height:76px;line-height:1.5}
 .input-hint{font-size:11px;color:var(--text-2);margin-top:2px}
 
@@ -177,7 +176,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .photo-item:hover .photo-remove{opacity:1}
 .photo-drag-hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;pointer-events:none;background:rgba(0,0,0,.2);border-radius:4px}
 .photo-item:hover .photo-drag-hint{opacity:1}
-.photo-main-badge{position:absolute;bottom:4px;left:4px;background:rgba(37,99,235,.85);color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;letter-spacing:.04em;text-transform:uppercase}
+.photo-main-badge{position:absolute;bottom:4px;left:4px;background:rgba(30,42,94,.85);color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;letter-spacing:.04em;text-transform:uppercase}
 .photo-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
 .gallery-img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:6px;cursor:zoom-in;border:1px solid var(--border);transition:opacity .15s;display:block}
 .gallery-img:hover{opacity:.82}
@@ -309,10 +308,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
    ═══════════════════════════════════════════════════════════ */
 @media(max-width:768px){
 
-  /* ── NAV: solo logo + botón añadir ──────────────────────── */
-  .nav-greeting { display:none; }
-  .nav-actions > .btn-secondary,
-  .nav-actions > .nav-sep { display:none!important; }
+  /* ── NAV: en móvil solo mostrar salir + añadir ─────────── */
 
   /* ── MODALES: full-screen bottom sheet ──────────────────── */
   .overlay { padding:0; align-items:flex-end; }
@@ -474,8 +470,58 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   .page-header { margin-bottom:10px; }
   .fsec { padding:14px 16px; }
 }
+/* ── DASHBOARD TABS (Dealcar style) ──────────────────────────── */
+.home-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:16px}
+.home-title{font-size:22px;font-weight:700;line-height:1.2}
+.home-subtitle{font-size:13px;color:var(--text-2);margin-top:3px}
+.dtabs-wrap{background:#F3F4F6;border-radius:var(--r-lg);padding:4px;margin-bottom:24px;display:inline-flex}
+.dtabs{display:flex;gap:1px}
+.dtab{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:var(--r);font-size:13px;font-weight:500;cursor:pointer;color:#6B7280;background:transparent;border:none;font-family:inherit;transition:background .12s,color .12s,box-shadow .12s;white-space:nowrap}
+.dtab:hover:not(.active){color:var(--text);background:rgba(0,0,0,.04)}
+.dtab.active{background:var(--white);color:var(--primary);font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06)}
+
+/* ── HOME DASHBOARD ─────────────────────────────────────────── */
+.home-metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:22px}
+.home-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px 20px;box-shadow:var(--shadow)}
+.hc-label{font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.hc-val{font-size:22px;font-weight:700;line-height:1.1;letter-spacing:-.3px;font-variant-numeric:tabular-nums}
+.hc-sub{font-size:11px;color:var(--text-2);margin-top:5px}
+.home-charts{display:grid;grid-template-columns:1fr 300px;gap:16px;align-items:start;margin-bottom:28px}
+.home-chart-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden}
+.hcc-head{padding:13px 18px;border-bottom:1px solid var(--border);font-size:13px;font-weight:600;background:var(--bg)}
+.hcc-body{padding:16px 18px}
+.status-bar-item{margin-bottom:14px}
+.status-bar-item:last-child{margin-bottom:0}
+.age-legend{display:flex;flex-direction:column;gap:10px}
+.age-leg-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-2);line-height:1.3}
+.age-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.stock-table-sep{display:flex;align-items:center;justify-content:space-between;margin:4px 0 14px}
+.stock-table-sep-title{font-size:14px;font-weight:600;color:var(--text)}
+.stock-table-sep-sub{font-size:12px;color:var(--text-2)}
+
+/* ── COMING SOON ────────────────────────────────────────────── */
+.comingsoon-wrap{text-align:center;padding:80px 20px}
+.comingsoon-icon{font-size:52px;margin-bottom:18px;line-height:1}
+.comingsoon-title{font-size:20px;font-weight:700;margin-bottom:6px}
+.comingsoon-sub{font-size:13px;color:var(--primary);font-weight:600;margin:4px 0 12px}
+.comingsoon-desc{font-size:13px;color:var(--text-2);max-width:360px;margin:0 auto 24px;line-height:1.6}
+
+/* ── RESPONSIVE (home/tabs) ─────────────────────────────────── */
+@media(max-width:1024px){.home-metrics{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:900px){
+  .home-metrics{grid-template-columns:repeat(2,1fr)}
+  .home-charts{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  .dtabs-wrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .home-metrics{grid-template-columns:repeat(2,1fr)}
+  .home-header{flex-direction:column;gap:12px}
+  .home-header .btn{align-self:stretch;justify-content:center}
+}
+@media(max-width:480px){.home-metrics{grid-template-columns:1fr}}
 </style>
 </head>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <body>
 
 <!-- ── LOGIN SCREEN ─────────────────────────────────────────── -->
@@ -516,39 +562,28 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 <!-- ── APP CONTAINER ────────────────────────────────────────── -->
 <div id="appContainer" class="hidden">
 
-<nav class="nav">
-  <div class="nav-brand" onclick="showDash()">
-    <img src="logo.png" alt="Eurocar Motor" style="height:32px;width:auto;">
-    <div>
-      <div style="font-size:16px;font-weight:700;color:#2563EB;line-height:1.2">StockDrive</div>
-      <div class="nav-sub">Eurocar Motor</div>
+  <nav class="nav">
+    <div class="nav-brand" onclick="goHome()" style="gap:0">
+      <div style="line-height:1">
+        <div style="font-size:16px;font-weight:800;color:var(--primary);line-height:1.15">StockDrive</div>
+        <div style="font-size:11px;color:#6B7280;font-weight:400;line-height:1.2">Eurocar Motor</div>
+      </div>
     </div>
-  </div>
-  <div class="nav-actions">
-    <span class="nav-greeting" id="navGreeting"></span>
-    <button class="btn btn-secondary btn-sm" onclick="exportData()" title="Descargar copia de seguridad">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      <span>Exportar</span>
-    </button>
-    <button class="btn btn-secondary btn-sm" onclick="importData()" title="Restaurar copia de seguridad">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      <span>Importar</span>
-    </button>
-    <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="handleImport(this)">
-    <div class="nav-sep"></div>
-    <button class="btn btn-secondary btn-sm" onclick="handleLogout()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-      <span>Salir</span>
-    </button>
-    <button class="btn btn-primary" onclick="showAddForm()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      Añadir vehículo
-    </button>
-  </div>
-</nav>
+    <div class="nav-actions">
+      <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="handleImport(this)">
+      <button class="btn btn-secondary btn-sm" onclick="handleLogout()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Salir
+      </button>
+      <button class="btn btn-primary" onclick="showAddForm()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Añadir vehículo
+      </button>
+    </div>
+  </nav>
 
-<div class="toasts" id="toasts"></div>
-<main class="main" id="app"></main>
+  <div class="toasts" id="toasts"></div>
+  <main class="main" id="app"></main>
 
 </div><!-- /#appContainer -->
 
@@ -617,8 +652,8 @@ const sb = createClient(
 // ─── STATE ───────────────────────────────────────────────────
 let vehiclesCache = [];
 let S = {
-  view:'dash', filter:'all', q:'', editId:null, detailId:null, delId:null,
-  sortCol:null, sortDir:'desc', soldTargetId:null, importPending:null
+  view:'home', homeTab:'metricas', filter:'all', q:'', editId:null, detailId:null, delId:null,
+  sortCol:null, sortDir:'desc', soldTargetId:null, importPending:null,
 };
 let fData={}, fExp=[], fPhotos=[], fStorageToDelete=[];
 let dragSrcIdx = null;
@@ -663,17 +698,9 @@ async function initApp() {
   });
 }
 
-function updateGreeting() {
-  const h = new Date().getHours();
-  const saludo = h >= 6 && h < 14 ? 'Buenos días' : h >= 14 && h < 21 ? 'Buenas tardes' : 'Buenas noches';
-  const el = document.getElementById('navGreeting');
-  if (el) el.textContent = `${saludo}, Yuriy`;
-}
-
 function showApp() {
   document.getElementById('loginScreen').classList.add('hidden');
   document.getElementById('appContainer').classList.remove('hidden');
-  updateGreeting();
 }
 
 async function handleLogin(e) {
@@ -817,70 +844,21 @@ function sortArrow(col) {
 // ─── RENDER ──────────────────────────────────────────────────
 function render() {
   const app = document.getElementById('app'); if (!app) return;
-  if (S.view==='dash')   app.innerHTML = renderDash();
-  if (S.view==='form')   app.innerHTML = renderForm();
-  if (S.view==='detail') app.innerHTML = renderDetail();
+  if (S.view==='home' || S.view==='stock' || S.view==='dash') {
+    app.innerHTML = renderHome();
+    if (S.homeTab==='metricas') initHomeCharts();
+    return;
+  }
+  if (S.view==='form')   { app.innerHTML = renderForm();   return; }
+  if (S.view==='detail') { app.innerHTML = renderDetail(); return; }
 }
 
-// ─── DASHBOARD ───────────────────────────────────────────────
+// ─── VEHICLE TABLE ────────────────────────────────────────────
 function renderDash() {
+  const all = vehiclesCache;
   const sm  = summary();
   const vs  = filtered();
-  const all = vehiclesCache;
-  const now = new Date();
-  const mesActual = now.toLocaleString('es-ES',{month:'long',year:'numeric'});
-
   return `
-<div class="page-header">
-  <div>
-    <div class="page-title">Stock de vehículos</div>
-    <div class="page-sub">Inventario actualizado · ${now.toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'})}</div>
-  </div>
-</div>
-
-<div class="metrics-section-label">Stock activo</div>
-<div class="metrics four-col">
-  <div class="metric-card">
-    <div class="metric-label">Dinero inmovilizado</div>
-    <div class="metric-val num">${eur(sm.invested)}</div>
-    <div class="metric-note">Coste total del stock activo</div>
-  </div>
-  <div class="metric-card">
-    <div class="metric-label">Vehículos en stock</div>
-    <div class="metric-val blue num">${sm.total}</div>
-    <div class="metric-note">${sm.availCount} disponibles · ${sm.reservedCount} reservados</div>
-  </div>
-  <div class="metric-card">
-    <div class="metric-label">Parados más de 60 días</div>
-    <div class="metric-val num ${sm.stuckCount>0?'warn':''}">${sm.stuckCount}</div>
-    <div class="metric-note">${sm.stuckCount>0?'Vehículos disponibles sin movimiento':'Todos en rotación'}</div>
-  </div>
-  <div class="metric-card">
-    <div class="metric-label">Margen potencial</div>
-    <div class="metric-val green num">${eur(sm.potentialMargin)}</div>
-    <div class="metric-note">Si se venden todos al PVP</div>
-  </div>
-</div>
-
-<div class="metrics-section-label">Ventas realizadas</div>
-<div class="metrics three-col" style="margin-bottom:24px">
-  <div class="metric-card">
-    <div class="metric-label">Beneficio del mes</div>
-    <div class="metric-val ${sm.thisMonthProfit>=0?'green':''} num">${eur(sm.thisMonthProfit)}</div>
-    <div class="metric-note">${mesActual}</div>
-  </div>
-  <div class="metric-card">
-    <div class="metric-label">Beneficio real acumulado</div>
-    <div class="metric-val ${sm.realProfit>=0?'green':''} num">${eur(sm.realProfit)}</div>
-    <div class="metric-note">${sm.soldWithPrice} venta${sm.soldWithPrice!==1?'s':''} con precio final</div>
-  </div>
-  <div class="metric-card">
-    <div class="metric-label">Margen medio real</div>
-    <div class="metric-val num">${pct(sm.avgRealMargin)}</div>
-    <div class="metric-note">Promedio de ventas realizadas</div>
-  </div>
-</div>
-
 <div class="filter-bar">
   <div class="filter-tabs">
     ${[['all','Todos',all.length],['disponible','Disponibles',sm.availCount],['reservado','Reservados',sm.reservedCount],['vendido','Vendidos',sm.soldCount]]
@@ -1471,9 +1449,194 @@ function renderDetail() {
 </div>`;
 }
 
-// ─── NAVIGATION ───────────────────────────────────────────────
-function showDash()  { S.view='dash';S.editId=null;S.detailId=null;fData={};fExp=[];fPhotos=[];fStorageToDelete=[];render(); }
+// ─── NAVIGATION ──────────────────────────────────────────────
+function goHome() {
+  S.view='home'; S.homeTab='metricas'; S.editId=null; S.detailId=null;
+  fData={}; fExp=[]; fPhotos=[]; fStorageToDelete=[];
+  render(); scrollTo(0,0);
+}
+function showStock() { goHome(); }
+function showDash()  { goHome(); }
+function setHomeTab(tab) {
+  S.homeTab=tab; S.view='home'; render(); scrollTo(0,0);
+}
 function showAddForm() { S.view='form';S.editId=null;initForm(null);render();scrollTo(0,0); }
+
+// ─── HOME DASHBOARD ──────────────────────────────────────────
+function renderHome() {
+  const now = new Date();
+  const h = now.getHours();
+  const saludo = h>=6&&h<14?'Buenos días':h>=14&&h<21?'Buenas tardes':'Buenas noches';
+
+  const tabBar = `
+<div class="dtabs-wrap">
+  <div class="dtabs">
+    <button class="dtab${S.homeTab==='metricas'?' active':''}" onclick="setHomeTab('metricas')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Métricas
+    </button>
+    <button class="dtab${S.homeTab==='stock'?' active':''}" onclick="setHomeTab('stock')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3v-5l2.5-5h13L21 12v5h-2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
+      Stock
+    </button>
+    <button class="dtab${S.homeTab==='ventas'?' active':''}" onclick="setHomeTab('ventas')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      Ventas &amp; Facturación
+    </button>
+    <button class="dtab${S.homeTab==='web'?' active':''}" onclick="setHomeTab('web')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      Web &amp; Visibilidad
+    </button>
+  </div>
+</div>`;
+
+  const header = `
+<div class="home-header">
+  <div><h1 class="home-title">${saludo}, Yuriy 👋</h1><p class="home-subtitle">Principales métricas y evolución de tu negocio</p></div>
+</div>`;
+
+  if (S.homeTab === 'stock') return `${header}${tabBar}${renderDash()}`;
+
+  if (S.homeTab === 'ventas') return `${header}${tabBar}
+<div class="comingsoon-wrap">
+  <div class="comingsoon-icon">🚀</div>
+  <div class="comingsoon-title">Próximamente</div>
+  <div class="comingsoon-sub">Ventas &amp; Facturación</div>
+  <p class="comingsoon-desc">Esta sección estará disponible en breve. Aquí podrás gestionar ventas, facturas y contratos.</p>
+</div>`;
+
+  if (S.homeTab === 'web') return `${header}${tabBar}
+<div class="comingsoon-wrap">
+  <div class="comingsoon-icon">🌐</div>
+  <div class="comingsoon-title">Próximamente</div>
+  <div class="comingsoon-sub">Web &amp; Visibilidad</div>
+  <p class="comingsoon-desc">Gestiona tu presencia en portales de coches y analiza la visibilidad online de tu stock.</p>
+</div>`;
+
+  // ── MÉTRICAS TAB (default) ─────────────────────────────────
+  const sm  = summary();
+  const active = vehiclesCache.filter(v => v.status!=='vendido');
+
+  const rangesDef = [
+    {label:'< 6.000 €',        fn: v=>v.salePrice>0&&v.salePrice<6000},
+    {label:'6.000 – 12.000 €', fn: v=>v.salePrice>=6000&&v.salePrice<12000},
+    {label:'12.000 – 18.000 €',fn: v=>v.salePrice>=12000&&v.salePrice<18000},
+    {label:'18.000 – 24.000 €',fn: v=>v.salePrice>=18000&&v.salePrice<24000},
+    {label:'24.000 – 35.000 €',fn: v=>v.salePrice>=24000&&v.salePrice<35000},
+    {label:'35.000 – 45.000 €',fn: v=>v.salePrice>=35000&&v.salePrice<45000},
+    {label:'45.000 – 55.000 €',fn: v=>v.salePrice>=45000&&v.salePrice<55000},
+    {label:'> 55.000 €',       fn: v=>v.salePrice>=55000},
+  ];
+  const rangeCounts = rangesDef.map(r=>active.filter(r.fn).length);
+  const rangeLabels = rangesDef.map(r=>r.label);
+
+  const dayOf = v => v.entryDate ? Math.floor((now-new Date(v.entryDate))/86400000) : null;
+  const age1 = active.filter(v=>{const d=dayOf(v);return d!==null&&d<45;}).length;
+  const age2 = active.filter(v=>{const d=dayOf(v);return d!==null&&d>=45&&d<=90;}).length;
+  const age3 = active.filter(v=>{const d=dayOf(v);return d!==null&&d>90;}).length;
+
+  const wp = active.filter(v=>v.salePrice>0);
+  const avgPrice = wp.length ? wp.reduce((s,v)=>s+v.salePrice,0)/wp.length : 0;
+  const wy = active.filter(v=>v.year);
+  const avgAge   = wy.length ? wy.reduce((s,v)=>s+(now.getFullYear()-v.year),0)/wy.length : null;
+  const we = active.filter(v=>v.entryDate);
+  const avgDays  = we.length ? we.reduce((s,v)=>s+dayOf(v),0)/we.length : null;
+
+  const maxBar = Math.max(sm.availCount, sm.reservedCount, sm.soldCount, 1);
+  const barPct = n => ((n/maxBar)*100).toFixed(1)+'%';
+
+  return `${header}${tabBar}
+<div class="home-metrics">
+  <div class="home-card">
+    <div class="hc-label">Stock actual</div>
+    <div class="hc-val">${sm.total}</div>
+    <div class="hc-sub">${sm.availCount} disponibles · ${sm.reservedCount} reservados</div>
+  </div>
+  <div class="home-card">
+    <div class="hc-label">Valor total del stock</div>
+    <div class="hc-val">${eur(sm.invested)}</div>
+    <div class="hc-sub">Coste acumulado en stock activo</div>
+  </div>
+  <div class="home-card">
+    <div class="hc-label">Precio medio de venta</div>
+    <div class="hc-val">${avgPrice>0?eur(avgPrice):'—'}</div>
+    <div class="hc-sub">${avgPrice>0?'PVP medio del stock activo':'Sin datos de PVP'}</div>
+  </div>
+  <div class="home-card">
+    <div class="hc-label">Antigüedad media</div>
+    <div class="hc-val">${avgAge!==null?avgAge.toFixed(1)+' años':'—'}</div>
+    <div class="hc-sub">${avgAge!==null?'Años de media del vehículo':'Sin histórico'}</div>
+  </div>
+  <div class="home-card">
+    <div class="hc-label">Rotación media</div>
+    <div class="hc-val">${avgDays!==null?Math.round(avgDays)+' días':'—'}</div>
+    <div class="hc-sub">${avgDays!==null?'Días medio en stock activo':'Sin histórico'}</div>
+  </div>
+</div>
+<div class="home-charts">
+  <div class="home-chart-card">
+    <div class="hcc-head">Stock por rango de precio</div>
+    <div class="hcc-body"><canvas id="chartRanges"></canvas></div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:16px">
+    <div class="home-chart-card">
+      <div class="hcc-head">Estado del stock</div>
+      <div class="hcc-body">
+        ${[
+          {l:'Disponibles',count:sm.availCount, color:'#059669'},
+          {l:'Reservados', count:sm.reservedCount,color:'#D97706'},
+          {l:'Vendidos',   count:sm.soldCount,  color:'#94A3B8'},
+        ].map(it=>`
+        <div class="status-bar-item">
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px">
+            <span style="color:var(--text-2)">${it.l}</span><strong>${it.count}</strong>
+          </div>
+          <div style="height:6px;background:#F1F5F9;border-radius:3px">
+            <div style="height:6px;background:${it.color};border-radius:3px;width:${barPct(it.count)};transition:width .3s"></div>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>
+    <div class="home-chart-card">
+      <div class="hcc-head">Antigüedad del stock</div>
+      <div class="hcc-body" style="display:flex;align-items:center;gap:20px">
+        <canvas id="chartAge" style="width:100px!important;height:100px!important;flex-shrink:0"></canvas>
+        <div class="age-legend">
+          ${[
+            {label:'&lt; 45 días', color:'#059669', count:age1},
+            {label:'46 – 90 días',color:'#1E2A5E', count:age2},
+            {label:'&gt; 91 días', color:'#F97316', count:age3},
+          ].map(it=>`<div class="age-leg-item"><span class="age-dot" style="background:${it.color}"></span><span>${it.label} · <strong>${it.count}</strong></span></div>`).join('')}
+          ${age1+age2+age3===0?'<p style="font-size:12px;color:var(--text-2)">Sin datos de entrada</p>':''}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="application/json" id="_chartData">${JSON.stringify({rangeCounts,rangeLabels,age1,age2,age3})}<\/script>`;
+}
+
+function initHomeCharts() {
+  const el=document.getElementById('_chartData'); if(!el) return;
+  const {rangeCounts,rangeLabels,age1,age2,age3}=JSON.parse(el.textContent);
+  ['chartRanges','chartAge'].forEach(id=>{
+    const c=document.getElementById(id);
+    if(c && typeof Chart!=='undefined' && Chart.getChart(c)) Chart.getChart(c).destroy();
+  });
+  const rc=document.getElementById('chartRanges');
+  if(rc && typeof Chart!=='undefined') new Chart(rc,{
+    type:'bar',
+    data:{labels:rangeLabels,datasets:[{data:rangeCounts,backgroundColor:'#1E2A5E',borderRadius:4,barThickness:14}]},
+    options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{precision:0,font:{size:11}},grid:{color:'#F1F5F9'}},y:{grid:{display:false},ticks:{font:{size:11}}}}}
+  });
+  const ac=document.getElementById('chartAge');
+  if(ac && typeof Chart!=='undefined' && (age1+age2+age3)>0) new Chart(ac,{
+    type:'doughnut',
+    data:{labels:['< 45 días','46-90 días','> 91 días'],datasets:[{data:[age1,age2,age3],backgroundColor:['#059669','#1E2A5E','#F97316'],borderWidth:0}]},
+    options:{plugins:{legend:{display:false}},cutout:'68%'}
+  });
+}
+
 function showEdit(id)  {
   const v=vehiclesCache.find(x=>x.id===id); if(!v) return;
   S.view='form';S.editId=id;initForm(v);render();scrollTo(0,0);
@@ -1636,7 +1799,7 @@ async function execDel() {
     const {error}=await sb.from('vehiculos').delete().eq('id',id); if(error) throw error;
     await loadData();
     toast(`${v?.brand||''} ${v?.model||''} eliminado`,3000,'success');
-    S.view='dash'; render();
+    S.view='home'; render();
   } catch(err) { toast('Error al eliminar: '+(err.message||err),4000,'error'); }
   finally { setLoading(false); }
 }
@@ -1747,6 +1910,13 @@ function toast(msg, ms=3500, type='') {
 }
 
 // ─── INIT ─────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    if (S.view !== 'home' || S.homeTab !== 'stock') { S.view='home'; S.homeTab='stock'; render(); scrollTo(0,0); }
+    setTimeout(() => { const inp=document.getElementById('searchInp'); if(inp){inp.focus();inp.select();} }, 50);
+  }
+});
 initApp();
 </script>
 </body>
