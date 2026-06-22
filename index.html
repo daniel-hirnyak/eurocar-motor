@@ -535,6 +535,32 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .hcc-age-body{display:flex;align-items:center;gap:20px}
 .chart-age-wrap{width:100px;height:100px;flex-shrink:0;position:relative}
 
+/* ── AI DESCRIPTION GENERATOR ───────────────────────────────── */
+.ai-wrap{max-width:660px;margin:0 auto;padding:32px 0 48px}
+.ai-wrap h2{font-size:20px;font-weight:800;color:var(--text);margin-bottom:6px}
+.ai-wrap .ai-sub{font-size:13px;color:var(--text-2);margin-bottom:28px;line-height:1.5}
+.ai-form{display:flex;flex-direction:column;gap:16px}
+.ai-fg{display:flex;flex-direction:column;gap:6px}
+.ai-fg label{font-size:11px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em}
+.ai-sel{width:100%;padding:10px 38px 10px 12px;border:1.5px solid var(--border);border-radius:var(--r);font-size:14px;color:var(--text);background:var(--white);font-family:inherit;outline:none;transition:border-color .15s;cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:10px}
+.ai-sel:focus{border-color:var(--primary)}
+.ai-portal-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.ai-pbtn{padding:9px 6px;border:1.5px solid var(--border);border-radius:var(--r);font-size:11px;font-weight:600;text-align:center;cursor:pointer;background:var(--white);color:var(--text-2);transition:all .15s;line-height:1.3;font-family:inherit}
+.ai-pbtn:hover{border-color:var(--primary);color:var(--primary)}
+.ai-pbtn.active{border-color:var(--primary);background:var(--primary-light);color:var(--primary);font-weight:700}
+.ai-gen-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 22px;background:var(--primary);color:#fff;border:none;border-radius:var(--r);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;width:100%}
+.ai-gen-btn:hover:not(:disabled){background:var(--primary-hover)}
+.ai-gen-btn:disabled{opacity:.55;cursor:not-allowed}
+.ai-spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:aiSpin .7s linear infinite;flex-shrink:0}
+@keyframes aiSpin{to{transform:rotate(360deg)}}
+.ai-result{display:flex;flex-direction:column;gap:10px}
+.ai-textarea{width:100%;min-height:240px;padding:14px;border:1.5px solid var(--border);border-radius:var(--r);font-size:13px;line-height:1.75;color:var(--text);background:#FAFBFF;font-family:inherit;resize:vertical;outline:none}
+.ai-copy-btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 16px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--text);transition:all .15s;align-self:flex-start}
+.ai-copy-btn:hover{border-color:var(--primary);color:var(--primary)}
+.ai-copy-btn.copied{border-color:#059669;color:#059669}
+.ai-error{background:#FEF2F2;border:1px solid #FCA5A5;border-radius:var(--r);padding:12px 14px;font-size:13px;color:#DC2626;line-height:1.5}
+@media(max-width:580px){.ai-portal-grid{grid-template-columns:repeat(3,1fr)}}
+
 /* ── RESPONSIVE (home/tabs) ─────────────────────────────────── */
 @media(max-width:1024px){.home-metrics{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:900px){
@@ -554,6 +580,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 </style>
 </head>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <body>
 
 <!-- ── LOGIN SCREEN ─────────────────────────────────────────── -->
@@ -633,12 +660,38 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 
 <!-- ── SOLD MODAL ───────────────────────────────────────────── -->
 <div class="overlay hidden" id="soldModal">
-  <div class="modal">
-    <div class="modal-head">Registrar venta</div>
-    <div class="modal-body" style="padding-bottom:4px">
-      <p style="margin-bottom:16px;color:var(--text)">Introduce los datos finales de la operación.</p>
-      <div class="fg" style="margin-bottom:12px">
-        <label>Precio de venta real (€) <span class="opt">(opcional)</span></label>
+  <div class="modal" style="max-width:520px">
+    <div class="modal-head">Registrar venta y generar contrato</div>
+    <div class="modal-body" style="padding-bottom:4px;max-height:80vh;overflow-y:auto">
+      <p style="margin-bottom:16px;font-size:12px;color:var(--text-2);background:var(--primary-light);border-radius:6px;padding:10px 12px;line-height:1.5">Los datos del comprador se incluirán en el contrato PDF que se descargará automáticamente.</p>
+
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--primary);margin-bottom:10px">Datos del comprador</div>
+      <div class="fg" style="margin-bottom:10px">
+        <label>Nombre completo <span style="color:var(--danger)">*</span></label>
+        <input type="text" id="buyerName" placeholder="Juan García López" style="width:100%" autocomplete="off">
+      </div>
+      <div class="fg" style="margin-bottom:10px">
+        <label>DNI / NIE <span style="color:var(--danger)">*</span></label>
+        <input type="text" id="buyerDni" placeholder="12345678A" style="width:100%" autocomplete="off">
+      </div>
+      <div class="fg" style="margin-bottom:10px">
+        <label>Dirección <span style="color:var(--danger)">*</span></label>
+        <input type="text" id="buyerAddr" placeholder="Calle Mayor, 5, 1º, 08001 Barcelona" style="width:100%" autocomplete="off">
+      </div>
+      <div class="fg" style="margin-bottom:10px">
+        <label>Forma de pago</label>
+        <select id="buyerPayment" style="width:100%">
+          <option value="Efectivo">Efectivo</option>
+          <option value="Transferencia bancaria">Transferencia bancaria</option>
+          <option value="Financiación">Financiación</option>
+        </select>
+      </div>
+
+      <div style="height:1px;background:var(--border);margin:14px 0"></div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--primary);margin-bottom:10px">Datos de la operación</div>
+
+      <div class="fg" style="margin-bottom:10px">
+        <label>Precio de venta final (€)</label>
         <input type="number" id="soldPriceInp" min="0" step="1" placeholder="11200" style="width:100%">
       </div>
       <div class="fg" style="margin-bottom:6px">
@@ -648,7 +701,10 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
     </div>
     <div class="modal-foot">
       <button class="btn btn-secondary" onclick="closeSoldModal()">Cancelar</button>
-      <button class="btn btn-primary" onclick="confirmSold()">Confirmar venta</button>
+      <button class="btn btn-primary" onclick="confirmSold()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Generar contrato y confirmar venta
+      </button>
     </div>
   </div>
 </div>
@@ -689,6 +745,11 @@ let S = {
 };
 let fData={}, fExp=[], fPhotos=[], fStorageToDelete=[];
 let dragSrcIdx = null;
+let _aiPortal = 'Wallapop';
+
+// ─── API KEY IA ───────────────────────────────────────────────
+// Sustituye por tu clave real de Anthropic (console.anthropic.com)
+const ANTHROPIC_API_KEY = 'TU_API_KEY_AQUI';
 
 const getVehicles = () => vehiclesCache;
 
@@ -1574,13 +1635,7 @@ function renderHomeContent() {
   <p class="comingsoon-desc">Esta sección estará disponible en breve. Aquí podrás gestionar ventas, facturas y contratos.</p>
 </div>`;
 
-  if (S.homeTab === 'web') return `
-<div class="comingsoon-wrap">
-  <div class="comingsoon-icon">🌐</div>
-  <div class="comingsoon-title">Próximamente</div>
-  <div class="comingsoon-sub">Web &amp; Visibilidad</div>
-  <p class="comingsoon-desc">Gestiona tu presencia en portales de coches y analiza la visibilidad online de tu stock.</p>
-</div>`;
+  if (S.homeTab === 'web') return renderWebTab();
 
   // ── MÉTRICAS TAB (default) ─────────────────────────────────
   const now  = new Date();
@@ -1717,6 +1772,136 @@ function renderHome() {
 </div>
 <div id="homeContent">${renderHomeContent()}</div>
 </div>`;
+}
+
+// ─── WEB & VISIBILIDAD — GENERADOR IA ────────────────────────
+const AI_PORTALS = ['Wallapop','Coches.net','AutoScout24','Autocasión','Milanuncios'];
+const AI_PORTAL_TIPS = {
+  'Wallapop':    'Tono cercano e informal, máximo 300 palabras, emojis moderados, precio al final.',
+  'Coches.net':  'Tono profesional y técnico, destaca equipamiento y estado del vehículo, formato estructurado.',
+  'AutoScout24': 'Tono neutro europeo, menciona ITV y revisiones si aplica, máximo 250 palabras.',
+  'Autocasión':  'Tono comercial y persuasivo, destaca la relación calidad-precio, llamada a la acción al final.',
+  'Milanuncios': 'Tono directo y conciso, máximo 150 palabras, precio destacado desde el principio.',
+};
+const AI_GEN_ICON = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>`;
+const AI_COPY_ICON = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+const AI_CHECK_ICON = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+
+function renderWebTab() {
+  const stock = vehiclesCache.filter(v => v.status !== 'vendido');
+  const opts = stock.length
+    ? stock.map(v => `<option value="${v.id}">${esc(v.brand)} ${esc(v.model)}${v.matricula?' — '+esc(v.matricula):''}${v.year?' ('+v.year+')':''}</option>`).join('')
+    : '<option value="" disabled>No hay vehículos en stock</option>';
+  return `
+<div class="ai-wrap">
+  <h2>Descripciones para portales</h2>
+  <p class="ai-sub">Selecciona un vehículo y el portal. La IA generará un texto optimizado listo para copiar y pegar.</p>
+  <div class="ai-form">
+    <div class="ai-fg">
+      <label>Vehículo</label>
+      <select class="ai-sel" id="aiVehicleSel" ${!stock.length?'disabled':''}>
+        <option value="">— Selecciona un vehículo —</option>
+        ${opts}
+      </select>
+    </div>
+    <div class="ai-fg">
+      <label>Portal</label>
+      <div class="ai-portal-grid">
+        ${AI_PORTALS.map(p=>`<button class="ai-pbtn${p===_aiPortal?' active':''}" onclick="aiSelectPortal(this,'${p}')">${esc(p)}</button>`).join('')}
+      </div>
+    </div>
+    <button class="ai-gen-btn" id="aiGenBtn" onclick="aiGenerate()">
+      ${AI_GEN_ICON} Generar descripción
+    </button>
+    <div id="aiResult" class="ai-result" style="display:none"></div>
+  </div>
+</div>`;
+}
+
+function aiSelectPortal(btn, portal) {
+  _aiPortal = portal;
+  document.querySelectorAll('.ai-pbtn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+async function aiGenerate() {
+  const sel = document.getElementById('aiVehicleSel');
+  if (!sel || !sel.value) {
+    if (sel) { sel.style.borderColor='var(--danger)'; setTimeout(()=>sel.style.borderColor='',1500); }
+    return;
+  }
+  const v = vehiclesCache.find(x => x.id === sel.value);
+  if (!v) return;
+
+  if (!ANTHROPIC_API_KEY || ANTHROPIC_API_KEY === 'TU_API_KEY_AQUI') {
+    aiShowResult(`<div class="ai-error">Configura tu API key de Anthropic en la constante <strong>ANTHROPIC_API_KEY</strong> al inicio del script (console.anthropic.com).</div>`);
+    return;
+  }
+
+  const btn = document.getElementById('aiGenBtn');
+  if (btn) { btn.disabled=true; btn.innerHTML=`<div class="ai-spinner"></div> Generando descripción...`; }
+  const resultEl = document.getElementById('aiResult');
+  if (resultEl) resultEl.style.display='none';
+
+  const details = [
+    `Marca: ${v.brand}`, `Modelo: ${v.model}`,
+    v.matricula?`Matrícula: ${v.matricula}`:'',
+    v.year?`Año: ${v.year}`:'',
+    v.km?`Kilómetros: ${num(v.km)} km`:'',
+    v.color?`Color: ${v.color}`:'',
+    v.salePrice?`Precio de venta: ${eur(v.salePrice)}`:'',
+    v.notes?`Notas: ${v.notes}`:'',
+  ].filter(Boolean).join('\n');
+
+  const prompt = `Eres un experto en marketing de vehículos de segunda mano en España. Genera una descripción optimizada para publicar en ${_aiPortal} con el siguiente vehículo:\n\n${details}\n\nInstrucciones para ${_aiPortal}: ${AI_PORTAL_TIPS[_aiPortal]||''}\n\nEscribe solo el texto de la descripción, en español, sin títulos adicionales ni explicaciones.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        messages: [{ role:'user', content: prompt }],
+      }),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const text = data?.content?.[0]?.text || '';
+    if (!text) throw new Error('empty');
+    aiShowResult(`<textarea class="ai-textarea" id="aiOutput" readonly>${esc(text)}</textarea>
+<button class="ai-copy-btn" id="aiCopyBtn" onclick="aiCopy()">${AI_COPY_ICON} Copiar al portapapeles</button>`);
+  } catch(err) {
+    aiShowResult(`<div class="ai-error">Error al generar la descripción. Comprueba tu conexión e inténtalo de nuevo.</div>`);
+    console.error('Anthropic API:', err);
+  } finally {
+    if (btn) { btn.disabled=false; btn.innerHTML=`${AI_GEN_ICON} Generar descripción`; }
+  }
+}
+
+function aiShowResult(html) {
+  const el = document.getElementById('aiResult');
+  if (!el) return;
+  el.innerHTML = html;
+  el.style.display = 'flex';
+}
+
+function aiCopy() {
+  const out = document.getElementById('aiOutput');
+  if (!out) return;
+  const btn = document.getElementById('aiCopyBtn');
+  navigator.clipboard.writeText(out.value).then(() => {
+    if (btn) {
+      btn.classList.add('copied');
+      btn.innerHTML = `${AI_CHECK_ICON} ¡Copiado!`;
+      setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML=`${AI_COPY_ICON} Copiar al portapapeles`; }, 2000);
+    }
+  }).catch(() => { out.select(); document.execCommand('copy'); });
 }
 
 function initHomeCharts() {
@@ -1932,18 +2117,247 @@ async function doChangeStatus(id, oldSt, newSt, salePrice, saleDate) {
 // ─── SOLD MODAL ───────────────────────────────────────────────
 function openSoldModal(id) {
   S.soldTargetId=id;
-  document.getElementById('soldPriceInp').value='';
+  const v=vehiclesCache.find(x=>x.id===id);
+  document.getElementById('buyerName').value='';
+  document.getElementById('buyerDni').value='';
+  document.getElementById('buyerAddr').value='';
+  document.getElementById('buyerPayment').value='Efectivo';
+  document.getElementById('soldPriceInp').value=v&&v.salePrice?v.salePrice:'';
   document.getElementById('soldDateInp').value=new Date().toISOString().split('T')[0];
   document.getElementById('soldModal').classList.remove('hidden');
-  setTimeout(()=>document.getElementById('soldPriceInp').focus(),100);
+  setTimeout(()=>document.getElementById('buyerName').focus(),100);
 }
 function closeSoldModal() { S.soldTargetId=null; document.getElementById('soldModal').classList.add('hidden'); }
 function confirmSold() {
-  const id=S.soldTargetId, price=+document.getElementById('soldPriceInp').value||null, date=document.getElementById('soldDateInp').value||null;
-  const v=vehiclesCache.find(x=>x.id===id); closeSoldModal();
+  const id=S.soldTargetId;
+  const buyerName=document.getElementById('buyerName').value.trim();
+  const buyerDni=document.getElementById('buyerDni').value.trim();
+  const buyerAddr=document.getElementById('buyerAddr').value.trim();
+  const payMethod=document.getElementById('buyerPayment').value;
+  const price=+document.getElementById('soldPriceInp').value||null;
+  const date=document.getElementById('soldDateInp').value||null;
+
+  // Validate required buyer fields
+  let ok=true;
+  ['buyerName','buyerDni','buyerAddr'].forEach(fid=>{
+    const el=document.getElementById(fid);
+    if(!el.value.trim()){el.style.borderColor='var(--danger)';ok=false;}
+    else el.style.borderColor='';
+  });
+  if(!ok){toast('Completa los campos obligatorios del comprador',3000,'error');return;}
+
+  const v=vehiclesCache.find(x=>x.id===id);
+  closeSoldModal();
+
+  // Generate PDF then confirm sale
+  try { generateContractPDF(v,buyerName,buyerDni,buyerAddr,price,payMethod,date); }
+  catch(err) { console.error('PDF error:',err); toast('El PDF no se pudo generar, pero la venta se confirmará igualmente.',4000,'error'); }
+
   doChangeStatus(id,v.status,'vendido',price,date);
 }
 document.getElementById('soldModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeSoldModal();});
+
+// ─── CONTRACT PDF ─────────────────────────────────────────────
+function generateContractPDF(v, buyerName, buyerDni, buyerAddr, price, payMethod, saleDate) {
+  if (!window.jspdf) { throw new Error('jsPDF not loaded'); }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const PW=210, PH=297, ML=20, MR=20, CW=170;
+  const NAVY=[30,42,94], BLACK=[30,30,30], GRAY=[140,140,140], LGRAY=[240,242,248];
+
+  const now=new Date();
+  const dateStr=saleDate||now.toISOString().split('T')[0];
+  const dateFmt=new Date(dateStr+'T12:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'});
+  const year=now.getFullYear();
+  const idShort=(v.id||'').slice(0,8).toUpperCase()||'XXXXXXXX';
+  const contractNum=`CONTRATO-${year}-${idShort}`;
+
+  let y=0;
+
+  // ─ HEADER BAND ─
+  doc.setFillColor(...NAVY);
+  doc.rect(0,0,PW,38,'F');
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(22);
+  doc.setTextColor(255,255,255);
+  doc.text('EUROCAR MOTOR',ML,18);
+  doc.setFontSize(11);
+  doc.setFont('helvetica','normal');
+  doc.setTextColor(180,195,230);
+  doc.text('Contrato de Compraventa de Vehículo',ML,26);
+  doc.setFontSize(8.5);
+  doc.text(contractNum,PW-MR,18,{align:'right'});
+  doc.text(dateFmt,PW-MR,25,{align:'right'});
+
+  y=48;
+
+  // ─ PARTIES ─
+  const MID=ML+CW/2+5;
+  const COL2=ML+CW/2-5;
+
+  const sectionHeader=(label,atY)=>{
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(8.5);
+    doc.setTextColor(...NAVY);
+    doc.text(label,ML,atY);
+    doc.setDrawColor(...NAVY);
+    doc.setLineWidth(0.35);
+    doc.line(ML,atY+2,ML+CW,atY+2);
+  };
+
+  sectionHeader('PARTES DEL CONTRATO',y);
+  y+=7;
+
+  // Sub-headers
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(8);
+  doc.setTextColor(...NAVY);
+  doc.text('VENDEDOR',ML,y);
+  doc.text('COMPRADOR',MID,y);
+  doc.setDrawColor(200,205,220);
+  doc.setLineWidth(0.2);
+  doc.line(ML,y+2,COL2,y+2);
+  doc.line(MID,y+2,ML+CW,y+2);
+
+  const dataStartY=y+7;
+  let yL=dataStartY, yR=dataStartY;
+
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(8.5);
+  doc.setTextColor(...BLACK);
+  [
+    ['','Eurocar Motor'],
+    ['CIF:','_______________'],
+    ['','Carrer les Minetes, 100'],
+    ['','Polígono Industrial'],
+    ['','08130 Santa Perpètua de Mogoda'],
+    ['','Barcelona'],
+    ['Tel.:','+34 692 92 22 99'],
+  ].forEach(([label,val])=>{
+    if(label){
+      doc.setFont('helvetica','bold');doc.text(label,ML,yL);
+      doc.setFont('helvetica','normal');doc.text(val,ML+10,yL);
+    } else {
+      doc.text(val,ML,yL);
+    }
+    yL+=5.2;
+  });
+
+  doc.setFont('helvetica','normal');
+  [
+    ['Nombre:',buyerName],
+    ['DNI/NIE:',buyerDni],
+  ].forEach(([label,val])=>{
+    doc.setFont('helvetica','bold');doc.text(label,MID,yR);
+    doc.setFont('helvetica','normal');
+    const parts=doc.splitTextToSize(val,CW/2-10);
+    doc.text(parts,MID+18,yR);
+    yR+=5.2*parts.length;
+  });
+  doc.setFont('helvetica','bold');doc.text('Dirección:',MID,yR);
+  doc.setFont('helvetica','normal');
+  const addrLines=doc.splitTextToSize(buyerAddr,CW/2-10);
+  doc.text(addrLines,MID+18,yR);
+  yR+=5.2*addrLines.length;
+
+  y=Math.max(yL,yR)+8;
+
+  // ─ SEPARATOR ─
+  doc.setDrawColor(215,220,230);doc.setLineWidth(0.25);
+  doc.line(ML,y,ML+CW,y);
+  y+=7;
+
+  // ─ VEHICLE ─
+  sectionHeader('DATOS DEL VEHÍCULO',y);
+  y+=8;
+
+  const rows=[
+    ['Marca y modelo',`${v.brand||''} ${v.model||''}`.trim()],
+    ['Año de matriculación',v.year?String(v.year):'—'],
+    ['Kilómetros',v.km?`${num(v.km)} km`:'—'],
+    ['Matrícula',v.matricula||'—'],
+    ['Número de bastidor (VIN)',v.vin||'_______________________________'],
+    ['Color',v.color||'_______________'],
+  ];
+  const C1=65;
+  rows.forEach(([label,val],i)=>{
+    if(i%2===0){doc.setFillColor(...LGRAY);doc.rect(ML,y-4.5,CW,7,'F');}
+    doc.setFont('helvetica','normal');doc.setFontSize(8);
+    doc.setTextColor(...GRAY);doc.text(label,ML+2,y);
+    doc.setTextColor(...BLACK);doc.setFont('helvetica','bold');
+    doc.text(val,ML+C1,y);doc.setFont('helvetica','normal');
+    y+=7;
+  });
+  y+=2;
+
+  // ─ SEPARATOR ─
+  doc.setDrawColor(215,220,230);doc.setLineWidth(0.25);
+  doc.line(ML,y,ML+CW,y);y+=7;
+
+  // ─ ECONOMIC CONDITIONS ─
+  sectionHeader('CONDICIONES ECONÓMICAS',y);y+=8;
+
+  const priceFmt=price
+    ?new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(price)
+    :'___________';
+
+  [
+    ['Precio de venta:',priceFmt],
+    ['Forma de pago:',payMethod],
+    ['Régimen fiscal:','Régimen Especial de Bienes Usados (REBU)'],
+  ].forEach(([label,val])=>{
+    doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(...BLACK);
+    doc.text(label,ML,y);
+    doc.setFont('helvetica','normal');doc.text(val,ML+44,y);
+    y+=7;
+  });
+  y+=2;
+
+  // ─ SEPARATOR ─
+  doc.setDrawColor(215,220,230);doc.setLineWidth(0.25);
+  doc.line(ML,y,ML+CW,y);y+=7;
+
+  // ─ CLAUSES ─
+  sectionHeader('CLÁUSULAS',y);y+=8;
+  doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(90,90,90);
+  const clauseText='El vendedor declara que el vehículo objeto de esta compraventa se encuentra libre de cargas y gravámenes. El comprador declara conocer el estado actual del vehículo y acepta el mismo en las condiciones en que se encuentra. La garantía legal aplicable es la establecida por el Real Decreto Legislativo 1/2007.';
+  const clauseLines=doc.splitTextToSize(clauseText,CW);
+  doc.text(clauseLines,ML,y);
+  y+=clauseLines.length*4.2+8;
+
+  // ─ SEPARATOR ─
+  doc.setDrawColor(215,220,230);doc.setLineWidth(0.25);
+  doc.line(ML,y,ML+CW,y);y+=7;
+
+  // ─ SIGNATURES ─
+  sectionHeader('FIRMAS',y);y+=10;
+  const BW=(CW-20)/2;
+  const BH=30;
+  [[ML,'El Vendedor','Eurocar Motor','_____________'],[ML+BW+20,'El Comprador',buyerName.length>22?buyerName.slice(0,22)+'…':buyerName,`DNI: ${buyerDni}`]].forEach(([x,title,name,sub])=>{
+    doc.setDrawColor(180,185,200);doc.setLineWidth(0.3);
+    doc.rect(x,y,BW,BH);
+    doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(...NAVY);
+    doc.text(title,x+BW/2,y+6,{align:'center'});
+    doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(160,160,160);
+    doc.text(name,x+BW/2,y+BH-8,{align:'center'});
+    doc.text(sub,x+BW/2,y+BH-3,{align:'center'});
+  });
+  y+=BH+10;
+
+  doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(...BLACK);
+  doc.text('Fecha y lugar de firma: ______________________________________________________',ML,y);
+
+  // ─ FOOTER ─
+  doc.setDrawColor(...NAVY);doc.setLineWidth(0.35);
+  doc.line(ML,PH-14,ML+CW,PH-14);
+  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(...GRAY);
+  doc.text('Documento generado por StockDrive · stockdrive.es',PW/2,PH-8,{align:'center'});
+
+  // ─ DOWNLOAD ─
+  const stamp=now.toISOString().split('T')[0];
+  const safe=s=>(s||'').replace(/[^a-zA-Z0-9]/g,'_');
+  doc.save(`Contrato_${safe(v.brand)}_${safe(v.model)}_${stamp}.pdf`);
+}
 
 // ─── EXPORT ───────────────────────────────────────────────────
 function exportData() {
