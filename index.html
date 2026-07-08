@@ -3,7 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>StockDrive — Eurocar Motor</title>
+<title>StockDrive</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1E3A8A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="StockDrive">
+<link rel="apple-touch-icon" href="/stockdrive-icon.png">
 <style>
 :root {
   --primary: #1E2A5E;
@@ -535,6 +541,21 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .hcc-age-body{display:flex;align-items:center;gap:20px}
 .chart-age-wrap{width:100px;height:100px;flex-shrink:0;position:relative}
 
+/* ── VENTAS & FACTURACIÓN ────────────────────────────────────── */
+.venta-list{display:flex;flex-direction:column;gap:7px}
+.venta-row{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:13px 16px;box-shadow:var(--shadow)}
+.venta-row-inner{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.venta-date{font-size:12px;color:var(--text-2);white-space:nowrap;min-width:74px;flex-shrink:0}
+.venta-vehicle{flex:1;min-width:140px;overflow:hidden}
+.venta-vehicle-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.venta-vehicle-sub{font-size:11px;color:var(--text-2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.venta-nums{text-align:right;flex-shrink:0;min-width:86px}
+.venta-price{font-size:14px;font-weight:700;color:var(--primary)}
+.venta-margin{font-size:11px;font-weight:600;margin-top:2px}
+.venta-pay{flex-shrink:0}
+.venta-pay-badge{font-size:11px;background:var(--primary-light);color:var(--primary);padding:3px 9px;border-radius:12px;font-weight:600;white-space:nowrap}
+@media(max-width:560px){.venta-pay{display:none}}
+
 /* ── AI DESCRIPTION GENERATOR ───────────────────────────────── */
 .ai-wrap{max-width:660px;margin:0 auto;padding:32px 0 48px}
 .ai-wrap h2{font-size:20px;font-weight:800;color:var(--text);margin-bottom:6px}
@@ -737,8 +758,29 @@ const sb = createClient(
   'sb_publishable_jG5mA8o9eVvMEIVBAJop2A_XA9EI4cu'
 );
 
+// ─── SQL: tabla ventas (ejecutar en Supabase si no existe) ────
+// CREATE TABLE IF NOT EXISTS ventas (
+//   id                  UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+//   vehiculo_id         UUID        REFERENCES vehiculos(id) ON DELETE SET NULL,
+//   marca               TEXT,
+//   modelo              TEXT,
+//   matricula           TEXT,
+//   precio_venta        NUMERIC,
+//   coste_total         NUMERIC,
+//   margen              NUMERIC,
+//   forma_pago          TEXT,
+//   nombre_comprador    TEXT,
+//   dni_comprador       TEXT,
+//   direccion_comprador TEXT,
+//   fecha_venta         TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+//   numero_contrato     TEXT
+// );
+// ALTER TABLE ventas ENABLE ROW LEVEL SECURITY;
+// CREATE POLICY "auth_only" ON ventas USING (auth.role() = 'authenticated');
+
 // ─── STATE ───────────────────────────────────────────────────
 let vehiclesCache = [];
+let ventasCache   = [];
 let S = {
   view:'home', homeTab:'metricas', filter:'disponible', q:'', editId:null, detailId:null, delId:null,
   sortCol:null, sortDir:'desc', soldTargetId:null, importPending:null, expandedCard:null,
@@ -849,13 +891,16 @@ async function loadData() {
       { data:vehicles, error:ve },
       { data:gastos,   error:ge },
       { data:historial, error:he },
+      { data:ventas,   error:sae },
     ] = await Promise.all([
       sb.from('vehiculos').select('*').order('created_at',{ascending:false}),
       sb.from('gastos').select('*'),
       sb.from('historial_estados').select('*').order('created_at',{ascending:true}),
+      sb.from('ventas').select('*').order('fecha_venta',{ascending:false}),
     ]);
     if (ve) throw ve; if (ge) throw ge; if (he) throw he;
     vehiclesCache = (vehicles||[]).map(v => normalizeV(v, gastos||[], historial||[]));
+    ventasCache   = sae ? [] : (ventas||[]); // non-fatal: tabla puede no existir aún
     render();
   } catch (err) {
     toast('Error al cargar datos: '+(err.message||err), 4000, 'error');
@@ -1627,13 +1672,7 @@ function showAddForm() { S.view='form';S.editId=null;initForm(null);render();scr
 function renderHomeContent() {
   if (S.homeTab === 'stock') return renderDash();
 
-  if (S.homeTab === 'ventas') return `
-<div class="comingsoon-wrap">
-  <div class="comingsoon-icon">🚀</div>
-  <div class="comingsoon-title">Próximamente</div>
-  <div class="comingsoon-sub">Ventas &amp; Facturación</div>
-  <p class="comingsoon-desc">Esta sección estará disponible en breve. Aquí podrás gestionar ventas, facturas y contratos.</p>
-</div>`;
+  if (S.homeTab === 'ventas') return renderVentas();
 
   if (S.homeTab === 'web') return renderWebTab();
 
@@ -1739,6 +1778,83 @@ function renderHomeContent() {
   </div>
 </div>
 <script type="application/json" id="_chartData">${JSON.stringify({rangeCounts,rangeLabels,age1,age2,age3})}<\/script>`;
+}
+
+// ─── VENTAS & FACTURACIÓN ─────────────────────────────────────
+const IC_DL = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
+
+function renderVentas() {
+  const now = new Date();
+  const thisMonth = ventasCache.filter(s=>{
+    const d=new Date(s.fecha_venta);
+    return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth();
+  });
+  const totalMes    = thisMonth.length;
+  const ingresosMes = thisMonth.reduce((t,s)=>t+(+s.precio_venta||0),0);
+  const margenMes   = thisMonth.reduce((t,s)=>t+(+s.margen||0),0);
+
+  const cards = `
+<div class="home-metrics" style="margin-bottom:24px;grid-template-columns:repeat(3,1fr)">
+  <div class="home-card">
+    <div class="hc-label">Ventas este mes</div>
+    <div class="hc-val">${totalMes}</div>
+    <div class="hc-sub">${ventasCache.length} en total</div>
+  </div>
+  <div class="home-card">
+    <div class="hc-label">Ingresos del mes</div>
+    <div class="hc-val">${eur(ingresosMes)}</div>
+    <div class="hc-sub">Precio de venta acumulado</div>
+  </div>
+  <div class="home-card">
+    <div class="hc-label">Margen del mes</div>
+    <div class="hc-val ${margenMes>=0?'pos':'neg'}">${eur(margenMes)}</div>
+    <div class="hc-sub">Beneficio bruto acumulado</div>
+  </div>
+</div>`;
+
+  if(!ventasCache.length) return cards+`
+<div class="empty">
+  <div class="empty-icon">${IC.carGrayLg}</div>
+  <div class="empty-title">Aún no hay ventas registradas</div>
+  <div class="empty-desc">Las ventas aparecerán aquí cuando confirmes una venta con el formulario de contrato.</div>
+</div>`;
+
+  const rows = ventasCache.map(s=>{
+    const date=new Date(s.fecha_venta).toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit',year:'numeric'});
+    const margen=+s.margen||0;
+    return `
+<div class="venta-row">
+  <div class="venta-row-inner">
+    <div class="venta-date">${date}</div>
+    <div class="venta-vehicle">
+      <div class="venta-vehicle-name">${esc(s.marca)} ${esc(s.modelo)}</div>
+      <div class="venta-vehicle-sub">${s.matricula?esc(s.matricula)+' · ':''}${esc(s.nombre_comprador||'—')}</div>
+    </div>
+    <div class="venta-nums">
+      <div class="venta-price">${eur(s.precio_venta)}</div>
+      <div class="venta-margin ${margen>=0?'pos':'neg'}">${margen>=0?'+':''}${eur(margen)}</div>
+    </div>
+    <div class="venta-pay"><span class="venta-pay-badge">${esc(s.forma_pago||'—')}</span></div>
+    <button class="btn btn-secondary btn-sm" onclick="redownloadContrato('${s.id}')">${IC_DL} PDF</button>
+  </div>
+</div>`;
+  }).join('');
+
+  return cards+`<div class="venta-list">${rows}</div>`;
+}
+
+function redownloadContrato(saleId) {
+  const s=ventasCache.find(x=>x.id===saleId);
+  if(!s){toast('No se encontraron los datos de la venta',3000,'error');return;}
+  const v=vehiclesCache.find(x=>x.id===s.vehiculo_id)||{
+    id:s.vehiculo_id||s.id, brand:s.marca, model:s.modelo,
+    matricula:s.matricula, year:null, km:null, color:null, vin:null, notes:null,
+  };
+  const saleDate=s.fecha_venta?s.fecha_venta.split('T')[0]:null;
+  try {
+    generateContractPDF(v,s.nombre_comprador||'',s.dni_comprador||'',s.direccion_comprador||'',
+      +s.precio_venta||null,s.forma_pago||'—',saleDate);
+  } catch(err){toast('Error al regenerar el PDF',3000,'error');console.error(err);}
 }
 
 function renderHome() {
@@ -2099,14 +2215,33 @@ function changeStatus(id, newSt) {
   if(newSt==='vendido'){openSoldModal(id);return;}
   doChangeStatus(id,v.status,newSt,null,null);
 }
-async function doChangeStatus(id, oldSt, newSt, salePrice, saleDate) {
+async function doChangeStatus(id, oldSt, newSt, salePrice, saleDate, buyerData=null) {
   setLoading(true,'Actualizando estado...');
+  const vOrig = vehiclesCache.find(x=>x.id===id); // capturar antes del reload
   try {
     const upd={estado:newSt,updated_at:new Date().toISOString()};
     if(newSt==='vendido'){upd.precio_venta_final=salePrice||null;upd.fecha_venta=saleDate||null;}
     const {error:ve}=await sb.from('vehiculos').update(upd).eq('id',id); if(ve) throw ve;
     const nota=formatSC(oldSt,newSt)+(salePrice?' · '+eur(salePrice):'');
     const {error:he}=await sb.from('historial_estados').insert({vehiculo_id:id,estado_anterior:oldSt,estado_nuevo:newSt,nota}); if(he) throw he;
+    if(newSt==='vendido'&&buyerData&&vOrig){
+      const c=calc(vOrig);
+      const actualMargin=salePrice?(salePrice-c.totalCost):c.margin;
+      const contractNum=`CONTRATO-${new Date().getFullYear()}-${id.slice(0,8).toUpperCase()}`;
+      const {error:sae}=await sb.from('ventas').insert({
+        vehiculo_id:id, marca:vOrig.brand, modelo:vOrig.model, matricula:vOrig.matricula||null,
+        precio_venta:salePrice||null, coste_total:c.totalCost||null, margen:actualMargin||null,
+        forma_pago:buyerData.payMethod, nombre_comprador:buyerData.name,
+        dni_comprador:buyerData.dni, direccion_comprador:buyerData.addr,
+        fecha_venta:saleDate?new Date(saleDate+'T12:00:00').toISOString():new Date().toISOString(),
+        numero_contrato:contractNum,
+      });
+      if(sae){
+        console.error('Error al guardar venta:', sae);
+        toast('⚠️ Venta confirmada pero no guardada en el historial: '+(sae.message||sae.code||'error')+'  →  Ejecuta el SQL de la tabla "ventas" en Supabase.', 8000, 'error');
+      }
+    }
+    if(newSt==='vendido'&&buyerData){S.view='home';S.homeTab='ventas';}
     await loadData();
     toast(`Estado actualizado a "${STATUS_LABEL[newSt]}"`,3000,'success');
     render();
@@ -2147,13 +2282,14 @@ function confirmSold() {
   if(!ok){toast('Completa los campos obligatorios del comprador',3000,'error');return;}
 
   const v=vehiclesCache.find(x=>x.id===id);
+  const buyerData={name:buyerName,dni:buyerDni,addr:buyerAddr,payMethod};
   closeSoldModal();
 
   // Generate PDF then confirm sale
   try { generateContractPDF(v,buyerName,buyerDni,buyerAddr,price,payMethod,date); }
   catch(err) { console.error('PDF error:',err); toast('El PDF no se pudo generar, pero la venta se confirmará igualmente.',4000,'error'); }
 
-  doChangeStatus(id,v.status,'vendido',price,date);
+  doChangeStatus(id,v.status,'vendido',price,date,buyerData);
 }
 document.getElementById('soldModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeSoldModal();});
 
