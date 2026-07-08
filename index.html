@@ -649,7 +649,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
     <div class="nav-brand" onclick="goHome()" style="gap:0">
       <div style="line-height:1">
         <div style="font-size:16px;font-weight:800;color:var(--primary);line-height:1.15">StockDrive</div>
-        <div style="font-size:11px;color:#6B7280;font-weight:400;line-height:1.2">Eurocar Motor</div>
+        <div id="navBusinessName" style="font-size:11px;color:#6B7280;font-weight:400;line-height:1.2"></div>
       </div>
     </div>
     <div class="nav-actions">
@@ -752,13 +752,14 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   <option value="Publicidad"><option value="Seguro temporal"><option value="Ruedas">
 </datalist>
 
+<script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
 // ─── SUPABASE ─────────────────────────────────────────────────
 const { createClient } = supabase;
 const sb = createClient(
-  'https://rxmokcdynbmkhtirdpcf.supabase.co',
-  'sb_publishable_jG5mA8o9eVvMEIVBAJop2A_XA9EI4cu'
+  CLIENT_CONFIG.supabaseUrl,
+  CLIENT_CONFIG.supabaseKey
 );
 
 // ─── SQL: tabla ventas (ejecutar en Supabase si no existe) ────
@@ -829,6 +830,8 @@ function setLoading(on, text) {
 
 // ─── AUTH ─────────────────────────────────────────────────────
 async function initApp() {
+  const el = document.getElementById('navBusinessName');
+  if (el) el.textContent = CLIENT_CONFIG.businessName;
   const { data: { session } } = await sb.auth.getSession();
   if (session) { showApp(); await loadData(); }
   sb.auth.onAuthStateChange((event, _s) => {
@@ -2365,7 +2368,7 @@ function generateContractPDF(v, buyerName, buyerDni, buyerAddr, price, payMethod
   doc.setFontSize(8.5);
   doc.setTextColor(...BLACK);
   [
-    ['','Eurocar Motor'],
+    ['',CLIENT_CONFIG.businessName],
     ['CIF:','_______________'],
     ['','Carrer les Minetes, 100'],
     ['','Polígono Industrial'],
@@ -2472,7 +2475,7 @@ function generateContractPDF(v, buyerName, buyerDni, buyerAddr, price, payMethod
   sectionHeader('FIRMAS',y);y+=10;
   const BW=(CW-20)/2;
   const BH=30;
-  [[ML,'El Vendedor','Eurocar Motor','_____________'],[ML+BW+20,'El Comprador',buyerName.length>22?buyerName.slice(0,22)+'…':buyerName,`DNI: ${buyerDni}`]].forEach(([x,title,name,sub])=>{
+  [[ML,'El Vendedor',CLIENT_CONFIG.businessName,'_____________'],[ML+BW+20,'El Comprador',buyerName.length>22?buyerName.slice(0,22)+'…':buyerName,`DNI: ${buyerDni}`]].forEach(([x,title,name,sub])=>{
     doc.setDrawColor(180,185,200);doc.setLineWidth(0.3);
     doc.rect(x,y,BW,BH);
     doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(...NAVY);
