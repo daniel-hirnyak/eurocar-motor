@@ -39,8 +39,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .login-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
 .login-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:40px 36px;width:100%;max-width:380px;box-shadow:var(--shadow-md);text-align:center}
 .login-logo-wrap{margin-bottom:16px;display:flex;justify-content:center}
-.login-logo-icon{width:52px;height:52px;background:var(--primary);border-radius:12px;display:flex;align-items:center;justify-content:center}
-.login-title{font-size:22px;font-weight:700;margin-bottom:4px}
+.login-logo-icon{width:52px;height:52px;border-radius:12px;overflow:hidden}
+.login-logo-icon img{width:100%;height:100%;object-fit:cover;display:block}
+.login-title{font-size:22px;font-weight:700;margin-bottom:6px}
+.login-eslogan{font-size:15px;color:var(--text-2);margin-bottom:5px}
 .login-sub{font-size:13px;color:var(--text-2);margin-bottom:28px}
 .login-form{text-align:left;display:flex;flex-direction:column;gap:14px}
 .login-error{background:var(--danger-bg);color:var(--danger);border:1px solid #FECACA;border-radius:var(--r);padding:10px 12px;font-size:13px;text-align:left;margin-bottom:4px}
@@ -609,11 +611,12 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   <div class="login-card">
     <div class="login-logo-wrap">
       <div class="login-logo-icon">
-        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3v-5l2.5-5h13L21 12v5h-2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
+        <img src="/eurocar-motor/sd-icon-v2.png" alt="StockDrive">
       </div>
     </div>
-    <div class="login-title">Eurocar Motor</div>
-    <div class="login-sub">Accede para gestionar el stock</div>
+    <div class="login-title">StockDrive</div>
+    <div class="login-eslogan">El sistema para gestionar tu stock de vehículos</div>
+    <div class="login-sub">Inicia sesión para gestionar tu negocio</div>
     <div id="loginError" class="login-error hidden"></div>
     <form class="login-form" onsubmit="handleLogin(event)">
       <div class="fg">
