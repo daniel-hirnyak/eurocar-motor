@@ -655,7 +655,7 @@ img { display: block; max-width: 100%; }
       </svg>
     </div>
     <div>
-      <div class="header-name">Eurocar Motor</div>
+      <div class="header-name" id="catHeaderName"></div>
       <div class="header-tagline">Santa Perpètua de Mogoda</div>
     </div>
   </div>
@@ -779,7 +779,7 @@ img { display: block; max-width: 100%; }
 <section class="about-section">
   <div class="about-inner">
     <h2 class="about-title">Sobre nosotros</h2>
-    <p class="about-text">Somos Eurocar Motor, una compraventa familiar con más de 10 años de experiencia en Santa Perpètua de Mogoda. Nos especializamos en vehículos de ocasión seleccionados, con atención directa y sin intermediarios. Nuestro objetivo es simple: que salgas con el coche que necesitas, al precio que merece.</p>
+    <p class="about-text">Somos <span id="catAboutName"></span>, una compraventa familiar con más de 10 años de experiencia en Santa Perpètua de Mogoda. Nos especializamos en vehículos de ocasión seleccionados, con atención directa y sin intermediarios. Nuestro objetivo es simple: que salgas con el coche que necesitas, al precio que merece.</p>
   </div>
 </section>
 
@@ -838,16 +838,23 @@ img { display: block; max-width: 100%; }
 
 <!-- ── FOOTER ────────────────────────────────────────────── -->
 <footer class="footer">
-  &copy; 2025 Eurocar Motor · Santa Perpètua de Mogoda, Barcelona
+  &copy; 2025 <span id="catFooterName"></span> · Santa Perpètua de Mogoda, Barcelona
 </footer>
 
+<script src="../config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
+// ─── NEGOCIO ─────────────────────────────────────────────────
+['catHeaderName','catAboutName','catFooterName'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.textContent = CLIENT_CONFIG.businessName;
+});
+
 // ─── SUPABASE ────────────────────────────────────────────────
 const { createClient } = supabase;
 const sb = createClient(
-  'https://rxmokcdynbmkhtirdpcf.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ4bW9rY2R5bmJta2h0aXJkcGNmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNjA1MTIsImV4cCI6MjA5NjgzNjUxMn0.ucPreFdtaopQ35upMj380igMk8VySh7ry_3ODvtU_2w'
+  CLIENT_CONFIG.supabaseUrl,
+  CLIENT_CONFIG.supabaseKey
 );
 
 // ─── STATE ───────────────────────────────────────────────────
