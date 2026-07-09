@@ -587,27 +587,39 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .web-analytics{max-width:660px;margin:0 auto;padding:32px 0 0}
 .web-analytics-title{font-size:20px;font-weight:800;color:var(--text);margin-bottom:6px}
 .web-analytics-sub{font-size:13px;color:var(--text-2);margin-bottom:24px;line-height:1.5}
-.analytics-section{margin-bottom:26px}
+.analytics-section{margin-bottom:30px}
 .analytics-section-head{font-size:11px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
-.ranking-list{display:flex;flex-direction:column;gap:6px}
-.ranking-row{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:11px 14px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow)}
-.ranking-pos{font-size:11px;font-weight:700;color:var(--text-2);min-width:18px;text-align:center;flex-shrink:0}
-.ranking-name{flex:1;font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
-.ranking-stats{display:flex;align-items:center;gap:7px;flex-shrink:0}
-.ranking-stat{font-size:11px;color:var(--text-2);white-space:nowrap}
-.tasa-badge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;white-space:nowrap}
+.analytics-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+/* ranking table */
+.ranking-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow)}
+.ranking-table{width:100%;border-collapse:collapse;font-size:13px;min-width:340px}
+.ranking-table thead th{padding:9px 12px;font-size:11px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;text-align:left;border-bottom:1px solid var(--border);background:var(--bg);white-space:nowrap}
+.ranking-table thead th.th-r{text-align:right}
+.ranking-table tbody tr{background:var(--white);transition:background .12s}
+.ranking-table tbody tr:hover{background:var(--primary-light)}
+.ranking-table tbody tr:not(:last-child) td{border-bottom:1px solid var(--border-light)}
+.ranking-table td{padding:10px 12px;vertical-align:middle}
+.ranking-table .td-pos{color:var(--text-2);font-size:11px;font-weight:700;width:28px}
+.ranking-table .td-name{font-weight:600;color:var(--text)}
+.ranking-table .td-r{text-align:right;color:var(--text-2);font-size:12px;white-space:nowrap}
+.tasa-pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;white-space:nowrap}
 .tasa-ok{background:var(--success-bg);color:var(--success)}
-.tasa-warn{background:var(--danger-bg);color:var(--danger)}
-.tasa-med{background:var(--primary-light);color:var(--primary)}
-.ranking-warn-note{font-size:12px;color:var(--danger);margin-top:10px;line-height:1.45;padding:9px 12px;background:var(--danger-bg);border:1px solid #FCA5A5;border-radius:var(--r)}
-.ghost-list{display:flex;flex-direction:column;gap:6px}
-.ghost-row{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:11px 14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;box-shadow:var(--shadow)}
-.ghost-name{font-size:13px;font-weight:600}
-.ghost-meta{font-size:12px;color:var(--text-2)}
-.analytics-empty{text-align:center;color:var(--text-2);font-size:13px;padding:28px 20px;background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg)}
-.analytics-loading{color:var(--text-2);font-size:13px;padding:28px 20px;text-align:center}
+.tasa-warn{background:#FFF7ED;color:#C2410C}
+.tasa-neutral{background:var(--border-light);color:var(--text-2)}
+.ranking-warn-note{font-size:12px;color:#C2410C;margin-top:8px;line-height:1.45;padding:9px 12px;background:#FFF7ED;border:1px solid #FED7AA;border-radius:var(--r)}
+/* ghost list */
+.ghost-list{display:flex;flex-direction:column;border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow)}
+.ghost-row{background:var(--white);padding:11px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.ghost-row:not(:last-child){border-bottom:1px solid var(--border-light)}
+.ghost-name{font-size:13px;font-weight:600;color:var(--text)}
+.ghost-meta{font-size:12px;color:var(--text-2);white-space:nowrap;flex-shrink:0}
+.analytics-empty{color:var(--text-2);font-size:13px;padding:20px 16px;background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);display:flex;align-items:center;gap:8px}
+.analytics-icon{display:inline-flex;align-items:center;gap:4px}
+.analytics-loading{color:var(--text-2);font-size:13px;padding:28px 0}
 .web-divider{border:none;border-top:1px solid var(--border);margin:8px 0 0}
-@media(max-width:480px){.ranking-stats{gap:5px}.ranking-stat{font-size:10px}}
+.hc-val-sm{font-size:16px;font-weight:700;color:var(--text);margin-top:4px;line-height:1.3;word-break:break-word}
+@media(max-width:540px){.analytics-cards{grid-template-columns:1fr}}
+@media(max-width:540px){.ranking-table{min-width:300px}}
 @media(max-width:580px){.ai-portal-grid{grid-template-columns:repeat(3,1fr)}}
 
 /* ── RESPONSIVE (home/tabs) ─────────────────────────────────── */
@@ -2073,6 +2085,7 @@ async function loadWebAnalytics() {
     const callsWeek = events.filter(e => e.tipo==='clic_llamar'  && new Date(e.timestamp)>=weekAgo).length;
     const waWeek    = events.filter(e => e.tipo==='clic_whatsapp' && new Date(e.timestamp)>=weekAgo).length;
     const totalWeek = callsWeek + waWeek;
+    const vistasWeek = events.filter(e => e.tipo==='vista' && new Date(e.timestamp)>=weekAgo).length;
 
     // Estadísticas por vehículo
     const vstats = {};
@@ -2093,6 +2106,8 @@ async function loadWebAnalytics() {
       .sort((a,b) => b.vistas-a.vistas)
       .slice(0,10);
 
+    const topVehicle = ranked.length>0 ? ranked[0].name : '—';
+
     // Métrica 4 — coches fantasma
     const ghosts = vehiclesCache
       .filter(v => {
@@ -2107,52 +2122,72 @@ async function loadWebAnalytics() {
       }))
       .sort((a,b)=>b.dias-a.dias);
 
-    // Render métricas 2+3
-    const rankingRows = ranked.length===0
-      ? `<div class="analytics-empty">Aún no hay suficientes datos. Comparte tu catálogo para empezar a ver qué coches generan más interés.</div>`
-      : ranked.map((r,i)=>{
-          const tc = r.warn?'tasa-warn':r.tasa>=10?'tasa-ok':'tasa-med';
-          return `<div class="ranking-row">
-  <div class="ranking-pos">${i+1}</div>
-  <div class="ranking-name">${esc(r.name)}</div>
-  <div class="ranking-stats">
-    <span class="ranking-stat">👁 ${r.vistas}</span>
-    <span class="ranking-stat">📞 ${r.contactos}</span>
-    <span class="tasa-badge ${tc}">${r.tasa}%</span>
-  </div>
-</div>`;
-        }).join('');
+    // SVG icons
+    const ICeye  = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+    const ICph   = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.56 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`;
+    const ICchk  = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+
+    // Ranking table rows
+    const rankingBody = ranked.length===0 ? '' : ranked.map((r,i)=>{
+      const tp = r.warn?'tasa-warn':r.tasa>=10?'tasa-ok':'tasa-neutral';
+      return `<tr>
+  <td class="td-pos td-r">${i+1}</td>
+  <td class="td-name">${esc(r.name)}</td>
+  <td class="td-r">${r.vistas}</td>
+  <td class="td-r">${r.contactos}</td>
+  <td class="td-r"><span class="tasa-pill ${tp}">${r.tasa}%</span></td>
+</tr>`;
+    }).join('');
+
+    const rankingHTML = ranked.length===0
+      ? `<div class="analytics-empty">Aún no hay datos suficientes. Comparte tu catálogo para empezar a ver qué coches generan más interés.</div>`
+      : `<div class="ranking-wrap"><table class="ranking-table">
+  <thead><tr>
+    <th class="td-pos th-r">#</th>
+    <th>Vehículo</th>
+    <th class="th-r"><span class="analytics-icon">${ICeye} Vistas</span></th>
+    <th class="th-r"><span class="analytics-icon">${ICph} Contactos</span></th>
+    <th class="th-r">Tasa</th>
+  </tr></thead>
+  <tbody>${rankingBody}</tbody>
+</table></div>`;
 
     const warnNote = ranked.some(r=>r.warn)
-      ? `<div class="ranking-warn-note">⚠️ Muchas visitas y pocos contactos puede indicar que el precio o las fotos necesitan revisión.</div>`
+      ? `<div class="ranking-warn-note">Muchas visitas y pocos contactos puede indicar que el precio o las fotos necesitan revisión.</div>`
       : '';
 
-    // Render métrica 4
-    const ghostRows = ghosts.length===0
-      ? `<div class="analytics-empty">Ningún coche necesita atención ahora mismo 👍</div>`
-      : ghosts.map(g=>`<div class="ghost-row">
-  <div class="ghost-name">${esc(g.name)}</div>
-  <div class="ghost-meta">${g.dias} días en stock · ${g.vistas} ${g.vistas===1?'vista':'vistas'}</div>
-</div>`).join('');
+    // Ghost rows
+    const ghostHTML = ghosts.length===0
+      ? `<div class="analytics-empty"><span style="color:var(--success);display:inline-flex">${ICchk}</span>Ningún coche necesita atención en este momento.</div>`
+      : `<div class="ghost-list">${ghosts.map(g=>`<div class="ghost-row"><div class="ghost-name">${esc(g.name)}</div><div class="ghost-meta">${g.dias} días en stock · ${g.vistas} ${g.vistas===1?'vista':'vistas'}</div></div>`).join('')}</div>`;
 
     section.innerHTML = `
 <div class="analytics-section">
-  <div class="analytics-section-head">Contactos</div>
-  <div class="home-metrics" style="grid-template-columns:1fr;max-width:260px">
+  <div class="analytics-section-head">Esta semana</div>
+  <div class="analytics-cards">
     <div class="home-card">
-      <div class="hc-label">Contactos esta semana</div>
-      <div class="hc-val" style="font-size:36px">${totalWeek}</div>
+      <div class="hc-label">Contactos</div>
+      <div class="hc-val">${totalWeek}</div>
       <div class="hc-sub">${callsWeek} llamadas · ${waWeek} WhatsApp</div>
+    </div>
+    <div class="home-card">
+      <div class="hc-label">Vistas del catálogo</div>
+      <div class="hc-val">${vistasWeek}</div>
+      <div class="hc-sub">Últimos 7 días</div>
+    </div>
+    <div class="home-card">
+      <div class="hc-label">Coche más visto</div>
+      <div class="hc-val-sm">${esc(topVehicle)}</div>
     </div>
   </div>
 </div>
 <div class="analytics-section">
-  <div class="analytics-section-head">Interés por vehículo &nbsp;<span style="font-size:11px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-2)">👁 vistas &nbsp;📞 contactos &nbsp;% tasa</span></div>
-  <div class="ranking-list">${rankingRows}</div>${warnNote}
+  <div class="analytics-section-head">Interés por vehículo</div>
+  ${rankingHTML}${warnNote}
 </div>
 <div class="analytics-section">
   <div class="analytics-section-head">Coches que necesitan atención</div>
-  <div class="ghost-list">${ghostRows}</div>
+  ${ghostHTML}
 </div>`;
   } catch(err) {
     console.error('Web analytics:', err);
