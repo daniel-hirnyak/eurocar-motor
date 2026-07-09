@@ -582,6 +582,32 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .ai-copy-btn:hover{border-color:var(--primary);color:var(--primary)}
 .ai-copy-btn.copied{border-color:#059669;color:#059669}
 .ai-error{background:#FEF2F2;border:1px solid #FCA5A5;border-radius:var(--r);padding:12px 14px;font-size:13px;color:#DC2626;line-height:1.5}
+
+/* ── WEB ANALYTICS DASHBOARD ─────────────────────── */
+.web-analytics{max-width:660px;margin:0 auto;padding:32px 0 0}
+.web-analytics-title{font-size:20px;font-weight:800;color:var(--text);margin-bottom:6px}
+.web-analytics-sub{font-size:13px;color:var(--text-2);margin-bottom:24px;line-height:1.5}
+.analytics-section{margin-bottom:26px}
+.analytics-section-head{font-size:11px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
+.ranking-list{display:flex;flex-direction:column;gap:6px}
+.ranking-row{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:11px 14px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow)}
+.ranking-pos{font-size:11px;font-weight:700;color:var(--text-2);min-width:18px;text-align:center;flex-shrink:0}
+.ranking-name{flex:1;font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.ranking-stats{display:flex;align-items:center;gap:7px;flex-shrink:0}
+.ranking-stat{font-size:11px;color:var(--text-2);white-space:nowrap}
+.tasa-badge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;white-space:nowrap}
+.tasa-ok{background:var(--success-bg);color:var(--success)}
+.tasa-warn{background:var(--danger-bg);color:var(--danger)}
+.tasa-med{background:var(--primary-light);color:var(--primary)}
+.ranking-warn-note{font-size:12px;color:var(--danger);margin-top:10px;line-height:1.45;padding:9px 12px;background:var(--danger-bg);border:1px solid #FCA5A5;border-radius:var(--r)}
+.ghost-list{display:flex;flex-direction:column;gap:6px}
+.ghost-row{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:11px 14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;box-shadow:var(--shadow)}
+.ghost-name{font-size:13px;font-weight:600}
+.ghost-meta{font-size:12px;color:var(--text-2)}
+.analytics-empty{text-align:center;color:var(--text-2);font-size:13px;padding:28px 20px;background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg)}
+.analytics-loading{color:var(--text-2);font-size:13px;padding:28px 20px;text-align:center}
+.web-divider{border:none;border-top:1px solid var(--border);margin:8px 0 0}
+@media(max-width:480px){.ranking-stats{gap:5px}.ranking-stat{font-size:10px}}
 @media(max-width:580px){.ai-portal-grid{grid-template-columns:repeat(3,1fr)}}
 
 /* ── RESPONSIVE (home/tabs) ─────────────────────────────────── */
@@ -1667,6 +1693,7 @@ function setHomeTab(tab) {
     document.querySelectorAll('.dtab[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
     c.innerHTML = renderHomeContent();
     if (tab==='metricas') initHomeCharts();
+    if (tab==='web') loadWebAnalytics();
   } else {
     render();
   }
@@ -1915,6 +1942,12 @@ function renderWebTab() {
     ? stock.map(v => `<option value="${v.id}">${esc(v.brand)} ${esc(v.model)}${v.matricula?' — '+esc(v.matricula):''}${v.year?' ('+v.year+')':''}</option>`).join('')
     : '<option value="" disabled>No hay vehículos en stock</option>';
   return `
+<div class="web-analytics">
+  <h2 class="web-analytics-title">Analítica de tu web</h2>
+  <p class="web-analytics-sub">Interacciones reales de los visitantes de tu catálogo online.</p>
+  <div id="webAnalyticsSection" class="analytics-loading">Cargando datos...</div>
+</div>
+<hr class="web-divider">
 <div class="ai-wrap">
   <h2>Descripciones para portales</h2>
   <p class="ai-sub">Selecciona un vehículo y el portal. La IA generará un texto optimizado listo para copiar y pegar.</p>
@@ -2024,6 +2057,108 @@ function aiCopy() {
       setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML=`${AI_COPY_ICON} Copiar al portapapeles`; }, 2000);
     }
   }).catch(() => { out.select(); document.execCommand('copy'); });
+}
+
+async function loadWebAnalytics() {
+  const section = document.getElementById('webAnalyticsSection');
+  if (!section) return;
+  try {
+    const { data: ev, error: ee } = await sb.from('eventos_catalogo').select('tipo,vehiculo_id,timestamp');
+    if (ee) throw ee;
+    const events = ev || [];
+    const now = new Date();
+    const weekAgo = new Date(now.getTime() - 7 * 86400000);
+
+    // Métrica 1 — contactos esta semana
+    const callsWeek = events.filter(e => e.tipo==='clic_llamar'  && new Date(e.timestamp)>=weekAgo).length;
+    const waWeek    = events.filter(e => e.tipo==='clic_whatsapp' && new Date(e.timestamp)>=weekAgo).length;
+    const totalWeek = callsWeek + waWeek;
+
+    // Estadísticas por vehículo
+    const vstats = {};
+    events.forEach(e => {
+      if (!e.vehiculo_id) return;
+      if (!vstats[e.vehiculo_id]) vstats[e.vehiculo_id] = { vistas:0, contactos:0 };
+      if (e.tipo==='vista') vstats[e.vehiculo_id].vistas++;
+      if (e.tipo==='clic_llamar'||e.tipo==='clic_whatsapp') vstats[e.vehiculo_id].contactos++;
+    });
+
+    // Métricas 2 + 3 — ranking con tasa de contacto
+    const ranked = Object.entries(vstats)
+      .map(([id, s]) => {
+        const v = vehiclesCache.find(x => x.id===id);
+        const tasa = s.vistas>0 ? Math.round((s.contactos/s.vistas)*100) : 0;
+        return { name: v?`${v.brand} ${v.model}`:'—', vistas:s.vistas, contactos:s.contactos, tasa, warn:s.vistas>=10&&tasa<5 };
+      })
+      .sort((a,b) => b.vistas-a.vistas)
+      .slice(0,10);
+
+    // Métrica 4 — coches fantasma
+    const ghosts = vehiclesCache
+      .filter(v => {
+        if (v.status!=='disponible') return false;
+        const ref = v.entryDate || v.createdAt; if (!ref) return false;
+        return Math.floor((now-new Date(ref))/86400000)>30 && (vstats[v.id]?.vistas||0)<5;
+      })
+      .map(v => ({
+        name:`${v.brand} ${v.model}`,
+        dias: Math.floor((now-new Date(v.entryDate||v.createdAt))/86400000),
+        vistas: vstats[v.id]?.vistas||0,
+      }))
+      .sort((a,b)=>b.dias-a.dias);
+
+    // Render métricas 2+3
+    const rankingRows = ranked.length===0
+      ? `<div class="analytics-empty">Aún no hay suficientes datos. Comparte tu catálogo para empezar a ver qué coches generan más interés.</div>`
+      : ranked.map((r,i)=>{
+          const tc = r.warn?'tasa-warn':r.tasa>=10?'tasa-ok':'tasa-med';
+          return `<div class="ranking-row">
+  <div class="ranking-pos">${i+1}</div>
+  <div class="ranking-name">${esc(r.name)}</div>
+  <div class="ranking-stats">
+    <span class="ranking-stat">👁 ${r.vistas}</span>
+    <span class="ranking-stat">📞 ${r.contactos}</span>
+    <span class="tasa-badge ${tc}">${r.tasa}%</span>
+  </div>
+</div>`;
+        }).join('');
+
+    const warnNote = ranked.some(r=>r.warn)
+      ? `<div class="ranking-warn-note">⚠️ Muchas visitas y pocos contactos puede indicar que el precio o las fotos necesitan revisión.</div>`
+      : '';
+
+    // Render métrica 4
+    const ghostRows = ghosts.length===0
+      ? `<div class="analytics-empty">Ningún coche necesita atención ahora mismo 👍</div>`
+      : ghosts.map(g=>`<div class="ghost-row">
+  <div class="ghost-name">${esc(g.name)}</div>
+  <div class="ghost-meta">${g.dias} días en stock · ${g.vistas} ${g.vistas===1?'vista':'vistas'}</div>
+</div>`).join('');
+
+    section.innerHTML = `
+<div class="analytics-section">
+  <div class="analytics-section-head">Contactos</div>
+  <div class="home-metrics" style="grid-template-columns:1fr;max-width:260px">
+    <div class="home-card">
+      <div class="hc-label">Contactos esta semana</div>
+      <div class="hc-val" style="font-size:36px">${totalWeek}</div>
+      <div class="hc-sub">${callsWeek} llamadas · ${waWeek} WhatsApp</div>
+    </div>
+  </div>
+</div>
+<div class="analytics-section">
+  <div class="analytics-section-head">Interés por vehículo &nbsp;<span style="font-size:11px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-2)">👁 vistas &nbsp;📞 contactos &nbsp;% tasa</span></div>
+  <div class="ranking-list">${rankingRows}</div>${warnNote}
+</div>
+<div class="analytics-section">
+  <div class="analytics-section-head">Coches que necesitan atención</div>
+  <div class="ghost-list">${ghostRows}</div>
+</div>`;
+  } catch(err) {
+    console.error('Web analytics:', err);
+    const s = document.getElementById('webAnalyticsSection');
+    if (s) s.innerHTML = `<div class="analytics-empty">No se pudieron cargar los datos de analítica.</div>`;
+  }
 }
 
 function initHomeCharts() {
