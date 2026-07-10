@@ -176,6 +176,29 @@ img { display: block; max-width: 100%; }
   .trust-item:nth-child(4){border-right:none;border-top:1px solid var(--gray-2)}
 }
 
+/* ── REVIEWS ─────────────────────────────────────────────── */
+.reviews-section{background:var(--gray);padding:72px 0 64px}
+.reviews-header{max-width:1200px;margin:0 auto;padding:0 48px 40px;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.reviews-header-left .reviews-eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--red);margin-bottom:10px}
+.reviews-title{font-size:clamp(22px,2.8vw,32px);font-weight:800;color:var(--text);letter-spacing:-.3px}
+.reviews-outer{overflow:hidden;cursor:grab;user-select:none;-webkit-user-select:none;padding:8px 0 20px}
+.reviews-outer:active{cursor:grabbing}
+.reviews-track{display:flex;gap:16px;will-change:transform;padding-left:48px}
+.review-card{background:var(--white);border:1px solid var(--gray-2);border-radius:12px;padding:24px;width:300px;flex-shrink:0;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.review-name{font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.review-stars{color:#F59E0B;font-size:17px;letter-spacing:1px;margin-bottom:12px;line-height:1}
+.review-text{font-size:13px;color:#4B5563;line-height:1.65;display:-webkit-box;-webkit-line-clamp:5;line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
+@media(max-width:768px){
+  .reviews-section{padding:56px 0 48px}
+  .reviews-header{padding:0 24px 32px;align-items:flex-start;flex-direction:column;gap:16px}
+  .reviews-track{padding-left:24px}
+}
+@media(max-width:480px){
+  .reviews-header{padding:0 16px 28px}
+  .reviews-track{padding-left:16px}
+  .review-card{width:260px;padding:20px 18px}
+}
+
 /* ── FILTERS ─────────────────────────────────────────────── */
 .filters-wrap {
   background: var(--white);
@@ -769,6 +792,95 @@ img { display: block; max-width: 100%; }
   </div>
 </section>
 
+<!-- ── RESEÑAS DE GOOGLE ─────────────────────────────────── -->
+<section class="reviews-section">
+  <div class="reviews-header">
+    <div class="reviews-header-left">
+      <p class="reviews-eyebrow">Reseñas de Google</p>
+      <h2 class="reviews-title">Lo que dicen nuestros clientes</h2>
+    </div>
+  </div>
+  <div class="reviews-outer" id="reviewsOuter">
+    <div class="reviews-track" id="reviewsTrack">
+
+      <!-- Set 1 -->
+      <div class="review-card">
+        <p class="review-name">Francisco Liébana Begara</p>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"He comprado una Mercedes Sprinter KSH de matrícula, todo muy transparente. La probé dos veces y al final la compré. Muy contento, da gusto encontrar aún vendedores profesionales, con la atención y la paciencia que tuvieron."</p>
+      </div>
+      <div class="review-card">
+        <p class="review-name">Adrián Dima</p>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"He comprado varias furgonetas aquí y todo ha ido muy bien. Buenos servicios y un trato excelente por parte de Yuri. Mucha profesionalidad y rapidez en los procedimientos. ¡Recomiendo el sitio!"</p>
+      </div>
+      <div class="review-card">
+        <p class="review-name">Javier Morales</p>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Un conocido compró una Sprinter larga hace 3 años y hasta el día de hoy (800.000 km) ningún problema. Un buen amigo también compró otra más pequeña y sigue sin problemas. Tienen buenos vehículos."</p>
+      </div>
+      <div class="review-card">
+        <p class="review-name">Cristian Del Amo Cosme</p>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Personas muy correctas y amables, un trato estupendo y total transparencia con los desperfectos que pueda tener el vehículo. Me fueron a recoger a la estación, ya que fui en avión hasta allí. Muy agradecido, la documentación súper rápida. Volvería a repetir cada vez que tenga que comprar un vehículo."</p>
+      </div>
+      <div class="review-card">
+        <p class="review-name">IRONCOL</p>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Compré allí una furgoneta, una Mercedes Sprinter, y salió buenísima. El vendedor es excelente, servicial, serio y muy responsable con las garantías. Atendió siempre mis dudas sobre cualquier detalle a revisar. Recomendado al 100%."</p>
+      </div>
+      <div class="review-card">
+        <p class="review-name">Jefferson Cachiguango</p>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Excelente reseña y recomendación para este negocio de venta de furgonetas. Se han portado genial desde el inicio hasta la compra, la entrega de la documentación y el cambio de nombre. Personas muy serias y de buen trato. Al comprar un coche sentimos un poco de miedo, pero esta empresa es muy seria y comprometida. ¡Recomendados!"</p>
+      </div>
+      <div class="review-card">
+        <p class="review-name">Juan Antonio Esteve Jiménez</p>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Compré hace 5 años una furgoneta y estoy súper contento con ella y por el trato recibido. Si tuviese que volver a comprar otra, volvería a comprársela a él."</p>
+      </div>
+
+      <!-- Set 2: clone para loop infinito -->
+      <div class="review-card" aria-hidden="true">
+        <p class="review-name">Francisco Liébana Begara</p>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"He comprado una Mercedes Sprinter KSH de matrícula, todo muy transparente. La probé dos veces y al final la compré. Muy contento, da gusto encontrar aún vendedores profesionales, con la atención y la paciencia que tuvieron."</p>
+      </div>
+      <div class="review-card" aria-hidden="true">
+        <p class="review-name">Adrián Dima</p>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"He comprado varias furgonetas aquí y todo ha ido muy bien. Buenos servicios y un trato excelente por parte de Yuri. Mucha profesionalidad y rapidez en los procedimientos. ¡Recomiendo el sitio!"</p>
+      </div>
+      <div class="review-card" aria-hidden="true">
+        <p class="review-name">Javier Morales</p>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Un conocido compró una Sprinter larga hace 3 años y hasta el día de hoy (800.000 km) ningún problema. Un buen amigo también compró otra más pequeña y sigue sin problemas. Tienen buenos vehículos."</p>
+      </div>
+      <div class="review-card" aria-hidden="true">
+        <p class="review-name">Cristian Del Amo Cosme</p>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Personas muy correctas y amables, un trato estupendo y total transparencia con los desperfectos que pueda tener el vehículo. Me fueron a recoger a la estación, ya que fui en avión hasta allí. Muy agradecido, la documentación súper rápida. Volvería a repetir cada vez que tenga que comprar un vehículo."</p>
+      </div>
+      <div class="review-card" aria-hidden="true">
+        <p class="review-name">IRONCOL</p>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Compré allí una furgoneta, una Mercedes Sprinter, y salió buenísima. El vendedor es excelente, servicial, serio y muy responsable con las garantías. Atendió siempre mis dudas sobre cualquier detalle a revisar. Recomendado al 100%."</p>
+      </div>
+      <div class="review-card" aria-hidden="true">
+        <p class="review-name">Jefferson Cachiguango</p>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Excelente reseña y recomendación para este negocio de venta de furgonetas. Se han portado genial desde el inicio hasta la compra, la entrega de la documentación y el cambio de nombre. Personas muy serias y de buen trato. Al comprar un coche sentimos un poco de miedo, pero esta empresa es muy seria y comprometida. ¡Recomendados!"</p>
+      </div>
+      <div class="review-card" aria-hidden="true">
+        <p class="review-name">Juan Antonio Esteve Jiménez</p>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Compré hace 5 años una furgoneta y estoy súper contento con ella y por el trato recibido. Si tuviese que volver a comprar otra, volvería a comprársela a él."</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 <!-- ── FILTERS ────────────────────────────────────────────── -->
 <div class="filters-wrap" id="catalogo">
   <div class="filters-inner">
@@ -1345,6 +1457,72 @@ function heroSearch() {
       hc.textContent = m ? m[0] : '0';
     }).observe(rc, { childList: true, characterData: true, subtree: true });
   }
+})();
+
+// ─── REVIEWS CAROUSEL ────────────────────────────────────────
+(function(){
+  var outer = document.getElementById('reviewsOuter');
+  var track = document.getElementById('reviewsTrack');
+  if (!outer || !track) return;
+  var cards = track.querySelectorAll('.review-card');
+  var half = Math.floor(cards.length / 2);
+  var SPEED = 0.1; // px per ms
+  var pos = 0, unit = 0, lastT = null, paused = false, dragging = false;
+  var dragX = 0, dragPos = 0;
+
+  function initUnit() {
+    if (cards.length < 2) return;
+    var r0 = cards[0].getBoundingClientRect().left;
+    var rN = cards[half].getBoundingClientRect().left;
+    unit = rN - r0;
+  }
+
+  function tick(ts) {
+    if (!paused && !dragging) {
+      if (lastT !== null && unit > 0) {
+        pos += SPEED * (ts - lastT);
+        if (pos >= unit) pos -= unit;
+      }
+      lastT = ts;
+      track.style.transform = 'translateX(' + (-pos) + 'px)';
+    } else {
+      lastT = null;
+    }
+    requestAnimationFrame(tick);
+  }
+
+  outer.addEventListener('mouseenter', function() { paused = true; });
+  outer.addEventListener('mouseleave', function() { if (!dragging) paused = false; });
+
+  outer.addEventListener('mousedown', function(e) {
+    dragging = true; paused = true;
+    dragX = e.clientX; dragPos = pos;
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove', function(e) {
+    if (!dragging) return;
+    pos = dragPos + (dragX - e.clientX);
+    if (unit > 0) { if (pos < 0) pos += unit; if (pos >= unit) pos -= unit; }
+    track.style.transform = 'translateX(' + (-pos) + 'px)';
+  });
+  document.addEventListener('mouseup', function() {
+    if (!dragging) return;
+    dragging = false; paused = false;
+  });
+
+  outer.addEventListener('touchstart', function(e) {
+    dragging = true; paused = true;
+    dragX = e.touches[0].clientX; dragPos = pos;
+  }, {passive: true});
+  outer.addEventListener('touchmove', function(e) {
+    if (!dragging) return;
+    pos = dragPos + (dragX - e.touches[0].clientX);
+    if (unit > 0) { if (pos < 0) pos += unit; if (pos >= unit) pos -= unit; }
+    track.style.transform = 'translateX(' + (-pos) + 'px)';
+  }, {passive: true});
+  outer.addEventListener('touchend', function() { dragging = false; paused = false; });
+
+  setTimeout(function() { initUnit(); requestAnimationFrame(tick); }, 100);
 })();
 
 // ─── START ───────────────────────────────────────────────────
