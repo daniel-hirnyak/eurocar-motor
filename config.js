@@ -6,7 +6,7 @@
 
 const CLIENT_CONFIG = {
   // --- Identidad del negocio ---
-  businessName: "Eurocar Motor",        // Nombre que aparece en PDFs, contratos, etc.
+  businessName: "Eurocar-Motor",        // Nombre que aparece en PDFs, contratos, etc.
 
   // --- Datos de contacto ---
   phone: "+34 692 92 22 99",           // Con prefijo internacional

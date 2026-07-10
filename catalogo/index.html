@@ -135,7 +135,7 @@ img { display: block; max-width: 100%; }
 .hero-cta-primary:hover{background:var(--red-d)}
 .hero-cta-secondary{display:inline-flex;align-items:center;gap:8px;padding:14px 22px;background:transparent;color:var(--white);border:2px solid rgba(255,255,255,.5);border-radius:10px;font-size:15px;font-weight:600;transition:all .25s;text-decoration:none}
 .hero-cta-secondary:hover{border-color:rgba(255,255,255,.9);background:rgba(255,255,255,.08)}
-.hero-card{background:var(--white);border-radius:16px;padding:32px 28px;box-shadow:0 24px 64px rgba(0,0,0,.28),0 4px 16px rgba(0,0,0,.12)}
+.hero-card{background:var(--white);border-radius:16px;padding:32px 28px;box-shadow:0 40px 100px rgba(0,0,0,.38),0 12px 32px rgba(0,0,0,.2),0 2px 8px rgba(0,0,0,.12)}
 .hero-card-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:20px;letter-spacing:-.2px}
 .hero-search-wrap{position:relative;margin-bottom:12px}
 .hero-search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--gray-3);pointer-events:none}
@@ -146,6 +146,7 @@ img { display: block; max-width: 100%; }
 .hero-count{margin-top:18px;padding-top:16px;border-top:1px solid var(--gray-2);text-align:center}
 .hero-count-num{color:var(--red);font-weight:900;font-size:26px;display:block;line-height:1;margin-bottom:4px}
 .hero-count-lbl{font-size:12px;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+@media(max-width:640px){.eyebrow-sep{display:none}.eyebrow-brand,.eyebrow-city{display:block}}
 @media(max-width:960px){
   .hero{min-height:auto}
   .hero-content{grid-template-columns:1fr;gap:32px;padding:80px 28px 56px}
@@ -706,8 +707,8 @@ img { display: block; max-width: 100%; }
 
     <!-- Columna izquierda: texto y CTAs -->
     <div class="hero-left">
-      <p class="hero-eyebrow">Eurocar Motor · Santa Perpètua de Mogoda</p>
-      <h1 class="hero-title">Furgonetas y<br>vehículos de<br>ocasión, <span>listos<br>para trabajar</span></h1>
+      <p class="hero-eyebrow"><span class="eyebrow-brand">Eurocar-Motor</span><span class="eyebrow-sep"> · </span><span class="eyebrow-city">Santa Perpètua de Mogoda</span></p>
+      <h1 class="hero-title">Furgonetas y<br>vehículos de<br>ocasión, <span>listos<br>para ti</span></h1>
       <p class="hero-sub" id="catHeroSub"></p>
       <div class="hero-actions">
         <a id="catHeroCallBtn" href="#" class="hero-cta-primary" onclick="trackEvento('clic_llamar',null)">
@@ -731,7 +732,7 @@ img { display: block; max-width: 100%; }
           </span>
           <input id="heroSearchInp" class="hero-search-inp" type="text" placeholder="Buscar por marca o modelo..." autocomplete="off" onkeydown="if(event.key==='Enter')heroSearch()">
         </div>
-        <button type="button" class="hero-search-btn" onclick="heroSearch()">Ver stock</button>
+        <button type="button" class="hero-search-btn" onclick="heroSearch()">Ver nuestro stock</button>
         <div class="hero-count">
           <span id="heroVehicleCount" class="hero-count-num">—</span>
           <span class="hero-count-lbl">vehículos disponibles en stock</span>
@@ -746,22 +747,22 @@ img { display: block; max-width: 100%; }
 <section class="trust-band">
   <div class="trust-grid-inner">
     <div class="trust-item">
-      <svg class="trust-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+      <svg class="trust-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
       <div class="trust-num">+10 años</div>
       <div class="trust-lbl">de experiencia en vehículos de ocasión</div>
     </div>
     <div class="trust-item">
-      <svg class="trust-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3v-5l2.5-5h13L21 12v5h-2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
+      <svg class="trust-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="13" height="12" rx="1"/><path d="M14 7h5l3 4v4h-8V7z"/><circle cx="4.5" cy="17.5" r="1.5"/><circle cx="18.5" cy="17.5" r="1.5"/><line x1="1" y1="10" x2="14" y2="10"/></svg>
       <div class="trust-num">+1.200</div>
       <div class="trust-lbl">furgonetas y vehículos vendidos</div>
     </div>
     <div class="trust-item">
-      <svg class="trust-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      <svg class="trust-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/><line x1="6" y1="15" x2="6.01" y2="15"/><line x1="10" y1="15" x2="14" y2="15"/></svg>
       <div class="trust-num">Financiación</div>
       <div class="trust-lbl">disponible para autónomos y empresas</div>
     </div>
     <div class="trust-item">
-      <svg class="trust-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <svg class="trust-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
       <div class="trust-num">Garantía</div>
       <div class="trust-lbl">incluida en todos los vehículos</div>
     </div>
@@ -960,7 +961,7 @@ _fill('catHeaderName',  CLIENT_CONFIG.businessName);
 _fill('catAboutName',   CLIENT_CONFIG.businessName);
 _fill('catFooterName',  CLIENT_CONFIG.businessName);
 _fill('catTagline',     CLIENT_CONFIG.city);
-_fill('catHeroSub',     `Vehículos de ocasión seleccionados · ${CLIENT_CONFIG.city}`);
+_fill('catHeroSub',     'Vehículos de ocasión seleccionados');
 _fill('catWhySub',      `Más de 10 años ayudando a clientes a encontrar su vehículo ideal en ${CLIENT_CONFIG.city}`);
 _fill('catAboutCity',   CLIENT_CONFIG.city);
 _fill('catFooterCity',  CLIENT_CONFIG.city);
