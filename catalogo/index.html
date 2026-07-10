@@ -239,11 +239,19 @@ img { display: block; max-width: 100%; }
   .featured-section{padding:48px 0 40px}
   .featured-inner{padding:0}
   .featured-header,.featured-cta-wrap{padding:0 16px}
+  /* Carrusel horizontal: 1 tarjeta visible + peek de la siguiente */
   .featured-grid{display:flex;gap:12px;overflow-x:auto;padding:4px 16px 16px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
   .featured-grid::-webkit-scrollbar{display:none}
-  .feat-card{min-width:240px;flex-shrink:0;scroll-snap-align:start}
-  .feat-card--main{min-width:270px}
-  .feat-card--main .feat-card-img,.feat-card:not(.feat-card--main) .feat-card-img{aspect-ratio:4/3}
+  .feat-card,.feat-card--main{min-width:72vw;max-width:72vw;flex-shrink:0;scroll-snap-align:start}
+  /* Altura fija y controlada para fotos en móvil — sin aspect-ratio que puede crecer sin límite */
+  .feat-card--main .feat-card-img,.feat-card:not(.feat-card--main) .feat-card-img{height:185px;aspect-ratio:unset}
+  .feat-card-img img{width:100%;height:100%;object-fit:cover;object-position:center center}
+  .feat-card-no-photo{height:185px;aspect-ratio:unset}
+  /* Reset tamaños tipográficos a los base, sin override de la tarjeta principal */
+  .feat-card--main .feat-card-name{font-size:14px;margin-bottom:8px}
+  .feat-card--main .feat-card-price{font-size:16px}
+  .feat-card--main .feat-card-body{padding:14px 16px}
+  .feat-card--main .feat-meta-tag{font-size:12px}
 }
 
 /* ── FILTERS ─────────────────────────────────────────────── */
