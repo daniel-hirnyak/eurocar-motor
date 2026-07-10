@@ -235,19 +235,18 @@ img { display: block; max-width: 100%; }
   .feat-card--main{grid-column:1/3;grid-row:auto}
   .feat-card--main .feat-card-img{aspect-ratio:16/7}
 }
+@media(max-width:768px){
+  .featured-section .feat-card-img{height:200px!important;max-height:200px!important;aspect-ratio:unset!important;min-height:0!important;overflow:hidden!important}
+  .featured-section .feat-card-img img{width:100%!important;height:200px!important;max-height:200px!important;object-fit:cover!important;object-position:center!important;display:block!important}
+  .featured-section .feat-card-no-photo{height:200px!important;max-height:200px!important;aspect-ratio:unset!important}
+}
 @media(max-width:640px){
   .featured-section{padding:48px 0 40px}
   .featured-inner{padding:0}
   .featured-header,.featured-cta-wrap{padding:0 16px}
-  /* Carrusel horizontal: 1 tarjeta visible + peek de la siguiente */
   .featured-grid{display:flex;gap:12px;overflow-x:auto;padding:4px 16px 16px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
   .featured-grid::-webkit-scrollbar{display:none}
-  .feat-card,.feat-card--main{min-width:72vw;max-width:72vw;flex-shrink:0;scroll-snap-align:start}
-  /* Altura fija y controlada para fotos en móvil — sin aspect-ratio que puede crecer sin límite */
-  .feat-card--main .feat-card-img,.feat-card:not(.feat-card--main) .feat-card-img{height:185px;aspect-ratio:unset}
-  .feat-card-img img{width:100%;height:100%;object-fit:cover;object-position:center center}
-  .feat-card-no-photo{height:185px;aspect-ratio:unset}
-  /* Reset tamaños tipográficos a los base, sin override de la tarjeta principal */
+  .feat-card,.feat-card--main{min-width:280px;max-width:280px;flex-shrink:0;scroll-snap-align:start}
   .feat-card--main .feat-card-name{font-size:14px;margin-bottom:8px}
   .feat-card--main .feat-card-price{font-size:16px}
   .feat-card--main .feat-card-body{padding:14px 16px}
