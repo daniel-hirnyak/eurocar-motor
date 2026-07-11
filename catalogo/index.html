@@ -836,6 +836,62 @@ img { display: block; max-width: 100%; }
   .sl-price{font-size:22px}
 }
 @media(max-width:480px){.sl-detail-btn{padding:9px 14px;font-size:12px}}
+
+/* ── FICHA VIEW ──────────────────────────────────────────── */
+#viewFicha{background:#F5F5F5;min-height:calc(100vh - 62px)}
+.ficha-bc-bar{background:var(--white);border-bottom:1px solid var(--gray-2);padding:12px 0}
+.ficha-bc-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;gap:8px;font-size:13px;flex-wrap:wrap}
+.ficha-bc-link{color:var(--text-2);cursor:pointer;transition:color .15s}.ficha-bc-link:hover{color:var(--red)}
+.ficha-bc-sep{color:var(--gray-3)}.ficha-bc-current{color:var(--text);font-weight:600}
+.ficha-wrap{max-width:1200px;margin:0 auto;padding:28px 24px 64px}
+.ficha-layout{display:grid;grid-template-columns:1fr 400px;gap:32px;align-items:start}
+.ficha-main-photo{position:relative;border-radius:14px;overflow:hidden;background:var(--black);aspect-ratio:4/3;cursor:zoom-in}
+.ficha-main-photo img{width:100%;height:100%;object-fit:cover;display:block;transition:opacity .2s}
+.ficha-main-placeholder{width:100%;height:100%;min-height:260px;display:flex;align-items:center;justify-content:center;background:#1a1a1a}
+.ficha-gnav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;background:rgba(0,0,0,.6);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s;z-index:5;border:none;font-size:22px;line-height:1}
+.ficha-gnav:hover{background:rgba(0,0,0,.88)}.ficha-gprev{left:14px}.ficha-gnext{right:14px}
+.ficha-gcnt{position:absolute;bottom:14px;right:14px;background:rgba(0,0,0,.6);color:rgba(255,255,255,.9);font-size:12px;font-weight:600;padding:4px 10px;border-radius:10px}
+.ficha-expand{position:absolute;bottom:14px;left:14px;background:rgba(0,0,0,.6);color:rgba(255,255,255,.85);border:none;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;transition:background .15s}
+.ficha-expand:hover{background:rgba(0,0,0,.88)}
+.ficha-thumbs{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.ficha-thumb{width:72px;height:54px;border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:border-color .15s,opacity .15s;flex-shrink:0}
+.ficha-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.ficha-thumb.active{border-color:var(--red)}.ficha-thumb:not(.active){opacity:.6}.ficha-thumb:hover:not(.active){opacity:.85}
+.ficha-info{display:flex;flex-direction:column;gap:20px}
+.ficha-name{font-size:clamp(22px,2.5vw,30px);font-weight:800;letter-spacing:-.4px;line-height:1.1;color:var(--text)}
+.ficha-summary{font-size:14px;color:var(--text-2);margin-top:8px;line-height:1.7}
+.ficha-price-box{background:var(--white);border:1px solid var(--gray-2);border-radius:14px;padding:20px 22px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.ficha-plabel{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-2);margin-bottom:4px}
+.ficha-price{font-size:36px;font-weight:900;color:var(--red);letter-spacing:-.5px;line-height:1;margin-bottom:18px}
+.ficha-cta-call,.ficha-cta-wa{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;text-decoration:none;transition:background .15s;font-family:inherit}
+.ficha-cta-call{background:var(--black);color:var(--white);margin-bottom:10px}
+.ficha-cta-call:hover{background:#222}
+.ficha-cta-wa{background:#25D366;color:var(--white)}.ficha-cta-wa:hover{background:#20bb59}
+.ficha-specs-box{background:var(--white);border:1px solid var(--gray-2);border-radius:14px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.ficha-specs-ttl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-2);padding:14px 18px 10px;border-bottom:1px solid var(--gray-2)}
+.ficha-srow{display:flex;align-items:center;justify-content:space-between;padding:11px 18px;border-bottom:1px solid var(--gray-2);gap:12px}
+.ficha-srow:last-child{border-bottom:none}
+.ficha-slbl{font-size:13px;color:var(--text-2);flex-shrink:0}.ficha-sval{font-size:13px;font-weight:600;color:var(--text);text-align:right}
+.ficha-desc{background:var(--white);border:1px solid var(--gray-2);border-radius:14px;padding:24px 28px;margin-top:28px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.ficha-desc-ttl{font-size:17px;font-weight:700;color:var(--text);margin-bottom:14px}
+.ficha-desc-txt{font-size:14px;line-height:1.75;color:#374151;white-space:pre-wrap}
+/* Lightbox */
+.ficha-lb{position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:500;display:flex;align-items:center;justify-content:center}
+.ficha-lb img{max-width:94vw;max-height:90vh;object-fit:contain;border-radius:6px;display:block}
+.ficha-lb-close{position:absolute;top:16px;right:20px;color:rgba(255,255,255,.8);background:none;border:none;font-size:32px;cursor:pointer;line-height:1;padding:6px}
+.ficha-lb-prev,.ficha-lb-next{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.12);border:none;color:#fff;font-size:28px;cursor:pointer;border-radius:50%;width:50px;height:50px;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.ficha-lb-prev:hover,.ficha-lb-next:hover{background:rgba(255,255,255,.22)}
+.ficha-lb-prev{left:16px}.ficha-lb-next{right:16px}
+.ficha-lb-cnt{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.6);font-size:13px}
+@media(max-width:960px){.ficha-layout{grid-template-columns:1fr}}
+@media(max-width:640px){
+  .ficha-wrap{padding:14px 14px 48px}
+  .ficha-bc-inner{padding:0 14px}
+  .ficha-main-photo{aspect-ratio:16/10;border-radius:10px}
+  .ficha-thumbs{gap:6px}.ficha-thumb{width:60px;height:44px}
+  .ficha-price{font-size:28px}
+  .ficha-desc{padding:18px 16px}
+}
 </style>
 </head>
 <body>
@@ -1331,6 +1387,12 @@ img { display: block; max-width: 100%; }
 
 </div><!-- /viewStock -->
 
+<!-- ── VISTA FICHA ────────────────────────────────────────── -->
+<div id="viewFicha" style="display:none">
+  <div class="ficha-bc-bar"><div class="ficha-bc-inner" id="fichaBc"></div></div>
+  <div class="ficha-wrap" id="fichaMain"></div>
+</div><!-- /viewFicha -->
+
 <script src="../config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
@@ -1394,7 +1456,7 @@ async function loadVehicles() {
   try {
     const { data, error } = await sb
       .from('vehiculos')
-      .select('id, marca, modelo, anio, kilometraje, color, precio_venta, fotos, destacado')
+      .select('id, marca, modelo, anio, kilometraje, color, precio_venta, fotos, destacado, matricula, combustible, cambio, potencia_cv, puertas, plazas, descripcion, etiqueta_dgt')
       .eq('estado', 'disponible')
       .gt('precio_venta', 0)
       .order('created_at', { ascending: false });
@@ -1402,16 +1464,25 @@ async function loadVehicles() {
     if (error) throw error;
 
     allVehicles = (data || []).map(row => ({
-      id:        row.id,
-      brand:     row.marca          || '',
-      model:     row.modelo         || '',
-      year:      row.anio,
-      km:        row.kilometraje,
-      color:     row.color          || '',
-      price:     row.precio_venta   || 0,
+      id:          row.id,
+      brand:       row.marca          || '',
+      model:       row.modelo         || '',
+      year:        row.anio,
+      km:          row.kilometraje,
+      color:       row.color          || '',
+      price:       row.precio_venta   || 0,
+      photos:      row.fotos          || [],
       thumb:       (row.fotos && row.fotos.length > 0) ? row.fotos[0] : null,
       photosCount: (row.fotos && row.fotos.length) || 0,
       destacado:   !!row.destacado,
+      matricula:   row.matricula      || '',
+      combustible: row.combustible    || '',
+      cambio:      row.cambio         || '',
+      potencia_cv: row.potencia_cv    || null,
+      puertas:     row.puertas        || null,
+      plazas:      row.plazas         || null,
+      descripcion: row.descripcion    || '',
+      etiqueta_dgt:row.etiqueta_dgt   || '',
     }));
 
     const _hc = document.getElementById('heroVehicleCount');
@@ -1419,7 +1490,11 @@ async function loadVehicles() {
 
     applyFilters();
     renderFeatured();
-    if (new URLSearchParams(location.search).get('view') === 'stock') {
+    const _p = new URLSearchParams(location.search);
+    const _vId = _p.get('vehiculo');
+    if (_vId) {
+      _showViewInternal('ficha', _vId);
+    } else if (_p.get('view') === 'stock') {
       _showViewInternal('stock');
     }
   } catch (err) {
@@ -1513,7 +1588,7 @@ function renderGrid() {
     const kmLabel  = v.km ? `${num(v.km)} km` : 'Sin datos';
     const yearLabel = v.year || '—';
 
-    return `<div class="card" style="animation-delay:${Math.min(i * 50, 300)}ms" onclick="openModal('${v.id}')">
+    return `<div class="card" style="animation-delay:${Math.min(i * 50, 300)}ms" onclick="openFicha('${v.id}')">
       <div class="card-img">${thumb}</div>
       <div class="card-body">
         <div class="card-name">${esc(v.brand)} ${esc(v.model)}</div>
@@ -1866,7 +1941,7 @@ function buildFeaturedHTML(vehicles) {
     const yearBadge = v.year ? `<span class="feat-year-badge">${v.year}</span>` : '';
     const kmTag = v.km ? `<span class="feat-meta-tag">${num(v.km)} km</span>` : '';
     return `
-<div class="feat-card${isMain ? ' feat-card--main' : ''}" onclick="openModal('${v.id}')">
+<div class="feat-card${isMain ? ' feat-card--main' : ''}" onclick="openFicha('${v.id}')">
   <div class="feat-card-img">${photo}${yearBadge}</div>
   <div class="feat-card-body">
     <div class="feat-card-name">${esc(v.brand)} ${esc(v.model)}</div>
@@ -1894,37 +1969,55 @@ function buildFeaturedHTML(vehicles) {
 // ─── STOCK VIEW ──────────────────────────────────────────────
 var _sfFiltered = [];
 
-history.replaceState({view: new URLSearchParams(location.search).get('view') || 'home'}, '');
+(function(){
+  var _ip = new URLSearchParams(location.search);
+  var _iv = _ip.get('vehiculo');
+  history.replaceState({view: _iv ? 'ficha' : (_ip.get('view') || 'home'), vehiculoId: _iv || null}, '');
+})();
 
-function _showViewInternal(view) {
+function _showViewInternal(view, vehiculoId) {
   var home  = document.getElementById('viewHome');
   var stock = document.getElementById('viewStock');
-  if (!home || !stock) return;
+  var ficha = document.getElementById('viewFicha');
+  if (!home || !stock || !ficha) return;
+  home.style.display  = 'none';
+  stock.style.display = 'none';
+  ficha.style.display = 'none';
   if (view === 'stock') {
-    home.style.display  = 'none';
     stock.style.display = '';
     sfPopulateBrandModel();
     sfApply();
+  } else if (view === 'ficha' && vehiculoId) {
+    ficha.style.display = '';
+    renderFicha(vehiculoId);
   } else {
-    stock.style.display = 'none';
-    home.style.display  = '';
+    home.style.display = '';
   }
 }
 
 function showView(view) {
   if (view === 'stock') {
-    history.pushState({view:'stock'}, '', '?view=stock');
+    history.pushState({view:'stock', vehiculoId:null}, '', '?view=stock');
   } else {
-    history.pushState({view:'home'}, '', location.pathname);
+    history.pushState({view:'home', vehiculoId:null}, '', location.pathname);
   }
   window.scrollTo(0, 0);
   _showViewInternal(view);
 }
 
-window.addEventListener('popstate', function(e) {
-  var v = (e.state && e.state.view) || (new URLSearchParams(location.search).get('view')) || 'home';
+function openFicha(id) {
+  history.pushState({view:'ficha', vehiculoId:id}, '', '?vehiculo=' + encodeURIComponent(id));
   window.scrollTo(0, 0);
-  _showViewInternal(v);
+  _showViewInternal('ficha', id);
+}
+
+window.addEventListener('popstate', function(e) {
+  var st  = e.state || {};
+  var ps  = new URLSearchParams(location.search);
+  var vw  = st.view       || (ps.get('vehiculo') ? 'ficha' : (ps.get('view') || 'home'));
+  var vid = st.vehiculoId || ps.get('vehiculo') || null;
+  window.scrollTo(0, 0);
+  _showViewInternal(vw, vid);
 });
 
 function sfPopulateBrandModel() {
@@ -2124,7 +2217,7 @@ function renderStockList() {
     if (v.color) specs += '<span class="sl-spec">' + esc(v.color) + '</span>';
     var destBadge = v.destacado ? '<div class="sl-badge-dest">' + svgStar + ' Destacado</div>' : '';
     var vid = esc(v.id);
-    return '<div class="sl-card" onclick="openModal(\'' + vid + '\')">' +
+    return '<div class="sl-card" onclick="openFicha(\'' + vid + '\')">' +
       '<div class="sl-card-img">' + photo + yearBadge + photoCount + '</div>' +
       '<div class="sl-card-body">' +
         '<div class="sl-card-name">' + esc(v.brand) + ' ' + esc(v.model) + '</div>' +
@@ -2134,10 +2227,204 @@ function renderStockList() {
       '<div class="sl-card-price-col">' +
         '<div class="sl-price-label">Precio</div>' +
         '<div class="sl-price">' + eur(v.price) + '</div>' +
-        '<button class="sl-detail-btn" onclick="event.stopPropagation();openModal(\'' + vid + '\')">Ver detalles</button>' +
+        '<button class="sl-detail-btn" onclick="event.stopPropagation();openFicha(\'' + vid + '\')">Ver detalles</button>' +
       '</div>' +
     '</div>';
   }).join('');
+}
+
+// ─── FICHA VIEW ──────────────────────────────────────────────
+var _fichaPhotos = [];
+var _fichaIdx    = 0;
+var _fichaLbIdx  = 0;
+
+function fichaSetPhoto(idx) {
+  var n = _fichaPhotos.length;
+  if (!n) return;
+  idx = ((idx % n) + n) % n;
+  _fichaIdx = idx;
+  var img = document.getElementById('fichaMainImg');
+  var cnt = document.getElementById('fichaGCnt');
+  if (img) { img.style.opacity = '0'; setTimeout(function(){ img.src = _fichaPhotos[idx]; img.style.opacity = '1'; }, 150); }
+  if (cnt) cnt.textContent = (idx + 1) + ' / ' + n;
+  document.querySelectorAll('.ficha-thumb').forEach(function(t, i){ t.classList.toggle('active', i === idx); });
+}
+
+function fichaNavPhoto(dir) { fichaSetPhoto(_fichaIdx + dir); }
+
+function fichaOpenLb(startIdx) {
+  var n = _fichaPhotos.length; if (!n) return;
+  _fichaLbIdx = (startIdx !== undefined ? startIdx : _fichaIdx);
+  var lb = document.createElement('div');
+  lb.id = 'fichaLb'; lb.className = 'ficha-lb';
+  lb.innerHTML =
+    '<button class="ficha-lb-close" onclick="fichaCloseLb()">&#x00D7;</button>' +
+    (n > 1 ? '<button class="ficha-lb-prev" onclick="fichaNavLb(-1)">&#x2039;</button>' : '') +
+    '<img id="fichaLbImg" src="' + esc(_fichaPhotos[_fichaLbIdx]) + '" alt="">' +
+    (n > 1 ? '<button class="ficha-lb-next" onclick="fichaNavLb(1)">&#x203A;</button>' : '') +
+    '<div class="ficha-lb-cnt" id="fichaLbCnt">' + (_fichaLbIdx + 1) + ' / ' + n + '</div>';
+  lb.addEventListener('click', function(e){ if (e.target === lb) fichaCloseLb(); });
+  document.body.appendChild(lb);
+  document.body.style.overflow = 'hidden';
+}
+
+function fichaNavLb(dir) {
+  var n = _fichaPhotos.length;
+  _fichaLbIdx = ((_fichaLbIdx + dir) + n) % n;
+  var img = document.getElementById('fichaLbImg'); if (img) img.src = _fichaPhotos[_fichaLbIdx];
+  var cnt = document.getElementById('fichaLbCnt'); if (cnt) cnt.textContent = (_fichaLbIdx + 1) + ' / ' + n;
+}
+
+function fichaCloseLb() {
+  var lb = document.getElementById('fichaLb'); if (lb) lb.remove();
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', function(e) {
+  var lb = document.getElementById('fichaLb');
+  if (lb) {
+    if (e.key === 'Escape')     fichaCloseLb();
+    if (e.key === 'ArrowLeft')  fichaNavLb(-1);
+    if (e.key === 'ArrowRight') fichaNavLb(1);
+  }
+});
+
+var _svgPhone = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.56 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>';
+var _svgWa   = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.995 0C5.379 0 0 5.373 0 11.982c0 2.109.556 4.09 1.526 5.808L.057 24l6.374-1.634a12.03 12.03 0 0 0 5.564 1.369h.005c6.614 0 11.994-5.373 11.994-11.982C24 5.373 18.609 0 11.995 0zm0 21.906a9.95 9.95 0 0 1-5.08-1.392l-.364-.216-3.783.97.999-3.674-.237-.377A9.875 9.875 0 0 1 2.04 11.98c0-5.48 4.475-9.944 9.956-9.944 5.48 0 9.955 4.464 9.955 9.944 0 5.48-4.475 9.926-9.956 9.926z"/></svg>';
+var _svgExpand = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>';
+
+function renderFicha(id) {
+  var v = allVehicles.find(function(x){ return x.id === id; });
+  var fichaMain = document.getElementById('fichaMain');
+  var fichaBc   = document.getElementById('fichaBc');
+  if (!fichaMain) return;
+
+  if (fichaBc) {
+    var namePart = v ? esc(v.brand) + ' ' + esc(v.model) : '...';
+    fichaBc.innerHTML =
+      '<span class="ficha-bc-link" onclick="showView(\'home\')">Inicio</span>' +
+      '<span class="ficha-bc-sep">›</span>' +
+      '<span class="ficha-bc-link" onclick="showView(\'stock\')">Stock completo</span>' +
+      '<span class="ficha-bc-sep">›</span>' +
+      '<span class="ficha-bc-current">' + namePart + '</span>';
+  }
+
+  if (!v) {
+    fichaMain.innerHTML = '<div style="text-align:center;padding:80px 20px"><p style="font-size:15px;color:var(--text-2)">Vehículo no encontrado o no disponible.</p></div>';
+    return;
+  }
+
+  trackEvento('vista', id);
+  _fichaPhotos = v.photos || [];
+  _fichaIdx    = 0;
+
+  var photos   = _fichaPhotos;
+  var waMsg    = encodeURIComponent('Hola, estoy interesado en el ' + v.brand + ' ' + v.model + ' ' + (v.year || '') + ' que vi en vuestra web');
+  var waUrl    = 'https://wa.me/' + CLIENT_CONFIG.phone.replace(/\+|\s/g,'') + '?text=' + waMsg;
+  var eid      = esc(id);
+
+  // Gallery
+  var galleryHtml;
+  if (photos.length) {
+    var navBtns = photos.length > 1
+      ? '<button class="ficha-gnav ficha-gprev" onclick="fichaNavPhoto(-1);event.stopPropagation()">&#x2039;</button>' +
+        '<button class="ficha-gnav ficha-gnext" onclick="fichaNavPhoto(1);event.stopPropagation()">&#x203A;</button>' +
+        '<div class="ficha-gcnt" id="fichaGCnt">1 / ' + photos.length + '</div>'
+      : '';
+    var thumbs = photos.length > 1
+      ? '<div class="ficha-thumbs">' + photos.map(function(p, i){
+          return '<div class="ficha-thumb' + (i===0?' active':'') + '" onclick="fichaSetPhoto(' + i + ')">' +
+            '<img src="' + esc(p) + '" loading="lazy"></div>';
+        }).join('') + '</div>'
+      : '';
+    galleryHtml =
+      '<div class="ficha-main-photo" id="fichaMainPhoto" onclick="fichaOpenLb()">' +
+        '<img id="fichaMainImg" src="' + esc(photos[0]) + '" alt="' + esc(v.brand) + ' ' + esc(v.model) + '">' +
+        navBtns +
+        '<button class="ficha-expand" onclick="fichaOpenLb();event.stopPropagation()">' + _svgExpand + ' Ver en grande</button>' +
+      '</div>' + thumbs;
+  } else {
+    galleryHtml =
+      '<div class="ficha-main-photo" style="cursor:default">' +
+        '<div class="ficha-main-placeholder">' +
+          '<svg viewBox="0 0 24 24" width="80" height="80" fill="none" stroke="#444" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3v-5l2.5-5h13L21 12v5h-2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/><line x1="3" y1="12" x2="21" y2="12"/></svg>' +
+        '</div>' +
+      '</div>';
+  }
+
+  // Summary line
+  var sumParts = [];
+  if (v.year)        sumParts.push(v.year);
+  if (v.km)          sumParts.push(num(v.km) + ' km');
+  if (v.combustible) sumParts.push(esc(v.combustible));
+  if (v.cambio)      sumParts.push(esc(v.cambio));
+
+  // Specs table
+  var specData = [
+    ['Marca',        v.brand       ? esc(v.brand) : null],
+    ['Modelo',       v.model       ? esc(v.model) : null],
+    ['Año',          v.year        ? v.year        : null],
+    ['Kilómetros',   v.km          ? num(v.km) + ' km' : null],
+    ['Color',        v.color       ? esc(v.color)  : null],
+    ['Combustible',  v.combustible ? esc(v.combustible) : null],
+    ['Cambio',       v.cambio      ? esc(v.cambio) : null],
+    ['Potencia',     v.potencia_cv ? v.potencia_cv + ' CV' : null],
+    ['Puertas',      v.puertas     ? v.puertas     : null],
+    ['Plazas',       v.plazas      ? v.plazas      : null],
+    ['Etiqueta DGT', v.etiqueta_dgt ? esc(v.etiqueta_dgt) : null],
+    ['Matrícula',    v.matricula   ? '<span style="font-family:monospace;font-weight:700;letter-spacing:.04em">' + esc(v.matricula) + '</span>' : null],
+  ].filter(function(r){ return r[1] !== null; });
+
+  var specsHtml = specData.length
+    ? '<div class="ficha-specs-box">' +
+        '<div class="ficha-specs-ttl">Ficha técnica</div>' +
+        specData.map(function(r){
+          return '<div class="ficha-srow"><span class="ficha-slbl">' + r[0] + '</span><span class="ficha-sval">' + r[1] + '</span></div>';
+        }).join('') +
+      '</div>'
+    : '';
+
+  var descHtml = v.descripcion
+    ? '<div class="ficha-desc"><div class="ficha-desc-ttl">Descripción</div><p class="ficha-desc-txt">' + esc(v.descripcion) + '</p></div>'
+    : '';
+
+  fichaMain.innerHTML =
+    '<div class="ficha-layout">' +
+      '<div>' + galleryHtml + '</div>' +
+      '<div class="ficha-info">' +
+        '<div>' +
+          '<div class="ficha-name">' + esc(v.brand) + ' ' + esc(v.model) + '</div>' +
+          (sumParts.length ? '<div class="ficha-summary">' + sumParts.join(' · ') + '</div>' : '') +
+        '</div>' +
+        '<div class="ficha-price-box">' +
+          '<div class="ficha-plabel">Precio de venta</div>' +
+          '<div class="ficha-price">' + eur(v.price) + '</div>' +
+          '<a href="tel:' + CLIENT_CONFIG.phone + '" class="ficha-cta-call" onclick="trackEvento(\'clic_llamar\',\'' + eid + '\')">' +
+            _svgPhone + ' Llamar ahora' +
+          '</a>' +
+          '<a href="' + waUrl + '" target="_blank" rel="noopener" class="ficha-cta-wa" onclick="trackEvento(\'clic_whatsapp\',\'' + eid + '\')">' +
+            _svgWa + ' WhatsApp' +
+          '</a>' +
+        '</div>' +
+        specsHtml +
+      '</div>' +
+    '</div>' +
+    descHtml;
+
+  // Touch swipe on main photo
+  if (photos.length > 1) {
+    var mp = document.getElementById('fichaMainPhoto');
+    if (mp) {
+      var _swX = null;
+      mp.addEventListener('touchstart', function(e){ _swX = e.touches[0].clientX; }, {passive:true});
+      mp.addEventListener('touchend',   function(e){
+        if (_swX === null) return;
+        var dx = e.changedTouches[0].clientX - _swX;
+        if (Math.abs(dx) > 40) fichaNavPhoto(dx < 0 ? 1 : -1);
+        _swX = null;
+      }, {passive:true});
+    }
+  }
 }
 
 // ─── START ───────────────────────────────────────────────────
