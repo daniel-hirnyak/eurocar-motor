@@ -244,7 +244,8 @@ img { display: block; max-width: 100%; }
   .featured-section{padding:48px 0 40px}
   .featured-inner{padding:0}
   .featured-header,.featured-cta-wrap{padding:0 16px}
-  .featured-grid{display:flex;gap:16px;overflow-x:auto;padding:8px 20px 20px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+  .featured-grid{display:flex;gap:16px;overflow-x:auto;padding:8px 0 20px 20px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scroll-padding-left:20px}
+  .featured-grid::after{content:'';flex-shrink:0;width:20px;display:block}
   .featured-grid::-webkit-scrollbar{display:none}
   .feat-card,.feat-card--main{min-width:280px;max-width:280px;flex-shrink:0;scroll-snap-align:start}
   .feat-card--main .feat-card-name{font-size:14px;margin-bottom:8px}
@@ -743,6 +744,14 @@ img { display: block; max-width: 100%; }
 .footer{background:var(--black);color:rgba(255,255,255,.45);text-align:center;padding:22px 20px;font-size:13px}
 .footer a{color:inherit}
 
+/* ── MAP ─────────────────────────────────────────────────── */
+.map-wrap{margin-top:36px;border-radius:var(--r-lg);overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.1)}
+.map-wrap iframe{width:100%;height:400px;display:block;border:0}
+.map-directions-wrap{margin-top:16px;text-align:center}
+.map-directions-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;background:var(--black);color:var(--white);border-radius:9px;font-size:14px;font-weight:600;text-decoration:none;transition:background .15s}
+.map-directions-btn:hover{background:#2a2a2a}
+@media(max-width:768px){.map-wrap iframe{height:300px}}
+
 /* ── STOCK VIEW ──────────────────────────────────────────── */
 #viewStock{background:#F5F5F5;min-height:calc(100vh - 62px)}
 .sbc-bar{background:var(--white);border-bottom:1px solid var(--gray-2);padding:12px 0}
@@ -1142,12 +1151,25 @@ img { display: block; max-width: 100%; }
         </div>
       </div>
     </div>
+
+    <div class="map-wrap">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2986.5407869481!2d2.1839993761835936!3d41.53588678677076!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12a4befec39d12cd%3A0x182a939d99eaa6f1!2sEurocar-motor%20s.l!5e0!3m2!1ses!2ses!4v1783773471864!5m2!1ses!2ses"
+        width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy"
+        referrerpolicy="strict-origin-when-cross-origin" title="Localización Eurocar-Motor"></iframe>
+    </div>
+    <div class="map-directions-wrap">
+      <a href="https://www.google.com/maps/search/?api=1&query=Eurocar-motor+s.l" target="_blank" rel="noopener" class="map-directions-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Cómo llegar en Google Maps
+      </a>
+    </div>
   </div>
 </section>
 
 <!-- ── FOOTER ────────────────────────────────────────────── -->
 <footer class="footer">
-  &copy; 2025 <span id="catFooterName"></span> · <span id="catFooterCity"></span>, Barcelona
+  &copy; 2026 <span id="catFooterName"></span> · <span id="catFooterCity"></span>, Barcelona
 </footer>
 
 </div><!-- /viewHome -->
