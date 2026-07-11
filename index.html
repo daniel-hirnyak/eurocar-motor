@@ -997,6 +997,13 @@ function normalizeV(row, allGastos, allHistorial) {
     createdAt:     row.created_at,
     updatedAt:     row.updated_at,
     destacado:     !!row.destacado,
+    combustible:   row.combustible   || '',
+    cambio:        row.cambio        || '',
+    potencia_cv:   row.potencia_cv   ?? null,
+    puertas:       row.puertas       ?? null,
+    plazas:        row.plazas        ?? null,
+    descripcion:   row.descripcion   || '',
+    etiqueta_dgt:  row.etiqueta_dgt  || '',
   };
 }
 
@@ -1301,6 +1308,49 @@ function renderForm() {
   </div>
 
   <div class="fsec">
+    <div class="fsec-title">Características técnicas</div>
+    <div class="fgrid">
+      <div class="fg"><label>Combustible</label>
+        <select name="combustible">
+          <option value="" ${!fData.combustible?'selected':''}>Sin especificar</option>
+          <option value="Diésel" ${fData.combustible==='Diésel'?'selected':''}>Diésel</option>
+          <option value="Gasolina" ${fData.combustible==='Gasolina'?'selected':''}>Gasolina</option>
+          <option value="Eléctrico" ${fData.combustible==='Eléctrico'?'selected':''}>Eléctrico</option>
+          <option value="Híbrido" ${fData.combustible==='Híbrido'?'selected':''}>Híbrido</option>
+          <option value="Híbrido enchufable" ${fData.combustible==='Híbrido enchufable'?'selected':''}>Híbrido enchufable</option>
+          <option value="GLP" ${fData.combustible==='GLP'?'selected':''}>GLP</option>
+        </select></div>
+      <div class="fg"><label>Cambio</label>
+        <select name="cambio">
+          <option value="" ${!fData.cambio?'selected':''}>Sin especificar</option>
+          <option value="Manual" ${fData.cambio==='Manual'?'selected':''}>Manual</option>
+          <option value="Automático" ${fData.cambio==='Automático'?'selected':''}>Automático</option>
+        </select></div>
+      <div class="fg"><label>Potencia (CV) <span class="opt">(opcional)</span></label>
+        <input type="number" name="potencia_cv" value="${fData.potencia_cv??''}" placeholder="120" min="0" max="2000"></div>
+      <div class="fg"><label>Puertas <span class="opt">(opcional)</span></label>
+        <select name="puertas">
+          <option value="" ${!fData.puertas?'selected':''}>Sin especificar</option>
+          <option value="2" ${fData.puertas==2?'selected':''}>2</option>
+          <option value="3" ${fData.puertas==3?'selected':''}>3</option>
+          <option value="4" ${fData.puertas==4?'selected':''}>4</option>
+          <option value="5" ${fData.puertas==5?'selected':''}>5</option>
+        </select></div>
+      <div class="fg"><label>Plazas <span class="opt">(opcional)</span></label>
+        <input type="number" name="plazas" value="${fData.plazas??''}" placeholder="5" min="1" max="20"></div>
+      <div class="fg"><label>Etiqueta DGT</label>
+        <select name="etiqueta_dgt">
+          <option value="" ${!fData.etiqueta_dgt?'selected':''}>Sin especificar</option>
+          <option value="0" ${fData.etiqueta_dgt==='0'?'selected':''}>0 (Cero emisiones)</option>
+          <option value="ECO" ${fData.etiqueta_dgt==='ECO'?'selected':''}>ECO</option>
+          <option value="C" ${fData.etiqueta_dgt==='C'?'selected':''}>C</option>
+          <option value="B" ${fData.etiqueta_dgt==='B'?'selected':''}>B</option>
+          <option value="Sin etiqueta" ${fData.etiqueta_dgt==='Sin etiqueta'?'selected':''}>Sin etiqueta</option>
+        </select></div>
+    </div>
+  </div>
+
+  <div class="fsec">
     <div class="fsec-title">Origen del vehículo</div>
     <div class="fgrid-2">
       <div class="fg"><label>Proveedor <span class="opt">(opcional)</span></label>
@@ -1361,6 +1411,13 @@ function renderForm() {
   <div class="fsec">
     <div class="fsec-title">Resumen económico</div>
     <div class="price-box" id="priceBox">${renderPriceBox()}</div>
+  </div>
+
+  <div class="fsec">
+    <div class="fsec-title">Descripción pública <span class="opt" style="font-weight:400;font-size:12px">· visible en el catálogo</span></div>
+    <div class="fg">
+      <textarea name="descripcion" rows="4" placeholder="Estado general, equipamiento destacado, extras, historial de revisiones… (visible para los clientes en el catálogo)">${esc(fData.descripcion||'')}</textarea>
+    </div>
   </div>
 
   <div class="fsec">
@@ -2363,6 +2420,13 @@ function buildVehicleRow(d, isSold, fotos) {
     fecha_venta:        isSold ? (d.saleDate || null) : null,
     estado:             d.status || 'disponible',
     notas:              d.notes?.trim() || null,
+    combustible:        d.combustible || null,
+    cambio:             d.cambio || null,
+    potencia_cv:        d.potencia_cv ? (+d.potencia_cv || null) : null,
+    puertas:            d.puertas ? (+d.puertas || null) : null,
+    plazas:             d.plazas ? (+d.plazas || null) : null,
+    descripcion:        d.descripcion?.trim() || null,
+    etiqueta_dgt:       d.etiqueta_dgt || null,
     fotos,
     updated_at:         new Date().toISOString(),
   };
