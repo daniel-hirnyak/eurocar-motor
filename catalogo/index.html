@@ -244,7 +244,7 @@ img { display: block; max-width: 100%; }
   .featured-section{padding:48px 0 40px}
   .featured-inner{padding:0}
   .featured-header,.featured-cta-wrap{padding:0 16px}
-  .featured-grid{display:flex;gap:12px;overflow-x:auto;padding:4px 16px 16px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+  .featured-grid{display:flex;gap:16px;overflow-x:auto;padding:8px 20px 20px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
   .featured-grid::-webkit-scrollbar{display:none}
   .feat-card,.feat-card--main{min-width:280px;max-width:280px;flex-shrink:0;scroll-snap-align:start}
   .feat-card--main .feat-card-name{font-size:14px;margin-bottom:8px}
@@ -795,7 +795,7 @@ img { display: block; max-width: 100%; }
 .stock-main{max-width:1200px;margin:0 auto;padding:20px 24px 64px}
 .sl-card{background:var(--white);border:1px solid var(--gray-2);border-radius:12px;overflow:hidden;display:flex;align-items:stretch;cursor:pointer;transition:box-shadow .22s,transform .22s;margin-bottom:12px}
 .sl-card:hover{box-shadow:0 8px 28px rgba(0,0,0,.1);transform:translateY(-2px)}
-.sl-card-img{width:240px;flex-shrink:0;background:var(--gray);position:relative;overflow:hidden}
+.sl-card-img{width:280px;height:200px;flex-shrink:0;background:var(--gray);position:relative;overflow:hidden}
 .sl-card-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s}
 .sl-card:hover .sl-card-img img{transform:scale(1.04)}
 .sl-card-no-photo{width:100%;height:100%;min-height:165px;display:flex;align-items:center;justify-content:center;background:var(--gray)}
@@ -933,6 +933,9 @@ img { display: block; max-width: 100%; }
   </div>
 </section>
 
+<!-- ── DESTACADOS ────────────────────────────────────────── -->
+<section id="featuredSection" class="featured-section" style="display:none"></section>
+
 <!-- ── RESEÑAS DE GOOGLE ─────────────────────────────────── -->
 <section class="reviews-section">
   <div class="reviews-header">
@@ -1021,60 +1024,6 @@ img { display: block; max-width: 100%; }
     </div>
   </div>
 </section>
-
-<!-- ── DESTACADOS ────────────────────────────────────────── -->
-<section id="featuredSection" class="featured-section" style="display:none"></section>
-
-<!-- ── FILTERS ────────────────────────────────────────────── -->
-<div class="filters-wrap" id="catalogo">
-  <div class="filters-inner">
-    <div class="search-wrap">
-      <span class="search-icon">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      </span>
-      <input class="search-inp" type="text" id="searchInp" placeholder="Buscar por marca o modelo..." oninput="applyFilters()">
-    </div>
-    <div class="filter-group">
-      <label class="filter-label" for="priceFilter">Precio</label>
-      <select class="filter-sel" id="priceFilter" onchange="applyFilters()">
-        <option value="0">Todos</option>
-        <option value="5000">Hasta 5.000 €</option>
-        <option value="10000">Hasta 10.000 €</option>
-        <option value="15000">Hasta 15.000 €</option>
-        <option value="20000">Hasta 20.000 €</option>
-        <option value="30000">Hasta 30.000 €</option>
-        <option value="99999">Más de 30.000 €</option>
-      </select>
-    </div>
-    <div class="filter-group">
-      <label class="filter-label" for="yearFilter">Año</label>
-      <select class="filter-sel" id="yearFilter" onchange="applyFilters()">
-        <option value="0">Todos</option>
-        <option value="2015">2015 o más nuevo</option>
-        <option value="2017">2017 o más nuevo</option>
-        <option value="2019">2019 o más nuevo</option>
-        <option value="2021">2021 o más nuevo</option>
-      </select>
-    </div>
-    <div class="filter-results-count" id="resultsCount"></div>
-  </div>
-</div>
-
-<!-- ── MAIN ───────────────────────────────────────────────── -->
-<main class="main">
-  <div class="vehicles-grid" id="grid">
-    <!-- skeletons while loading -->
-    ${[1,2,3,4,5,6].map(() => `
-    <div class="skeleton-card">
-      <div class="skeleton-img"></div>
-      <div class="skeleton-body">
-        <div class="sk sk-title"></div>
-        <div class="sk sk-sub"></div>
-        <div class="sk-foot"><div class="sk sk-price"></div><div class="sk sk-btn"></div></div>
-      </div>
-    </div>`).join('')}
-  </div>
-</main>
 
 <!-- ── MODAL ──────────────────────────────────────────────── -->
 <div id="modal" style="display:none"></div>
@@ -1443,6 +1392,9 @@ async function loadVehicles() {
       destacado:   !!row.destacado,
     }));
 
+    const _hc = document.getElementById('heroVehicleCount');
+    if (_hc) _hc.textContent = allVehicles.length;
+
     applyFilters();
     renderFeatured();
     if (new URLSearchParams(location.search).get('view') === 'stock') {
@@ -1458,9 +1410,9 @@ async function loadVehicles() {
 let _searchTrackTimer = null;
 
 function applyFilters() {
-  const q     = document.getElementById('searchInp').value.toLowerCase().trim();
-  const price = +document.getElementById('priceFilter').value;
-  const year  = +document.getElementById('yearFilter').value;
+  const q     = (document.getElementById('searchInp')?.value  || '').toLowerCase().trim();
+  const price = +(document.getElementById('priceFilter')?.value || 0);
+  const year  = +(document.getElementById('yearFilter')?.value  || 0);
 
   filtered = allVehicles.filter(v => {
     if (q && !`${v.brand} ${v.model}`.toLowerCase().includes(q)) return false;
@@ -1491,10 +1443,11 @@ async function trackBusqueda(termino, resultados) {
 function renderGrid() {
   const grid = document.getElementById('grid');
   const count = document.getElementById('resultsCount');
+  if (!grid) return;
 
   if (!filtered.length) {
     const noResults = allVehicles.length === 0;
-    count.textContent = '';
+    if (count) count.textContent = '';
     grid.innerHTML = `
       <div class="empty">
         <div class="empty-icon">
@@ -1523,7 +1476,7 @@ function renderGrid() {
     return;
   }
 
-  count.textContent = `${filtered.length} vehículo${filtered.length !== 1 ? 's' : ''}`;
+  if (count) count.textContent = `${filtered.length} vehículo${filtered.length !== 1 ? 's' : ''}`;
 
   grid.innerHTML = filtered.map((v, i) => {
     const thumb = v.thumb
@@ -1566,14 +1519,16 @@ function renderGrid() {
 }
 
 function clearFilters() {
-  document.getElementById('searchInp').value = '';
-  document.getElementById('priceFilter').value = '0';
-  document.getElementById('yearFilter').value = '0';
+  const si = document.getElementById('searchInp');  if (si) si.value = '';
+  const pf = document.getElementById('priceFilter'); if (pf) pf.value = '0';
+  const yf = document.getElementById('yearFilter');  if (yf) yf.value = '0';
   applyFilters();
 }
 
 function renderError() {
-  document.getElementById('grid').innerHTML = `
+  const _eg = document.getElementById('grid');
+  if (!_eg) return;
+  _eg.innerHTML = `
     <div class="empty" style="grid-column:1/-1">
       <div class="empty-title">Error de conexión</div>
       <div class="empty-desc">No pudimos cargar los vehículos. Comprueba tu conexión y recarga la página, o llámanos directamente.</div>
