@@ -1697,6 +1697,12 @@ function renderDetail() {
     ['Color', v.color],
     ['Nº Bastidor', v.vin?`<span style="font-family:monospace;font-size:12px">${esc(v.vin)}</span>`:'—'],
     ['Fecha entrada', dt(v.entryDate)],
+    ...(v.combustible  ? [['Combustible',  esc(v.combustible)]]       : []),
+    ...(v.cambio       ? [['Cambio',       esc(v.cambio)]]            : []),
+    ...(v.potencia_cv  ? [['Potencia',     v.potencia_cv + ' CV']]    : []),
+    ...(v.puertas      ? [['Puertas',      v.puertas]]                : []),
+    ...(v.plazas       ? [['Plazas',       v.plazas]]                 : []),
+    ...(v.etiqueta_dgt ? [['Etiqueta DGT', esc(v.etiqueta_dgt)]]      : []),
     ...(v.proveedor ? [['Proveedor', esc(v.proveedor)]] : []),
     ...(v.origen    ? [['Origen',    esc(v.origen)]]    : []),
     ...(v.saleDate  ? [['Fecha venta', dt(v.saleDate)]] : []),
@@ -1756,6 +1762,10 @@ function renderDetail() {
           ${v.photos.map((p,i)=>`<img class="gallery-img" src="${p}" alt="Foto ${i+1}" onclick="openLightbox('${v.id}',${i})">`).join('')}
         </div>
       </div>
+    </div>`:''}
+    ${v.descripcion?`<div class="dcard">
+      <div class="dcard-head">Descripción</div>
+      <div class="dcard-body"><p style="font-size:13px;line-height:1.65;white-space:pre-wrap">${esc(v.descripcion)}</p></div>
     </div>`:''}
     ${v.notes?`<div class="dcard">
       <div class="dcard-head">Notas internas</div>
