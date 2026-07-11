@@ -2143,5 +2143,29 @@ function renderStockList() {
 // ─── START ───────────────────────────────────────────────────
 loadVehicles();
 </script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('../service-worker.js').then(reg => {
+      reg.addEventListener('updatefound', () => {
+        const newSW = reg.installing;
+        newSW.addEventListener('statechange', () => {
+          if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+            // Nuevo SW listo — la recarga ocurrirá vía controllerchange
+          }
+        });
+      });
+    }).catch(() => {});
+  });
+
+  // Recarga automática una sola vez cuando el nuevo SW toma el control
+  let _swRefreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (_swRefreshing) return;
+    _swRefreshing = true;
+    window.location.reload();
+  });
+}
+</script>
 </body>
 </html>

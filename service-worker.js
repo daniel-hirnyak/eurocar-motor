@@ -1,40 +1,77 @@
-const CACHE_NAME = 'stockdrive-v1';
-const urlsToCache = [
+const CACHE_VERSION = 'v3';
+const CACHE_NAME = `stockdrive-${CACHE_VERSION}`;
+
+const PRECACHE_URLS = [
   './',
   './index.html',
   './manifest.json',
-  './sd-icon-v2.png'
+  './sd-icon-v2.png',
+  './catalogo/',
+  './catalogo/index.html',
 ];
 
-// Instalación: cachea los archivos base
+// Dominios externos — pasan directamente a la red, nunca se cachean
+const BYPASS_ORIGINS = [
+  'supabase.co',
+  'anthropic.com',
+  'googleapis.com',
+  'gstatic.com',
+  'google-analytics.com',
+  'maps.googleapis.com',
+];
+
+function shouldBypass(url) {
+  try {
+    const host = new URL(url).hostname;
+    return BYPASS_ORIGINS.some(d => host === d || host.endsWith('.' + d));
+  } catch (_) {
+    return false;
+  }
+}
+
+// INSTALL — pre-cachea archivos esenciales y activa el SW inmediatamente
 self.addEventListener('install', event => {
   self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
+    caches.open(CACHE_NAME).then(cache => cache.addAll(PRECACHE_URLS))
   );
 });
 
-// Activación: borra cachés viejas
+// ACTIVATE — borra cachés de versiones anteriores y toma control de las páginas abiertas
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(names =>
-      Promise.all(
-        names.filter(name => name !== CACHE_NAME).map(name => caches.delete(name))
-      )
-    ).then(() => self.clients.claim())
+    caches.keys()
+      .then(names => Promise.all(
+        names
+          .filter(name => name !== CACHE_NAME)
+          .map(name => caches.delete(name))
+      ))
+      .then(() => self.clients.claim())
   );
 });
 
-// Fetch: network-first. Intenta la red, si falla usa caché.
+// FETCH — network-first: siempre intenta la red primero; caché solo como respaldo offline
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
+  if (shouldBypass(event.request.url)) return; // deja pasar sin interceptar
+
   event.respondWith(
     fetch(event.request)
       .then(response => {
-        const clone = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+        // Actualiza la caché con la respuesta fresca (solo respuestas válidas)
+        if (response && response.status === 200 && response.type !== 'opaque') {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+        }
         return response;
       })
-      .catch(() => caches.match(event.request))
+      .catch(() => caches.match(event.request)) // offline: usa caché como respaldo
   );
+});
+
+// MESSAGE — permite que la página fuerce skipWaiting desde el cliente
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
