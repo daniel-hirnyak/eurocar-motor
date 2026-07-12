@@ -839,13 +839,23 @@ img { display: block; max-width: 100%; }
 
 /* ── FICHA VIEW ──────────────────────────────────────────── */
 #viewFicha{background:#F5F5F5;min-height:calc(100vh - 62px)}
-.ficha-bc-bar{background:var(--white);border-bottom:1px solid var(--gray-2);padding:12px 0}
-.ficha-bc-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;gap:8px;font-size:13px;flex-wrap:wrap}
+.ficha-bc-bar{background:var(--white);border-bottom:1px solid var(--gray-2);padding:11px 0}
+.ficha-bc-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;gap:6px;font-size:13px;flex-wrap:wrap}
 .ficha-bc-link{color:var(--text-2);cursor:pointer;transition:color .15s}.ficha-bc-link:hover{color:var(--red)}
-.ficha-bc-sep{color:var(--gray-3)}.ficha-bc-current{color:var(--text);font-weight:600}
-.ficha-wrap{max-width:1200px;margin:0 auto;padding:28px 24px 64px}
-.ficha-layout{display:grid;grid-template-columns:1fr 400px;gap:32px;align-items:start}
-.ficha-main-photo{position:relative;border-radius:14px;overflow:hidden;background:var(--black);aspect-ratio:4/3;cursor:zoom-in}
+.ficha-bc-sep{color:var(--gray-3)}.ficha-bc-cur{color:var(--text);font-weight:600}
+.ficha-wrap{max-width:1200px;margin:0 auto;padding:28px 24px 72px}
+/* Cabecera: título + resumen a ancho completo */
+.ficha-header{margin-bottom:24px}
+.ficha-htitle{font-size:clamp(24px,3.2vw,38px);font-weight:900;letter-spacing:-.5px;line-height:1.08;color:var(--text);margin-bottom:10px}
+.ficha-hsum{display:flex;flex-wrap:wrap;align-items:center;font-size:15px;color:var(--text-2);margin-bottom:16px;line-height:1;gap:0}
+.ficha-hsum-item{white-space:nowrap}
+.ficha-hdot{color:var(--red);font-weight:700;margin:0 10px}
+.ficha-hdivider{height:1px;background:var(--gray-2);position:relative}
+.ficha-hdivider::before{content:'';position:absolute;left:0;top:0;height:2px;width:56px;background:var(--red)}
+/* Cuerpo: 2 columnas galería + panel lateral */
+.ficha-body{display:grid;grid-template-columns:1fr 360px;gap:28px;align-items:start;margin-top:26px}
+/* Galería */
+.ficha-main-photo{position:relative;border-radius:12px;overflow:hidden;background:var(--black);aspect-ratio:4/3;cursor:zoom-in}
 .ficha-main-photo img{width:100%;height:100%;object-fit:cover;display:block;transition:opacity .2s}
 .ficha-main-placeholder{width:100%;height:100%;min-height:260px;display:flex;align-items:center;justify-content:center;background:#1a1a1a}
 .ficha-gnav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;background:rgba(0,0,0,.6);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s;z-index:5;border:none;font-size:22px;line-height:1}
@@ -854,27 +864,30 @@ img { display: block; max-width: 100%; }
 .ficha-expand{position:absolute;bottom:14px;left:14px;background:rgba(0,0,0,.6);color:rgba(255,255,255,.85);border:none;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;transition:background .15s}
 .ficha-expand:hover{background:rgba(0,0,0,.88)}
 .ficha-thumbs{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
-.ficha-thumb{width:72px;height:54px;border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:border-color .15s,opacity .15s;flex-shrink:0}
+.ficha-thumb{width:72px;height:54px;border-radius:7px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:border-color .15s,opacity .15s;flex-shrink:0}
 .ficha-thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .ficha-thumb.active{border-color:var(--red)}.ficha-thumb:not(.active){opacity:.6}.ficha-thumb:hover:not(.active){opacity:.85}
-.ficha-info{display:flex;flex-direction:column;gap:20px}
-.ficha-name{font-size:clamp(22px,2.5vw,30px);font-weight:800;letter-spacing:-.4px;line-height:1.1;color:var(--text)}
-.ficha-summary{font-size:14px;color:var(--text-2);margin-top:8px;line-height:1.7}
-.ficha-price-box{background:var(--white);border:1px solid var(--gray-2);border-radius:14px;padding:20px 22px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
-.ficha-plabel{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-2);margin-bottom:4px}
-.ficha-price{font-size:36px;font-weight:900;color:var(--red);letter-spacing:-.5px;line-height:1;margin-bottom:18px}
-.ficha-cta-call,.ficha-cta-wa{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;text-decoration:none;transition:background .15s;font-family:inherit}
-.ficha-cta-call{background:var(--black);color:var(--white);margin-bottom:10px}
-.ficha-cta-call:hover{background:#222}
+/* Panel lateral */
+.ficha-side{display:flex;flex-direction:column;gap:0;position:sticky;top:80px}
+.ficha-price-panel{background:var(--white);border:1px solid var(--gray-2);border-radius:14px;padding:24px 22px 22px;box-shadow:0 2px 16px rgba(0,0,0,.07)}
+.ficha-plabel{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-2);margin-bottom:6px}
+.ficha-price-big{font-size:46px;font-weight:900;color:var(--red);letter-spacing:-.8px;line-height:1;margin-bottom:22px}
+.ficha-cta-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ficha-cta-call,.ficha-cta-wa{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 10px;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;text-decoration:none;transition:background .15s;font-family:inherit;white-space:nowrap}
+.ficha-cta-call{background:var(--black);color:var(--white)}.ficha-cta-call:hover{background:#222}
 .ficha-cta-wa{background:#25D366;color:var(--white)}.ficha-cta-wa:hover{background:#20bb59}
-.ficha-specs-box{background:var(--white);border:1px solid var(--gray-2);border-radius:14px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.06)}
-.ficha-specs-ttl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-2);padding:14px 18px 10px;border-bottom:1px solid var(--gray-2)}
-.ficha-srow{display:flex;align-items:center;justify-content:space-between;padding:11px 18px;border-bottom:1px solid var(--gray-2);gap:12px}
+/* Parte inferior: specs + descripción a ancho completo */
+.ficha-bottom{margin-top:28px;display:flex;flex-direction:column;gap:20px}
+.ficha-specs-box{background:var(--white);border:1px solid var(--gray-2);border-radius:14px;overflow:hidden}
+.ficha-specs-ttl{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text);padding:14px 20px;border-bottom:2px solid var(--gray-2);background:var(--gray)}
+.ficha-srow{display:flex;align-items:center;justify-content:space-between;padding:13px 20px;border-bottom:1px solid var(--gray-2);gap:16px}
 .ficha-srow:last-child{border-bottom:none}
-.ficha-slbl{font-size:13px;color:var(--text-2);flex-shrink:0}.ficha-sval{font-size:13px;font-weight:600;color:var(--text);text-align:right}
-.ficha-desc{background:var(--white);border:1px solid var(--gray-2);border-radius:14px;padding:24px 28px;margin-top:28px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
-.ficha-desc-ttl{font-size:17px;font-weight:700;color:var(--text);margin-bottom:14px}
-.ficha-desc-txt{font-size:14px;line-height:1.75;color:#374151;white-space:pre-wrap}
+.ficha-srow:nth-child(even){background:#FAFAFA}
+.ficha-slbl{font-size:13px;font-weight:700;color:var(--text);flex-shrink:0}
+.ficha-sval{font-size:13px;color:var(--text-2);text-align:right}
+.ficha-desc-box{background:var(--white);border:1px solid var(--gray-2);border-radius:14px;padding:24px 28px}
+.ficha-desc-ttl{font-size:15px;font-weight:700;color:var(--text);margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--gray-2)}
+.ficha-desc-txt{font-size:14px;line-height:1.8;color:#374151;white-space:pre-wrap}
 /* Lightbox */
 .ficha-lb{position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:500;display:flex;align-items:center;justify-content:center}
 .ficha-lb img{max-width:94vw;max-height:90vh;object-fit:contain;border-radius:6px;display:block}
@@ -883,14 +896,24 @@ img { display: block; max-width: 100%; }
 .ficha-lb-prev:hover,.ficha-lb-next:hover{background:rgba(255,255,255,.22)}
 .ficha-lb-prev{left:16px}.ficha-lb-next{right:16px}
 .ficha-lb-cnt{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.6);font-size:13px}
-@media(max-width:960px){.ficha-layout{grid-template-columns:1fr}}
+@media(max-width:900px){
+  .ficha-body{grid-template-columns:1fr}
+  .ficha-side{position:static}
+}
 @media(max-width:640px){
-  .ficha-wrap{padding:14px 14px 48px}
+  .ficha-wrap{padding:14px 14px 56px}
   .ficha-bc-inner{padding:0 14px}
+  .ficha-htitle{margin-bottom:8px}
+  .ficha-hsum{font-size:14px}
+  .ficha-hdot{margin:0 7px}
+  .ficha-price-big{font-size:36px}
   .ficha-main-photo{aspect-ratio:16/10;border-radius:10px}
-  .ficha-thumbs{gap:6px}.ficha-thumb{width:60px;height:44px}
-  .ficha-price{font-size:28px}
-  .ficha-desc{padding:18px 16px}
+  .ficha-thumbs{gap:6px}.ficha-thumb{width:58px;height:44px}
+  .ficha-desc-box{padding:18px 16px}
+  .ficha-srow{padding:12px 16px}
+}
+@media(max-width:380px){
+  .ficha-cta-row{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -2300,13 +2323,13 @@ function renderFicha(id) {
   if (!fichaMain) return;
 
   if (fichaBc) {
-    var namePart = v ? esc(v.brand) + ' ' + esc(v.model) : '...';
     fichaBc.innerHTML =
       '<span class="ficha-bc-link" onclick="showView(\'home\')">Inicio</span>' +
       '<span class="ficha-bc-sep">›</span>' +
-      '<span class="ficha-bc-link" onclick="showView(\'stock\')">Stock completo</span>' +
-      '<span class="ficha-bc-sep">›</span>' +
-      '<span class="ficha-bc-current">' + namePart + '</span>';
+      '<span class="ficha-bc-link" onclick="showView(\'stock\')">Stock</span>' +
+      (v ? '<span class="ficha-bc-sep">›</span><span class="ficha-bc-link" onclick="showView(\'stock\')">' + esc(v.brand) + '</span>' +
+           '<span class="ficha-bc-sep">›</span><span class="ficha-bc-cur">' + esc(v.model) + '</span>'
+         : '<span class="ficha-bc-sep">›</span><span class="ficha-bc-cur">...</span>');
   }
 
   if (!v) {
@@ -2352,27 +2375,30 @@ function renderFicha(id) {
       '</div>';
   }
 
-  // Summary line
-  var sumParts = [];
-  if (v.year)        sumParts.push(v.year);
-  if (v.km)          sumParts.push(num(v.km) + ' km');
-  if (v.combustible) sumParts.push(esc(v.combustible));
-  if (v.cambio)      sumParts.push(esc(v.cambio));
+  // Línea de resumen: año • combustible • cambio • km (puntos rojos)
+  var sumItems = [];
+  if (v.year)        sumItems.push('<span class="ficha-hsum-item">' + v.year + '</span>');
+  if (v.combustible) sumItems.push('<span class="ficha-hsum-item">' + esc(v.combustible) + '</span>');
+  if (v.cambio)      sumItems.push('<span class="ficha-hsum-item">' + esc(v.cambio) + '</span>');
+  if (v.km)          sumItems.push('<span class="ficha-hsum-item">' + num(v.km) + ' km</span>');
+  var sumHtml = sumItems.length
+    ? '<div class="ficha-hsum">' + sumItems.join('<span class="ficha-hdot">•</span>') + '</div>'
+    : '';
 
-  // Specs table
+  // Tabla de especificaciones (solo filas con valor)
   var specData = [
-    ['Marca',        v.brand       ? esc(v.brand) : null],
-    ['Modelo',       v.model       ? esc(v.model) : null],
-    ['Año',          v.year        ? v.year        : null],
-    ['Kilómetros',   v.km          ? num(v.km) + ' km' : null],
-    ['Color',        v.color       ? esc(v.color)  : null],
-    ['Combustible',  v.combustible ? esc(v.combustible) : null],
-    ['Cambio',       v.cambio      ? esc(v.cambio) : null],
-    ['Potencia',     v.potencia_cv ? v.potencia_cv + ' CV' : null],
-    ['Puertas',      v.puertas     ? v.puertas     : null],
-    ['Plazas',       v.plazas      ? v.plazas      : null],
+    ['Marca',        v.brand        ? esc(v.brand) : null],
+    ['Modelo',       v.model        ? esc(v.model) : null],
+    ['Año',          v.year         ? v.year        : null],
+    ['Kilómetros',   v.km           ? num(v.km) + ' km' : null],
+    ['Color',        v.color        ? esc(v.color)  : null],
+    ['Combustible',  v.combustible  ? esc(v.combustible) : null],
+    ['Cambio',       v.cambio       ? esc(v.cambio) : null],
+    ['Potencia',     v.potencia_cv  ? v.potencia_cv + ' CV' : null],
+    ['Puertas',      v.puertas      ? v.puertas     : null],
+    ['Plazas',       v.plazas       ? v.plazas      : null],
     ['Etiqueta DGT', v.etiqueta_dgt ? esc(v.etiqueta_dgt) : null],
-    ['Matrícula',    v.matricula   ? '<span style="font-family:monospace;font-weight:700;letter-spacing:.04em">' + esc(v.matricula) + '</span>' : null],
+    ['Matrícula',    v.matricula    ? '<span style="font-family:monospace;letter-spacing:.06em">' + esc(v.matricula) + '</span>' : null],
   ].filter(function(r){ return r[1] !== null; });
 
   var specsHtml = specData.length
@@ -2385,31 +2411,39 @@ function renderFicha(id) {
     : '';
 
   var descHtml = v.descripcion
-    ? '<div class="ficha-desc"><div class="ficha-desc-ttl">Descripción</div><p class="ficha-desc-txt">' + esc(v.descripcion) + '</p></div>'
+    ? '<div class="ficha-desc-box"><div class="ficha-desc-ttl">Descripción</div><p class="ficha-desc-txt">' + esc(v.descripcion) + '</p></div>'
     : '';
 
   fichaMain.innerHTML =
-    '<div class="ficha-layout">' +
+    // Cabecera: título + resumen + divisor rojo — ancho completo
+    '<div class="ficha-header">' +
+      '<div class="ficha-htitle">' + esc(v.brand) + ' ' + esc(v.model) + '</div>' +
+      sumHtml +
+      '<div class="ficha-hdivider"></div>' +
+    '</div>' +
+    // Cuerpo: galería izquierda + panel derecho
+    '<div class="ficha-body">' +
       '<div>' + galleryHtml + '</div>' +
-      '<div class="ficha-info">' +
-        '<div>' +
-          '<div class="ficha-name">' + esc(v.brand) + ' ' + esc(v.model) + '</div>' +
-          (sumParts.length ? '<div class="ficha-summary">' + sumParts.join(' · ') + '</div>' : '') +
-        '</div>' +
-        '<div class="ficha-price-box">' +
+      '<div class="ficha-side">' +
+        '<div class="ficha-price-panel">' +
           '<div class="ficha-plabel">Precio de venta</div>' +
-          '<div class="ficha-price">' + eur(v.price) + '</div>' +
-          '<a href="tel:' + CLIENT_CONFIG.phone + '" class="ficha-cta-call" onclick="trackEvento(\'clic_llamar\',\'' + eid + '\')">' +
-            _svgPhone + ' Llamar ahora' +
-          '</a>' +
-          '<a href="' + waUrl + '" target="_blank" rel="noopener" class="ficha-cta-wa" onclick="trackEvento(\'clic_whatsapp\',\'' + eid + '\')">' +
-            _svgWa + ' WhatsApp' +
-          '</a>' +
+          '<div class="ficha-price-big">' + eur(v.price) + '</div>' +
+          '<div class="ficha-cta-row">' +
+            '<a href="tel:' + CLIENT_CONFIG.phone + '" class="ficha-cta-call" onclick="trackEvento(\'clic_llamar\',\'' + eid + '\')">' +
+              _svgPhone + ' Llamar' +
+            '</a>' +
+            '<a href="' + waUrl + '" target="_blank" rel="noopener" class="ficha-cta-wa" onclick="trackEvento(\'clic_whatsapp\',\'' + eid + '\')">' +
+              _svgWa + ' WhatsApp' +
+            '</a>' +
+          '</div>' +
         '</div>' +
-        specsHtml +
       '</div>' +
     '</div>' +
-    descHtml;
+    // Parte inferior: specs + descripción a ancho completo
+    '<div class="ficha-bottom">' +
+      specsHtml +
+      descHtml +
+    '</div>';
 
   // Touch swipe on main photo
   if (photos.length > 1) {
