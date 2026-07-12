@@ -844,31 +844,34 @@ img { display: block; max-width: 100%; }
 .ficha-bc-link{color:var(--text-2);cursor:pointer;transition:color .15s}.ficha-bc-link:hover{color:var(--red)}
 .ficha-bc-sep{color:var(--gray-3)}.ficha-bc-cur{color:var(--text);font-weight:600}
 .ficha-wrap{max-width:1200px;margin:0 auto;padding:28px 24px 72px}
-/* Cabecera: título + resumen a ancho completo */
-.ficha-header{margin-bottom:24px}
-.ficha-htitle{font-size:clamp(24px,3.2vw,38px);font-weight:900;letter-spacing:-.5px;line-height:1.08;color:var(--text);margin-bottom:10px}
-.ficha-hsum{display:flex;flex-wrap:wrap;align-items:center;font-size:15px;color:var(--text-2);margin-bottom:16px;line-height:1;gap:0}
+/* Cabecera: título + resumen (dentro de columna derecha) */
+.ficha-header{margin-bottom:4px}
+.ficha-htitle{font-size:clamp(20px,2.6vw,32px);font-weight:900;letter-spacing:-.5px;line-height:1.1;color:var(--text);margin-bottom:10px}
+.ficha-hsum{display:flex;flex-wrap:wrap;align-items:center;font-size:14px;color:var(--text-2);margin-bottom:14px;line-height:1;gap:0}
 .ficha-hsum-item{white-space:nowrap}
-.ficha-hdot{color:var(--red);font-weight:700;margin:0 10px}
-.ficha-hdivider{height:1px;background:var(--gray-2);position:relative}
+.ficha-hdot{color:var(--red);font-weight:700;margin:0 9px}
+.ficha-hdivider{height:1px;background:var(--gray-2);position:relative;margin-bottom:4px}
 .ficha-hdivider::before{content:'';position:absolute;left:0;top:0;height:2px;width:56px;background:var(--red)}
-/* Cuerpo: 2 columnas galería + panel lateral */
-.ficha-body{display:grid;grid-template-columns:1fr 360px;gap:28px;align-items:start;margin-top:26px}
+/* Grid principal: col izda (galería+desc) | col dcha (título+precio+specs) */
+.ficha-body{display:grid;grid-template-columns:1.35fr 1fr;column-gap:32px;row-gap:20px;align-items:start;margin-top:26px}
+.ficha-gal{grid-column:1;grid-row:1}
+.ficha-desc-wrap{grid-column:1;grid-row:2}
+.ficha-desc-wrap .ficha-desc-box{max-width:60%}
+.ficha-col-right{grid-column:2;grid-row:1/-1;align-self:start;position:sticky;top:80px;display:flex;flex-direction:column;gap:16px}
 /* Galería */
-.ficha-main-photo{position:relative;border-radius:12px;overflow:hidden;background:var(--black);aspect-ratio:4/3;cursor:zoom-in}
+.ficha-main-photo{position:relative;border-radius:12px;overflow:hidden;background:#f0f0f0;aspect-ratio:16/10;cursor:zoom-in}
 .ficha-main-photo img{width:100%;height:100%;object-fit:cover;display:block;transition:opacity .2s}
-.ficha-main-placeholder{width:100%;height:100%;min-height:260px;display:flex;align-items:center;justify-content:center;background:#1a1a1a}
-.ficha-gnav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;background:rgba(0,0,0,.6);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s;z-index:5;border:none;font-size:22px;line-height:1}
-.ficha-gnav:hover{background:rgba(0,0,0,.88)}.ficha-gprev{left:14px}.ficha-gnext{right:14px}
-.ficha-gcnt{position:absolute;bottom:14px;right:14px;background:rgba(0,0,0,.6);color:rgba(255,255,255,.9);font-size:12px;font-weight:600;padding:4px 10px;border-radius:10px}
-.ficha-expand{position:absolute;bottom:14px;left:14px;background:rgba(0,0,0,.6);color:rgba(255,255,255,.85);border:none;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;transition:background .15s}
-.ficha-expand:hover{background:rgba(0,0,0,.88)}
+.ficha-main-placeholder{width:100%;height:100%;min-height:220px;display:flex;align-items:center;justify-content:center;background:#e8e8e8}
+.ficha-gnav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;background:rgba(0,0,0,.55);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s;z-index:5;border:none;font-size:22px;line-height:1}
+.ficha-gnav:hover{background:rgba(0,0,0,.82)}.ficha-gprev{left:14px}.ficha-gnext{right:14px}
+.ficha-gcnt{position:absolute;bottom:14px;right:14px;background:rgba(0,0,0,.55);color:rgba(255,255,255,.9);font-size:12px;font-weight:600;padding:4px 10px;border-radius:10px}
+.ficha-expand{position:absolute;bottom:14px;left:14px;background:rgba(0,0,0,.55);color:rgba(255,255,255,.85);border:none;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;transition:background .15s}
+.ficha-expand:hover{background:rgba(0,0,0,.82)}
 .ficha-thumbs{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
-.ficha-thumb{width:72px;height:54px;border-radius:7px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:border-color .15s,opacity .15s;flex-shrink:0}
+.ficha-thumb{width:72px;aspect-ratio:16/10;border-radius:7px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:border-color .15s,opacity .15s;flex-shrink:0}
 .ficha-thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .ficha-thumb.active{border-color:var(--red)}.ficha-thumb:not(.active){opacity:.6}.ficha-thumb:hover:not(.active){opacity:.85}
-/* Panel lateral */
-.ficha-side{display:flex;flex-direction:column;gap:0;position:sticky;top:80px}
+/* Panel de precio */
 .ficha-price-panel{background:var(--white);border:1px solid var(--gray-2);border-radius:14px;padding:24px 22px 22px;box-shadow:0 2px 16px rgba(0,0,0,.07)}
 .ficha-plabel{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-2);margin-bottom:6px}
 .ficha-price-big{font-size:46px;font-weight:900;color:var(--red);letter-spacing:-.8px;line-height:1;margin-bottom:22px}
@@ -876,16 +879,16 @@ img { display: block; max-width: 100%; }
 .ficha-cta-call,.ficha-cta-wa{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 10px;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;text-decoration:none;transition:background .15s;font-family:inherit;white-space:nowrap}
 .ficha-cta-call{background:var(--black);color:var(--white)}.ficha-cta-call:hover{background:#222}
 .ficha-cta-wa{background:#25D366;color:var(--white)}.ficha-cta-wa:hover{background:#20bb59}
-/* Parte inferior: specs + descripción a ancho completo */
-.ficha-bottom{margin-top:28px;display:flex;flex-direction:column;gap:20px}
-.ficha-specs-box{background:var(--white);border:1px solid var(--gray-2);border-radius:14px;overflow:hidden}
-.ficha-specs-ttl{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text);padding:14px 20px;border-bottom:2px solid var(--gray-2);background:var(--gray)}
-.ficha-srow{display:flex;align-items:center;justify-content:space-between;padding:13px 20px;border-bottom:1px solid var(--gray-2);gap:16px}
+/* Ficha técnica */
+.ficha-specs-box{background:var(--white);border:1px solid var(--gray-2);border-radius:12px;overflow:hidden}
+.ficha-specs-ttl{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text);padding:12px 18px;border-bottom:2px solid var(--gray-2);background:var(--gray)}
+.ficha-srow{display:flex;align-items:center;justify-content:space-between;padding:11px 18px;border-bottom:1px solid var(--gray-2);gap:12px}
 .ficha-srow:last-child{border-bottom:none}
 .ficha-srow:nth-child(even){background:#FAFAFA}
 .ficha-slbl{font-size:13px;font-weight:700;color:var(--text);flex-shrink:0}
 .ficha-sval{font-size:13px;color:var(--text-2);text-align:right}
-.ficha-desc-box{background:var(--white);border:1px solid var(--gray-2);border-radius:14px;padding:24px 28px}
+/* Descripción */
+.ficha-desc-box{background:var(--white);border:1px solid var(--gray-2);border-radius:12px;padding:22px 26px}
 .ficha-desc-ttl{font-size:15px;font-weight:700;color:var(--text);margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--gray-2)}
 .ficha-desc-txt{font-size:14px;line-height:1.8;color:#374151;white-space:pre-wrap}
 /* Lightbox */
@@ -898,19 +901,22 @@ img { display: block; max-width: 100%; }
 .ficha-lb-cnt{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.6);font-size:13px}
 @media(max-width:900px){
   .ficha-body{grid-template-columns:1fr}
-  .ficha-side{position:static}
+  .ficha-gal{grid-column:1;grid-row:auto}
+  .ficha-col-right{grid-column:1;grid-row:auto;position:static}
+  .ficha-desc-wrap{grid-column:1;grid-row:auto}
+  .ficha-desc-wrap .ficha-desc-box{max-width:100%}
 }
 @media(max-width:640px){
   .ficha-wrap{padding:14px 14px 56px}
   .ficha-bc-inner{padding:0 14px}
   .ficha-htitle{margin-bottom:8px}
-  .ficha-hsum{font-size:14px}
+  .ficha-hsum{font-size:13px}
   .ficha-hdot{margin:0 7px}
   .ficha-price-big{font-size:36px}
-  .ficha-main-photo{aspect-ratio:16/10;border-radius:10px}
-  .ficha-thumbs{gap:6px}.ficha-thumb{width:58px;height:44px}
-  .ficha-desc-box{padding:18px 16px}
-  .ficha-srow{padding:12px 16px}
+  .ficha-main-photo{border-radius:10px}
+  .ficha-thumbs{gap:6px}.ficha-thumb{width:56px}
+  .ficha-desc-box{padding:16px 14px}
+  .ficha-srow{padding:10px 14px}
 }
 @media(max-width:380px){
   .ficha-cta-row{grid-template-columns:1fr}
@@ -2340,6 +2346,8 @@ function renderFicha(id) {
   trackEvento('vista', id);
   _fichaPhotos = v.photos || [];
   _fichaIdx    = 0;
+  // Precarga silenciosa para evitar flash al cambiar de imagen
+  _fichaPhotos.forEach(function(src){ var pi = new Image(); pi.src = src; });
 
   var photos   = _fichaPhotos;
   var waMsg    = encodeURIComponent('Hola, estoy interesado en el ' + v.brand + ' ' + v.model + ' ' + (v.year || '') + ' que vi en vuestra web');
@@ -2415,16 +2423,16 @@ function renderFicha(id) {
     : '';
 
   fichaMain.innerHTML =
-    // Cabecera: título + resumen + divisor rojo — ancho completo
-    '<div class="ficha-header">' +
-      '<div class="ficha-htitle">' + esc(v.brand) + ' ' + esc(v.model) + '</div>' +
-      sumHtml +
-      '<div class="ficha-hdivider"></div>' +
-    '</div>' +
-    // Cuerpo: galería izquierda + panel derecho
     '<div class="ficha-body">' +
-      '<div>' + galleryHtml + '</div>' +
-      '<div class="ficha-side">' +
+      // Col izda fila 1: galería
+      '<div class="ficha-gal">' + galleryHtml + '</div>' +
+      // Col dcha filas 1–fin (sticky): título + precio + ficha técnica
+      '<div class="ficha-col-right">' +
+        '<div class="ficha-header">' +
+          '<div class="ficha-htitle">' + esc(v.brand) + ' ' + esc(v.model) + '</div>' +
+          sumHtml +
+          '<div class="ficha-hdivider"></div>' +
+        '</div>' +
         '<div class="ficha-price-panel">' +
           '<div class="ficha-plabel">Precio de venta</div>' +
           '<div class="ficha-price-big">' + eur(v.price) + '</div>' +
@@ -2437,12 +2445,10 @@ function renderFicha(id) {
             '</a>' +
           '</div>' +
         '</div>' +
+        specsHtml +
       '</div>' +
-    '</div>' +
-    // Parte inferior: specs + descripción a ancho completo
-    '<div class="ficha-bottom">' +
-      specsHtml +
-      descHtml +
+      // Col izda fila 2: descripción limitada al 60% de la columna
+      (descHtml ? '<div class="ficha-desc-wrap">' + descHtml + '</div>' : '') +
     '</div>';
 
   // Touch swipe on main photo
