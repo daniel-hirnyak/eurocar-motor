@@ -1499,7 +1499,7 @@ async function loadVehicles() {
   try {
     const { data, error } = await sb
       .from('vehiculos')
-      .select('id, marca, modelo, anio, kilometraje, color, precio_venta, fotos, destacado, matricula, combustible, cambio, potencia_cv, puertas, plazas, descripcion, etiqueta_dgt')
+      .select('id, marca, modelo, anio, kilometraje, color, precio_venta, fotos, destacado, combustible, cambio, potencia_cv, puertas, plazas, descripcion, etiqueta_dgt')
       .eq('estado', 'disponible')
       .gt('precio_venta', 0)
       .order('created_at', { ascending: false });
@@ -1518,7 +1518,7 @@ async function loadVehicles() {
       thumb:       (row.fotos && row.fotos.length > 0) ? row.fotos[0] : null,
       photosCount: (row.fotos && row.fotos.length) || 0,
       destacado:   !!row.destacado,
-      matricula:   row.matricula      || '',
+
       combustible: row.combustible    || '',
       cambio:      row.cambio         || '',
       potencia_cv: row.potencia_cv    || null,
