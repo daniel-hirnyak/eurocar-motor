@@ -1,9 +1,7 @@
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v4';
 const CACHE_NAME = `stockdrive-${CACHE_VERSION}`;
 
 const PRECACHE_URLS = [
-  './',
-  './index.html',
   './manifest.json',
   './sd-icon-v2.png',
   './catalogo/',
