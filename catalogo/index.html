@@ -50,13 +50,23 @@ img { display: block; max-width: 100%; }
   position: sticky;
   top: 0;
   z-index: 100;
-  background: var(--black);
+  background: #141414;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
   height: 62px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 28px;
-  box-shadow: 0 1px 0 rgba(255,255,255,.06);
+  box-shadow: 0 1px 0 rgba(255,255,255,.08);
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  transition: background .25s, box-shadow .25s;
+}
+.header--scrolled {
+  background: rgba(20,20,20,.72);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 2px 16px rgba(0,0,0,.35);
 }
 .header-brand {
   display: flex;
@@ -73,6 +83,7 @@ img { display: block; max-width: 100%; }
   height: 44px;
   width: auto;
   display: block;
+  filter: brightness(0) invert(1);
 }
 .header-name {
   font-size: 17px;
@@ -158,6 +169,10 @@ img { display: block; max-width: 100%; }
   .hero-card{max-width:none;padding:24px 20px}
   .hero-actions{flex-direction:column;align-items:stretch}
   .hero-cta-primary,.hero-cta-secondary{justify-content:center}
+}
+@media(min-width:961px){
+  .hero-title{font-size:clamp(46px,5.5vw,72px)}
+  .hero-sub{font-size:clamp(16px,1.8vw,20px)}
 }
 
 /* ── TRUST BAND ──────────────────────────────────────────── */
@@ -929,7 +944,7 @@ img { display: block; max-width: 100%; }
 <header class="header">
   <div class="header-brand">
     <div class="header-logo">
-      <img src="media/logoeurocar.webp" alt="Eurocar Motor">
+      <img src="media/nofondologo.png" alt="Eurocar Motor">
     </div>
     <div>
       <div class="header-name" id="catHeaderName"></div>
@@ -2466,6 +2481,16 @@ function renderFicha(id) {
     }
   }
 }
+
+// ─── NAVBAR SCROLL ───────────────────────────────────────────
+(function(){
+  var _hdr = document.querySelector('.header');
+  function _navScroll() {
+    if (_hdr) _hdr.classList.toggle('header--scrolled', window.scrollY >= 30);
+  }
+  window.addEventListener('scroll', _navScroll, {passive: true});
+  _navScroll();
+})();
 
 // ─── START ───────────────────────────────────────────────────
 loadVehicles();
