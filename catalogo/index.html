@@ -871,11 +871,9 @@ img { display: block; max-width: 100%; }
 .ficha-hdivider{height:1px;background:var(--gray-2);position:relative;margin-bottom:4px}
 .ficha-hdivider::before{content:'';position:absolute;left:0;top:0;height:2px;width:56px;background:var(--red)}
 /* Grid principal: col izda (galería+desc) | col dcha (título+precio+specs) */
-.ficha-body{display:grid;grid-template-columns:1.35fr 1fr;column-gap:32px;row-gap:20px;align-items:start;margin-top:26px}
-.ficha-gal{grid-column:1;grid-row:1}
-.ficha-desc-wrap{grid-column:1;grid-row:2}
-.ficha-desc-wrap .ficha-desc-box{max-width:60%}
-.ficha-col-right{grid-column:2;grid-row:1/-1;align-self:start;position:sticky;top:80px;display:flex;flex-direction:column;gap:16px}
+.ficha-body{display:grid;grid-template-columns:1.35fr 1fr;column-gap:32px;align-items:start;margin-top:26px}
+.ficha-col-left{display:flex;flex-direction:column;gap:20px}
+.ficha-col-right{align-self:start;position:sticky;top:80px;display:flex;flex-direction:column;gap:16px}
 /* Galería */
 .ficha-main-photo{position:relative;border-radius:12px;overflow:hidden;background:#f0f0f0;aspect-ratio:16/10;cursor:zoom-in}
 .ficha-main-photo img{width:100%;height:100%;object-fit:cover;display:block;transition:opacity .2s}
@@ -919,10 +917,7 @@ img { display: block; max-width: 100%; }
 .ficha-lb-cnt{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.6);font-size:13px}
 @media(max-width:900px){
   .ficha-body{grid-template-columns:1fr}
-  .ficha-gal{grid-column:1;grid-row:auto}
-  .ficha-col-right{grid-column:1;grid-row:auto;position:static}
-  .ficha-desc-wrap{grid-column:1;grid-row:auto}
-  .ficha-desc-wrap .ficha-desc-box{max-width:100%}
+  .ficha-col-right{position:static}
 }
 @media(max-width:640px){
   .ficha-wrap{padding:14px 14px 56px}
@@ -2425,7 +2420,6 @@ function renderFicha(id) {
     ['Puertas',      v.puertas      ? v.puertas     : null],
     ['Plazas',       v.plazas       ? v.plazas      : null],
     ['Etiqueta DGT', v.etiqueta_dgt ? esc(v.etiqueta_dgt) : null],
-    ['Matrícula',    v.matricula    ? '<span style="font-family:monospace;letter-spacing:.06em">' + esc(v.matricula) + '</span>' : null],
   ].filter(function(r){ return r[1] !== null; });
 
   var specsHtml = specData.length
@@ -2443,9 +2437,12 @@ function renderFicha(id) {
 
   fichaMain.innerHTML =
     '<div class="ficha-body">' +
-      // Col izda fila 1: galería
-      '<div class="ficha-gal">' + galleryHtml + '</div>' +
-      // Col dcha filas 1–fin (sticky): título + precio + ficha técnica
+      // Col izda: galería + descripción (flujo natural, sin salto de fila)
+      '<div class="ficha-col-left">' +
+        '<div class="ficha-gal">' + galleryHtml + '</div>' +
+        (descHtml ? descHtml : '') +
+      '</div>' +
+      // Col dcha (sticky): título + precio + ficha técnica
       '<div class="ficha-col-right">' +
         '<div class="ficha-header">' +
           '<div class="ficha-htitle">' + esc(v.brand) + ' ' + esc(v.model) + '</div>' +
@@ -2466,8 +2463,6 @@ function renderFicha(id) {
         '</div>' +
         specsHtml +
       '</div>' +
-      // Col izda fila 2: descripción limitada al 60% de la columna
-      (descHtml ? '<div class="ficha-desc-wrap">' + descHtml + '</div>' : '') +
     '</div>';
 
   // Touch swipe on main photo
