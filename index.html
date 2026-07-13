@@ -1607,26 +1607,22 @@ function photoTouchEnd(e) {
 }
 
 function handlePhotoUpload(input) {
-  Array.from(input.files).forEach(file => {
-    const reader = new FileReader();
-    reader.onload = e => compressImage(e.target.result, preview => {
-      fPhotos.push({ preview, file });
-      refreshPhotos();
-    });
-    reader.readAsDataURL(file);
+  Array.from(input.files).forEach(async file => {
+    const preview = await compressImage(file);
+    fPhotos.push({ preview });
+    refreshPhotos();
   });
   input.value='';
 }
-function compressImage(src, cb) {
-  const img=new Image();
-  img.onload=()=>{
-    const MAX=800; let w=img.width, h=img.height;
-    if(w>MAX||h>MAX){ if(w>=h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;} }
-    const c=document.createElement('canvas'); c.width=w; c.height=h;
-    c.getContext('2d').drawImage(img,0,0,w,h);
-    cb(c.toDataURL('image/jpeg',.7));
-  };
-  img.src=src;
+async function compressImage(file) {
+  const MAX=1600;
+  const bitmap=await createImageBitmap(file,{imageOrientation:'from-image',resizeQuality:'high'});
+  let w=bitmap.width, h=bitmap.height;
+  if(w>MAX||h>MAX){ if(w>=h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;} }
+  const c=document.createElement('canvas'); c.width=w; c.height=h;
+  c.getContext('2d').drawImage(bitmap,0,0,w,h);
+  bitmap.close();
+  return c.toDataURL('image/jpeg',.80);
 }
 function removePhoto(idx) {
   const item = fPhotos[idx];
@@ -2396,6 +2392,15 @@ function filtered() {
 }
 
 // ─── SAVE VEHICLE ─────────────────────────────────────────────
+function dataURLtoBlob(dataURL) {
+  const [header,data]=dataURL.split(',');
+  const mime=header.match(/:(.*?);/)[1];
+  const bytes=atob(data);
+  const arr=new Uint8Array(bytes.length);
+  for(let i=0;i<bytes.length;i++) arr[i]=bytes.charCodeAt(i);
+  return new Blob([arr],{type:mime});
+}
+
 async function uploadPendingPhotos(vehiculoId) {
   const pending = fPhotos
     .map((p, idx) => ({ p, idx }))
@@ -2404,10 +2409,10 @@ async function uploadPendingPhotos(vehiculoId) {
   await Promise.all(pending.map(async ({ p, idx }) => {
     const ts   = Date.now();
     const rand = Math.random().toString(36).slice(2, 8);
-    const ext  = (p.file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');
-    const path = `vehiculos/${vehiculoId}/${ts}_${rand}.${ext || 'jpg'}`;
-    const { error } = await sb.storage.from('vehiculos-fotos').upload(path, p.file, {
-      contentType: p.file.type || 'image/jpeg',
+    const path = `vehiculos/${vehiculoId}/${ts}_${rand}.jpg`;
+    const blob = dataURLtoBlob(p.preview);
+    const { error } = await sb.storage.from('vehiculos-fotos').upload(path, blob, {
+      contentType: 'image/jpeg',
       cacheControl: '3600',
     });
     if (error) throw error;
