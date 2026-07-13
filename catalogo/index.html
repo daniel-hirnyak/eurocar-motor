@@ -916,8 +916,11 @@ img { display: block; max-width: 100%; }
 .ficha-lb-prev{left:16px}.ficha-lb-next{right:16px}
 .ficha-lb-cnt{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.6);font-size:13px}
 @media(max-width:900px){
-  .ficha-body{grid-template-columns:1fr}
-  .ficha-col-right{position:static}
+  .ficha-body{grid-template-columns:1fr;row-gap:20px}
+  .ficha-col-left{display:contents}
+  .ficha-gal{order:1}
+  .ficha-col-right{order:2;position:static}
+  .ficha-desc-box{order:3}
 }
 @media(max-width:640px){
   .ficha-wrap{padding:14px 14px 56px}
