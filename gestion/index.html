@@ -314,11 +314,11 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 }
 @media(max-width:640px){
   .exp-header{display:none}
-  .exp-line{grid-template-columns:1fr 1fr 28px;grid-template-rows:auto auto}
-  .exp-line input[type=text]{grid-column:1/3}
-  .exp-line .exp-del-btn{grid-column:3;grid-row:1}
-  .exp-line select{grid-column:1;grid-row:2}
-  .exp-line input[type=number]{grid-column:2;grid-row:2}
+  .exp-line{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r)}
+  .exp-line input[type=number]{order:1}
+  .exp-line input[type=text]{order:2}
+  .exp-line .exp-cat-sel{order:3}
+  .exp-line .exp-del-btn{order:4;align-self:flex-end;margin-top:2px}
 }
 @media(max-width:500px){
   .metrics.four-col,.metrics.three-col,.metrics.two-col{grid-template-columns:1fr}
@@ -440,6 +440,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
     min-height:44px;
     font-size:16px; /* evita el zoom automático en iOS */
   }
+  input[type=date]{max-width:100%;min-width:0;box-sizing:border-box}
   textarea { font-size:16px; }
   .btn { min-height:44px; }
   .btn-sm { min-height:38px; }
@@ -491,7 +492,9 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 
   /* ── FORMULARIO: reducir espaciado vertical en móvil ────── */
   .page-header { margin-bottom:10px; }
-  .fsec { padding:14px 16px; }
+  .fsec { padding:14px 16px; border:1px solid var(--border); border-radius:var(--r) }
+  .fsec:last-child { border-bottom:1px solid var(--border) }
+  .form-card { background:transparent; border:none; box-shadow:none; overflow:visible; display:flex; flex-direction:column; gap:12px }
 }
 /* ── DASHBOARD TABS (Dealcar style) ──────────────────────────── */
 .home-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:16px}
