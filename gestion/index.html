@@ -1004,6 +1004,7 @@ function normalizeV(row, allGastos, allHistorial) {
     combustible:   row.combustible   || '',
     cambio:        row.cambio        || '',
     potencia_cv:   row.potencia_cv   ?? null,
+    motor:         row.motor         || '',
     puertas:       row.puertas       ?? null,
     plazas:        row.plazas        ?? null,
     descripcion:   row.descripcion   || '',
@@ -1332,6 +1333,8 @@ function renderForm() {
         </select></div>
       <div class="fg"><label>Potencia (CV) <span class="opt">(opcional)</span></label>
         <input type="number" name="potencia_cv" value="${fData.potencia_cv??''}" placeholder="120" min="0" max="2000"></div>
+      <div class="fg"><label>Motor <span class="opt">(opcional)</span></label>
+        <input type="text" name="motor" value="${esc(fData.motor||'')}" placeholder="ej: 2.3 dCi 145, OM651…"></div>
       <div class="fg"><label>Puertas <span class="opt">(opcional)</span></label>
         <select name="puertas">
           <option value="" ${!fData.puertas?'selected':''}>Sin especificar</option>
@@ -1703,6 +1706,7 @@ function renderDetail() {
     ...(v.combustible  ? [['Combustible',  esc(v.combustible)]]       : []),
     ...(v.cambio       ? [['Cambio',       esc(v.cambio)]]            : []),
     ...(v.potencia_cv  ? [['Potencia',     v.potencia_cv + ' CV']]    : []),
+    ...(v.motor        ? [['Motor',        esc(v.motor)]]              : []),
     ...(v.puertas      ? [['Puertas',      v.puertas]]                : []),
     ...(v.plazas       ? [['Plazas',       v.plazas]]                 : []),
     ...(v.etiqueta_dgt ? [['Etiqueta DGT', esc(v.etiqueta_dgt)]]      : []),
@@ -2445,6 +2449,7 @@ function buildVehicleRow(d, isSold, fotos) {
     combustible:        d.combustible || null,
     cambio:             d.cambio || null,
     potencia_cv:        d.potencia_cv ? (+d.potencia_cv || null) : null,
+    motor:              d.motor?.trim() || null,
     puertas:            d.puertas ? (+d.puertas || null) : null,
     plazas:             d.plazas ? (+d.plazas || null) : null,
     descripcion:        d.descripcion?.trim() || null,
