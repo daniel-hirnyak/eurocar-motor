@@ -167,7 +167,9 @@ tbody tr:hover td{background:#FAFBFF}
 .form-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden}
 .fsec{padding:22px 24px;border-bottom:1px solid var(--border)}
 .fsec:last-child{border-bottom:none}
-.fsec-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:16px}
+.fsec-title{font-size:13px;font-weight:600;color:var(--text)}
+.fsec-title-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px 8px;margin-bottom:16px}
+.fsec-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;color:var(--text-2);background:rgba(0,0,0,.04);border:0.5px solid var(--border);border-radius:20px;padding:2px 8px;white-space:nowrap;line-height:1.4;flex-shrink:0}
 .fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .fgrid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
 .fg{display:flex;flex-direction:column;gap:5px}
@@ -1285,24 +1287,21 @@ function renderForm() {
 <div class="form-card">
 
   <div class="fsec">
-    <div class="fsec-title">Datos del vehículo</div>
+    <div class="fsec-title-row">
+      <div class="fsec-title">Información básica</div>
+      <span class="fsec-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Visible en la web</span>
+    </div>
     <div class="fgrid">
       <div class="fg"><label>Marca *</label>
         <input type="text" name="brand" value="${esc(fData.brand||'')}" placeholder="Volkswagen" required autocomplete="off"></div>
       <div class="fg"><label>Modelo *</label>
         <input type="text" name="model" value="${esc(fData.model||'')}" placeholder="Golf 1.6 TDI" required autocomplete="off"></div>
-      <div class="fg"><label>Matrícula</label>
-        <input type="text" name="matricula" value="${esc(fData.matricula||'')}" placeholder="1234 ABC" autocomplete="off" style="font-family:monospace;letter-spacing:.06em;text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"></div>
       <div class="fg"><label>Año *</label>
         <input type="number" name="year" value="${fData.year||''}" placeholder="2020" min="1980" max="2030" required></div>
       <div class="fg"><label>Kilometraje</label>
         <input type="number" name="km" value="${fData.km||''}" placeholder="85000" min="0"></div>
       <div class="fg"><label>Color</label>
         <input type="text" name="color" value="${esc(fData.color||'')}" placeholder="Blanco" autocomplete="off"></div>
-      <div class="fg"><label>Nº Bastidor <span class="opt">(opcional)</span></label>
-        <input type="text" name="vin" value="${esc(fData.vin||'')}" placeholder="WVWZZZ1KZ…" autocomplete="off" style="font-family:monospace;font-size:12px"></div>
-      <div class="fg"><label>Fecha de entrada *</label>
-        <input type="date" name="entryDate" value="${fData.entryDate||today}" required></div>
       <div class="fg"><label>Estado</label>
         <select name="status" onchange="updateSoldFields(this.value)">
           <option value="disponible"${(fData.status||'disponible')==='disponible'?' selected':''}>Disponible</option>
@@ -1313,7 +1312,10 @@ function renderForm() {
   </div>
 
   <div class="fsec">
-    <div class="fsec-title">Características técnicas</div>
+    <div class="fsec-title-row">
+      <div class="fsec-title">Características técnicas</div>
+      <span class="fsec-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Visible en la web</span>
+    </div>
     <div class="fgrid">
       <div class="fg"><label>Combustible</label>
         <select name="combustible">
@@ -1358,20 +1360,10 @@ function renderForm() {
   </div>
 
   <div class="fsec">
-    <div class="fsec-title">Origen del vehículo</div>
-    <div class="fgrid-2">
-      <div class="fg"><label>Proveedor <span class="opt">(opcional)</span></label>
-        <input type="text" name="proveedor" value="${esc(fData.proveedor||'')}" placeholder="Nombre del vendedor o empresa" autocomplete="off"></div>
-      <div class="fg"><label>Tipo de origen</label>
-        <select name="origen">
-          <option value="" ${!fData.origen?'selected':''}>Seleccionar...</option>
-          ${origenOpts.map(o=>`<option value="${o}" ${fData.origen===o?'selected':''}>${o}</option>`).join('')}
-        </select></div>
+    <div class="fsec-title-row">
+      <div class="fsec-title">Fotos <span class="opt" style="font-weight:400;font-size:12px">· arrastra para reordenar</span></div>
+      <span class="fsec-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Visible en la web</span>
     </div>
-  </div>
-
-  <div class="fsec">
-    <div class="fsec-title">Fotos <span class="opt" style="font-weight:400;font-size:12px">· arrastra para reordenar</span></div>
     <div id="photoGrid">${renderPhotoGrid()}</div>
     <label class="photo-upload-area" for="photoInput">
       <input type="file" id="photoInput" accept="image/*" multiple style="display:none" onchange="handlePhotoUpload(this)">
@@ -1384,14 +1376,67 @@ function renderForm() {
   </div>
 
   <div class="fsec">
-    <div class="fsec-title">Precios</div>
+    <div class="fsec-title-row">
+      <div class="fsec-title">Precio de venta</div>
+      <span class="fsec-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Visible en la web</span>
+    </div>
+    <div class="fg">
+      <label>PVP objetivo (€)</label>
+      <input type="number" name="salePrice" id="sp" value="${fData.salePrice||''}" placeholder="11500" min="0" step="1" oninput="refreshPricing()">
+      <div class="input-hint">Precio al que planeas vender</div>
+    </div>
+  </div>
+
+  <div class="fsec">
+    <div class="fsec-title-row">
+      <div class="fsec-title">Descripción pública</div>
+      <span class="fsec-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Visible en la web</span>
+    </div>
+    <div class="fg">
+      <textarea name="descripcion" rows="4" placeholder="Estado general, equipamiento destacado, extras, historial de revisiones… (visible para los clientes en el catálogo)">${esc(fData.descripcion||'')}</textarea>
+    </div>
+  </div>
+
+  <div class="fsec">
+    <div class="fsec-title-row">
+      <div class="fsec-title">Datos internos</div>
+      <span class="fsec-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Solo tú</span>
+    </div>
+    <div class="fgrid">
+      <div class="fg"><label>Matrícula</label>
+        <input type="text" name="matricula" value="${esc(fData.matricula||'')}" placeholder="1234 ABC" autocomplete="off" style="font-family:monospace;letter-spacing:.06em;text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"></div>
+      <div class="fg"><label>Nº Bastidor <span class="opt">(opcional)</span></label>
+        <input type="text" name="vin" value="${esc(fData.vin||'')}" placeholder="WVWZZZ1KZ…" autocomplete="off" style="font-family:monospace;font-size:12px"></div>
+      <div class="fg"><label>Fecha de entrada *</label>
+        <input type="date" name="entryDate" value="${fData.entryDate||today}" required></div>
+    </div>
+  </div>
+
+  <div class="fsec">
+    <div class="fsec-title-row">
+      <div class="fsec-title">Origen del vehículo</div>
+      <span class="fsec-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Solo tú</span>
+    </div>
     <div class="fgrid-2">
-      <div class="fg"><label>Precio de compra (€) *</label>
-        <input type="number" name="purchasePrice" id="pp" value="${fData.purchasePrice||''}" placeholder="8500" min="0" step="1" required oninput="refreshPricing()">
-        <div class="input-hint">Precio de adquisición</div></div>
-      <div class="fg"><label>PVP objetivo (€)</label>
-        <input type="number" name="salePrice" id="sp" value="${fData.salePrice||''}" placeholder="11500" min="0" step="1" oninput="refreshPricing()">
-        <div class="input-hint">Precio al que planeas vender</div></div>
+      <div class="fg"><label>Proveedor <span class="opt">(opcional)</span></label>
+        <input type="text" name="proveedor" value="${esc(fData.proveedor||'')}" placeholder="Nombre del vendedor o empresa" autocomplete="off"></div>
+      <div class="fg"><label>Tipo de origen</label>
+        <select name="origen">
+          <option value="" ${!fData.origen?'selected':''}>Seleccionar...</option>
+          ${origenOpts.map(o=>`<option value="${o}" ${fData.origen===o?'selected':''}>${o}</option>`).join('')}
+        </select></div>
+    </div>
+  </div>
+
+  <div class="fsec">
+    <div class="fsec-title-row">
+      <div class="fsec-title">Compra y venta</div>
+      <span class="fsec-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Solo tú</span>
+    </div>
+    <div class="fg">
+      <label>Precio de compra (€) *</label>
+      <input type="number" name="purchasePrice" id="pp" value="${fData.purchasePrice||''}" placeholder="8500" min="0" step="1" required oninput="refreshPricing()">
+      <div class="input-hint">Precio de adquisición</div>
     </div>
     <div id="soldPriceFields" class="${isSold?'':'hidden'}">
       <div class="form-subsection-title">Datos de la venta</div>
@@ -1406,7 +1451,10 @@ function renderForm() {
   </div>
 
   <div class="fsec">
-    <div class="fsec-title">Gastos asociados</div>
+    <div class="fsec-title-row">
+      <div class="fsec-title">Gastos asociados</div>
+      <span class="fsec-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Solo tú</span>
+    </div>
     <div class="exp-header">
       <span>Importe €</span><span>Concepto</span><span>Categoría</span><span></span>
     </div>
@@ -1419,19 +1467,18 @@ function renderForm() {
   </div>
 
   <div class="fsec">
-    <div class="fsec-title">Resumen económico</div>
+    <div class="fsec-title-row">
+      <div class="fsec-title">Resumen económico</div>
+      <span class="fsec-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Solo tú</span>
+    </div>
     <div class="price-box" id="priceBox">${renderPriceBox()}</div>
   </div>
 
   <div class="fsec">
-    <div class="fsec-title">Descripción pública <span class="opt" style="font-weight:400;font-size:12px">· visible en el catálogo</span></div>
-    <div class="fg">
-      <textarea name="descripcion" rows="4" placeholder="Estado general, equipamiento destacado, extras, historial de revisiones… (visible para los clientes en el catálogo)">${esc(fData.descripcion||'')}</textarea>
+    <div class="fsec-title-row">
+      <div class="fsec-title">Notas internas</div>
+      <span class="fsec-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Solo tú</span>
     </div>
-  </div>
-
-  <div class="fsec">
-    <div class="fsec-title">Notas internas <span class="opt" style="font-weight:400;font-size:12px">· visibles solo para ti</span></div>
     <div class="fg">
       <textarea name="notes" placeholder="Historial de revisiones, detalles del comprador, pendientes…">${esc(fData.notes||'')}</textarea>
     </div>
