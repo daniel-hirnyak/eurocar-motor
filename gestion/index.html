@@ -181,6 +181,9 @@ input[type=text],input[type=number],input[type=date],input[type=email],input[typ
 input:focus,select:focus,textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(30,42,94,.08)}
 textarea{resize:vertical;min-height:76px;line-height:1.5}
 .input-hint{font-size:11px;color:var(--text-2);margin-top:2px}
+.iva-display{background:var(--primary-light);border-radius:var(--r);padding:10px 12px;margin-top:8px;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px}
+.iva-label{color:var(--text-2)}
+.iva-amount{font-size:15px;font-weight:600;color:var(--primary)}
 
 /* ── PHOTOS ────────────────────────────────────────────────── */
 .photo-upload-area{display:block;border:2px dashed var(--border);border-radius:var(--r);padding:18px 20px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;margin-top:10px}
@@ -320,7 +323,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   .exp-line input[type=number]{order:1}
   .exp-line input[type=text]{order:2}
   .exp-line .exp-cat-sel{order:3}
-  .exp-line .exp-del-btn{order:4;align-self:stretch;width:100%;height:44px;border-radius:var(--r);background:rgba(220,38,38,.06);color:#DC2626;border:1px solid rgba(220,38,38,.2);justify-content:center;gap:6px}
+  .exp-line .exp-del-btn{order:4;align-self:stretch;width:100%;height:44px;border-radius:var(--r);background:#FEF2F2;color:#B91C1C;border:1px solid #FECACA;justify-content:center;gap:6px}
   .exp-line .exp-del-btn::after{content:'Eliminar gasto';font-size:13px;font-weight:500}
 }
 @media(max-width:500px){
@@ -444,7 +447,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
     font-size:16px; /* evita el zoom automático en iOS */
   }
   .fg{overflow:hidden;min-width:0}
-  input[type=date]{width:100%;max-width:100%;min-width:0;box-sizing:border-box}
+  input[type=date]{-webkit-appearance:none;appearance:none;width:100%;min-width:0;max-width:100%;box-sizing:border-box}
   textarea { font-size:16px; }
   .btn { min-height:44px; }
   .btn-sm { min-height:38px; }
@@ -1403,7 +1406,10 @@ function renderForm() {
       <input type="hidden" name="ivaChecked" id="ivaHidden" value="${fData.ivaChecked?'true':'false'}">
     </div>
     <div id="ivaDisplay" class="${fData.ivaChecked?'':'hidden'}">
-      <div class="input-hint" style="margin-top:4px">Precio final para el cliente: <strong id="ivaTotal" class="num">${fData.ivaChecked&&fData.salePrice?eur(fData.salePrice*1.21):''}</strong></div>
+      <div class="iva-display">
+        <span class="iva-label">Precio final para el cliente:</span>
+        <strong id="ivaTotal" class="num iva-amount">${fData.ivaChecked&&fData.salePrice?eur(fData.salePrice*1.21):''}</strong>
+      </div>
     </div>
   </div>
 
