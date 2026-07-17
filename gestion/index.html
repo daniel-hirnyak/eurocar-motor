@@ -169,7 +169,9 @@ tbody tr:hover td{background:#FAFBFF}
 .fsec:last-child{border-bottom:none}
 .fsec-title{font-size:13px;font-weight:600;color:var(--text)}
 .fsec-title-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px 8px;margin-bottom:16px}
-.fsec-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;color:var(--text-2);background:rgba(0,0,0,.04);border:0.5px solid var(--border);border-radius:20px;padding:2px 8px;white-space:nowrap;line-height:1.4;flex-shrink:0}
+.fsec-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;border-radius:20px;padding:2px 8px;white-space:nowrap;line-height:1.4;flex-shrink:0;border:0.5px solid transparent}
+.fsec-badge.pub{color:#1E2A5E;background:rgba(30,42,94,.09);border-color:rgba(30,42,94,.22)}
+.fsec-badge.prv{color:#334155;background:rgba(0,0,0,.08);border-color:rgba(0,0,0,.20)}
 .fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .fgrid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
 .fg{display:flex;flex-direction:column;gap:5px}
@@ -318,7 +320,8 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   .exp-line input[type=number]{order:1}
   .exp-line input[type=text]{order:2}
   .exp-line .exp-cat-sel{order:3}
-  .exp-line .exp-del-btn{order:4;align-self:flex-end;margin-top:2px}
+  .exp-line .exp-del-btn{order:4;align-self:stretch;width:100%;height:44px;border-radius:var(--r);background:rgba(220,38,38,.06);color:#DC2626;border:1px solid rgba(220,38,38,.2);justify-content:center;gap:6px}
+  .exp-line .exp-del-btn::after{content:'Eliminar gasto';font-size:13px;font-weight:500}
 }
 @media(max-width:500px){
   .metrics.four-col,.metrics.three-col,.metrics.two-col{grid-template-columns:1fr}
@@ -440,7 +443,8 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
     min-height:44px;
     font-size:16px; /* evita el zoom automático en iOS */
   }
-  input[type=date]{max-width:100%;min-width:0;box-sizing:border-box}
+  .fg{overflow:hidden;min-width:0}
+  input[type=date]{width:100%;max-width:100%;min-width:0;box-sizing:border-box}
   textarea { font-size:16px; }
   .btn { min-height:44px; }
   .btn-sm { min-height:38px; }
@@ -1014,6 +1018,7 @@ function normalizeV(row, allGastos, allHistorial) {
     plazas:        row.plazas        ?? null,
     descripcion:   row.descripcion   || '',
     etiqueta_dgt:  row.etiqueta_dgt  || '',
+    ivaChecked:    !!row.precio_mas_iva,
   };
 }
 
@@ -1292,7 +1297,7 @@ function renderForm() {
   <div class="fsec">
     <div class="fsec-title-row">
       <div class="fsec-title">Información básica</div>
-      <span class="fsec-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Visible en la web</span>
+      <span class="fsec-badge pub"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Visible en la web</span>
     </div>
     <div class="fgrid">
       <div class="fg"><label>Marca *</label>
@@ -1317,7 +1322,7 @@ function renderForm() {
   <div class="fsec">
     <div class="fsec-title-row">
       <div class="fsec-title">Características técnicas</div>
-      <span class="fsec-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Visible en la web</span>
+      <span class="fsec-badge pub"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Visible en la web</span>
     </div>
     <div class="fgrid">
       <div class="fg"><label>Combustible</label>
@@ -1365,7 +1370,7 @@ function renderForm() {
   <div class="fsec">
     <div class="fsec-title-row">
       <div class="fsec-title">Fotos <span class="opt" style="font-weight:400;font-size:12px">· arrastra para reordenar</span></div>
-      <span class="fsec-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Visible en la web</span>
+      <span class="fsec-badge pub"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Visible en la web</span>
     </div>
     <div id="photoGrid">${renderPhotoGrid()}</div>
     <label class="photo-upload-area" for="photoInput">
@@ -1381,19 +1386,31 @@ function renderForm() {
   <div class="fsec">
     <div class="fsec-title-row">
       <div class="fsec-title">Precio de venta</div>
-      <span class="fsec-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Visible en la web</span>
+      <span class="fsec-badge pub"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Visible en la web</span>
     </div>
     <div class="fg">
       <label>PVP objetivo (€)</label>
-      <input type="number" name="salePrice" id="sp" value="${fData.salePrice||''}" placeholder="11500" min="0" step="1" oninput="refreshPricing()">
+      <input type="number" name="salePrice" id="sp" value="${fData.salePrice||''}" placeholder="11500" min="0" step="1" oninput="refreshPricing();refreshIvaDisplay()">
       <div class="input-hint">Precio al que planeas vender</div>
+    </div>
+    <div class="fg" style="margin-top:10px">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:500;font-size:12px;color:var(--text)">
+        <input type="checkbox" id="ivaCheck" ${fData.ivaChecked?'checked':''}
+               onchange="refreshIvaDisplay()"
+               style="width:16px;height:16px;accent-color:var(--primary);cursor:pointer;flex-shrink:0;margin:0">
+        Precio + IVA (21%)
+      </label>
+      <input type="hidden" name="ivaChecked" id="ivaHidden" value="${fData.ivaChecked?'true':'false'}">
+    </div>
+    <div id="ivaDisplay" class="${fData.ivaChecked?'':'hidden'}">
+      <div class="input-hint" style="margin-top:4px">Precio final para el cliente: <strong id="ivaTotal" class="num">${fData.ivaChecked&&fData.salePrice?eur(fData.salePrice*1.21):''}</strong></div>
     </div>
   </div>
 
   <div class="fsec">
     <div class="fsec-title-row">
       <div class="fsec-title">Descripción pública</div>
-      <span class="fsec-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Visible en la web</span>
+      <span class="fsec-badge pub"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Visible en la web</span>
     </div>
     <div class="fg">
       <textarea name="descripcion" rows="4" placeholder="Estado general, equipamiento destacado, extras, historial de revisiones… (visible para los clientes en el catálogo)">${esc(fData.descripcion||'')}</textarea>
@@ -1403,7 +1420,7 @@ function renderForm() {
   <div class="fsec">
     <div class="fsec-title-row">
       <div class="fsec-title">Datos internos</div>
-      <span class="fsec-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Solo tú</span>
+      <span class="fsec-badge prv"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Solo tú</span>
     </div>
     <div class="fgrid">
       <div class="fg"><label>Matrícula</label>
@@ -1418,7 +1435,7 @@ function renderForm() {
   <div class="fsec">
     <div class="fsec-title-row">
       <div class="fsec-title">Origen del vehículo</div>
-      <span class="fsec-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Solo tú</span>
+      <span class="fsec-badge prv"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Solo tú</span>
     </div>
     <div class="fgrid-2">
       <div class="fg"><label>Proveedor <span class="opt">(opcional)</span></label>
@@ -1434,7 +1451,7 @@ function renderForm() {
   <div class="fsec">
     <div class="fsec-title-row">
       <div class="fsec-title">Compra y venta</div>
-      <span class="fsec-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Solo tú</span>
+      <span class="fsec-badge prv"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Solo tú</span>
     </div>
     <div class="fg">
       <label>Precio de compra (€) *</label>
@@ -1456,7 +1473,7 @@ function renderForm() {
   <div class="fsec">
     <div class="fsec-title-row">
       <div class="fsec-title">Gastos asociados</div>
-      <span class="fsec-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Solo tú</span>
+      <span class="fsec-badge prv"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Solo tú</span>
     </div>
     <div class="exp-header">
       <span>Importe €</span><span>Concepto</span><span>Categoría</span><span></span>
@@ -1472,7 +1489,7 @@ function renderForm() {
   <div class="fsec">
     <div class="fsec-title-row">
       <div class="fsec-title">Resumen económico</div>
-      <span class="fsec-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Solo tú</span>
+      <span class="fsec-badge prv"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Solo tú</span>
     </div>
     <div class="price-box" id="priceBox">${renderPriceBox()}</div>
   </div>
@@ -1480,7 +1497,7 @@ function renderForm() {
   <div class="fsec">
     <div class="fsec-title-row">
       <div class="fsec-title">Notas internas</div>
-      <span class="fsec-badge"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Solo tú</span>
+      <span class="fsec-badge prv"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Solo tú</span>
     </div>
     <div class="fg">
       <textarea name="notes" placeholder="Historial de revisiones, detalles del comprador, pendientes…">${esc(fData.notes||'')}</textarea>
@@ -1506,7 +1523,7 @@ function updateSoldFields(status) {
 function renderExpLines() {
   return fExp.map(e => `
     <div class="exp-line" data-id="${e.id}">
-      <input type="number" placeholder="0" min="0" step="1" value="${e.amount||''}" oninput="updExp('${e.id}','amount',this.value)">
+      <input type="number" placeholder="0 €" min="0" step="1" value="${e.amount||''}" oninput="updExp('${e.id}','amount',this.value)">
       <input type="text" list="dconcepts" placeholder="Concepto (ej: Pintura, ITV…)" value="${esc(e.concept||'')}" oninput="updExp('${e.id}','concept',this.value)">
       <select class="exp-cat-sel" onchange="updExp('${e.id}','categoria',this.value)">
         <option value="" ${!e.categoria?'selected':''}>Categoría…</option>
@@ -1558,6 +1575,21 @@ function updExp(id,field,val) {
 function refreshPricing() {
   document.getElementById('expTotal').textContent=eur(sumExp());
   document.getElementById('priceBox').innerHTML=renderPriceBox();
+}
+function refreshIvaDisplay() {
+  const cb=document.getElementById('ivaCheck');
+  const hidden=document.getElementById('ivaHidden');
+  const disp=document.getElementById('ivaDisplay');
+  const tot=document.getElementById('ivaTotal');
+  if(!cb||!disp) return;
+  if(hidden) hidden.value=cb.checked?'true':'false';
+  if(cb.checked){
+    const sp=+document.getElementById('sp')?.value||0;
+    disp.classList.remove('hidden');
+    if(tot) tot.textContent=eur(sp*1.21);
+  } else {
+    disp.classList.add('hidden');
+  }
 }
 
 // ─── PHOTOS + DRAG & DROP ────────────────────────────────────
@@ -2505,6 +2537,7 @@ function buildVehicleRow(d, isSold, fotos) {
     descripcion:        d.descripcion?.trim() || null,
     etiqueta_dgt:       d.etiqueta_dgt || null,
     fotos,
+    precio_mas_iva:     d.ivaChecked === 'true',
     updated_at:         new Date().toISOString(),
   };
 }

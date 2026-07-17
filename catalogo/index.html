@@ -904,6 +904,7 @@ img { display: block; max-width: 100%; }
 .ficha-price-panel{background:var(--white);border:1px solid var(--gray-2);border-radius:14px;padding:24px 22px 22px;box-shadow:0 2px 16px rgba(0,0,0,.07)}
 .ficha-plabel{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-2);margin-bottom:6px}
 .ficha-price-big{font-size:46px;font-weight:900;color:var(--red);letter-spacing:-.8px;line-height:1;margin-bottom:22px}
+.ficha-price-iva{font-size:12px;font-weight:600;color:var(--text-2);margin-top:-14px;margin-bottom:14px;letter-spacing:.02em}
 .ficha-cta-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .ficha-cta-call,.ficha-cta-wa{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 10px;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;text-decoration:none;transition:background .15s;font-family:inherit;white-space:nowrap}
 .ficha-cta-call{background:var(--black);color:var(--white)}.ficha-cta-call:hover{background:#222}
@@ -1515,7 +1516,7 @@ async function loadVehicles() {
   try {
     const { data, error } = await sb
       .from('vehiculos')
-      .select('id, marca, modelo, anio, kilometraje, color, precio_venta, fotos, destacado, combustible, cambio, potencia_cv, puertas, plazas, descripcion, etiqueta_dgt, motor')
+      .select('id, marca, modelo, anio, kilometraje, color, precio_venta, fotos, destacado, combustible, cambio, potencia_cv, puertas, plazas, descripcion, etiqueta_dgt, motor, precio_mas_iva')
       .eq('estado', 'disponible')
       .gt('precio_venta', 0)
       .order('created_at', { ascending: false });
@@ -1543,6 +1544,7 @@ async function loadVehicles() {
       plazas:      row.plazas         || null,
       descripcion: row.descripcion    || '',
       etiqueta_dgt:row.etiqueta_dgt   || '',
+      precio_mas_iva: !!row.precio_mas_iva,
     }));
 
     const _hc = document.getElementById('heroVehicleCount');
@@ -2477,6 +2479,7 @@ function renderFicha(id) {
         '<div class="ficha-price-panel">' +
           '<div class="ficha-plabel">Precio de venta</div>' +
           '<div class="ficha-price-big">' + eur(v.price) + '</div>' +
+          (v.precio_mas_iva ? '<div class="ficha-price-iva">+ IVA (21%)</div>' : '') +
           '<div class="ficha-cta-row">' +
             '<a href="tel:' + CLIENT_CONFIG.phone + '" class="ficha-cta-call" onclick="trackEvento(\'clic_llamar\',\'' + eid + '\')">' +
               _svgPhone + ' Llamar' +
