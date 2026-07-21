@@ -1022,6 +1022,7 @@ function normalizeV(row, allGastos, allHistorial) {
     descripcion:   row.descripcion   || '',
     etiqueta_dgt:  row.etiqueta_dgt  || '',
     ivaChecked:    !!row.precio_mas_iva,
+    archivado:     !!row.archivado,
   };
 }
 
@@ -1070,10 +1071,10 @@ function calc(v) {
 
 function summary() {
   const vs      = vehiclesCache;
-  const active  = vs.filter(v => v.status!=='vendido');
-  const avail   = vs.filter(v => v.status==='disponible');
-  const reserved = vs.filter(v => v.status==='reservado');
-  const sold    = vs.filter(v => v.status==='vendido');
+  const active  = vs.filter(v => v.status!=='vendido' && !v.archivado);
+  const avail   = vs.filter(v => v.status==='disponible' && !v.archivado);
+  const reserved = vs.filter(v => v.status==='reservado' && !v.archivado);
+  const sold    = vs.filter(v => v.status==='vendido' && !v.archivado);
   const soldWP  = sold.filter(v => +v.saleRealPrice);
   const now     = new Date();
 
@@ -1150,7 +1151,7 @@ function renderDash() {
   const filterBar = `
 <div class="filter-bar">
   <div class="filter-tabs">
-    ${[['all','Todos',all.length],['disponible','Disponibles',sm.availCount],['reservado','Reservados',sm.reservedCount],['vendido','Vendidos',sm.soldCount]]
+    ${[['all','Todos',vehiclesCache.filter(v=>!v.archivado).length],['disponible','Disponibles',sm.availCount],['reservado','Reservados',sm.reservedCount],['vendido','Vendidos',sm.soldCount],['archivado','Archivados',vehiclesCache.filter(v=>v.archivado).length]]
       .map(([k,l,n])=>`<button class="ftab${S.filter===k?' active':''}" onclick="setFilter('${k}')">${l} <span style="opacity:.6">(${n})</span></button>`).join('')}
   </div>
   <span class="featured-counter${featuredCount>=5?' at-limit':featuredCount>0?' has-items':''}" title="Vehículos destacados en el catálogo público">${IC.starOn} ${featuredCount}/5 destacados</span>
@@ -1195,6 +1196,7 @@ function renderDash() {
         <button class="btn btn-secondary btn-sm btn-star${v.destacado?' active':''}" onclick="toggleDestacado('${v.id}',event)" title="${v.destacado?'Quitar de destacados':'Destacar en catálogo'}">${v.destacado?IC.starOn:IC.starOff} ${v.destacado?'Destacado':'Destacar'}</button>
         <button class="btn btn-secondary btn-sm" onclick="showDetail('${v.id}')">${IC.eye} Ver</button>
         <button class="btn btn-secondary btn-sm" onclick="showEdit('${v.id}')">${IC.edit} Editar</button>
+        <button class="btn btn-secondary btn-sm" onclick="archiveVehicle('${v.id}',${!v.archivado})">${v.archivado?'↩ Desarchivar':'Archivar'}</button>
         <button class="btn btn-danger-soft btn-sm" onclick="openDel('${v.id}')">${IC.trash} Eliminar</button>
       </div>
     </div>
@@ -1521,6 +1523,12 @@ function renderForm() {
 }
 
 function updateSoldFields(status) {
+  if (status==='vendido' && fData.status!=='vendido') {
+    const sel=document.querySelector('[name="status"]');
+    if (sel) sel.value = fData.status||'disponible';
+    openSoldModal(S.editId);
+    return;
+  }
   const el=document.getElementById('soldPriceFields');
   if (el) { if(status==='vendido') el.classList.remove('hidden'); else el.classList.add('hidden'); }
   refreshPricing();
@@ -1962,7 +1970,7 @@ function renderHomeContent() {
   // ── MÉTRICAS TAB (default) ─────────────────────────────────
   const now  = new Date();
   const sm   = summary();
-  const active = vehiclesCache.filter(v => v.status!=='vendido');
+  const active = vehiclesCache.filter(v => v.status!=='vendido' && !v.archivado);
 
   const rangesDef = [
     {label:'< 6.000 €',        fn: v=>v.salePrice>0&&v.salePrice<6000},
@@ -2018,6 +2026,16 @@ function renderHomeContent() {
     <div class="hc-label">Rotación media</div>
     <div class="hc-val">${avgDays!==null?Math.round(avgDays)+' días':'—'}</div>
     <div class="hc-sub">${avgDays!==null?'Días medio en stock activo':'Sin histórico'}</div>
+  </div>
+  <div class="home-card" style="border-top:2px solid #059669">
+    <div class="hc-label" style="color:#059669">Beneficio acumulado</div>
+    <div class="hc-val" style="color:#059669">${sm.soldWithPrice>0?eur(sm.realProfit):'—'}</div>
+    <div class="hc-sub">${sm.soldWithPrice>0?'Sobre '+sm.soldWithPrice+' venta'+(sm.soldWithPrice!==1?'s':'')+'  con precio real':'Sin ventas registradas'}</div>
+  </div>
+  <div class="home-card" style="border-top:2px solid #059669">
+    <div class="hc-label" style="color:#059669">Margen medio real</div>
+    <div class="hc-val" style="color:#059669">${sm.soldWithPrice>0?pct(sm.avgRealMargin):'—'}</div>
+    <div class="hc-sub">${sm.soldWithPrice>0?'% sobre coste, ventas cerradas':'Sin ventas registradas'}</div>
   </div>
 </div>
 <div class="home-charts">
@@ -2468,7 +2486,12 @@ function setQ(q) {
 
 function filtered() {
   let vs=[...vehiclesCache];
-  if (S.filter!=='all') vs=vs.filter(v=>v.status===S.filter);
+  if (S.filter==='archivado') {
+    vs=vs.filter(v=>v.archivado);
+  } else {
+    vs=vs.filter(v=>!v.archivado);
+    if (S.filter!=='all') vs=vs.filter(v=>v.status===S.filter);
+  }
   if (S.q.trim()) {
     const q=S.q.toLowerCase();
     vs=vs.filter(v=>[v.brand,v.model,v.matricula,v.color,v.vin].some(f=>(f||'').toLowerCase().includes(q)));
@@ -2641,14 +2664,33 @@ async function toggleDestacado(id, event) {
   }
 }
 
+// ─── ARCHIVE ─────────────────────────────────────────────────
+async function archiveVehicle(id, archive) {
+  setLoading(true, archive?'Archivando...':'Desarchivando...');
+  try {
+    const {error}=await sb.from('vehiculos').update({archivado:archive,updated_at:new Date().toISOString()}).eq('id',id);
+    if (error) throw error;
+    await loadData();
+    toast(archive?'Vehículo archivado':'Vehículo desarchivado',3000,'success');
+    render();
+  } catch(err) {
+    toast('Error: '+(err.message||err),4000,'error');
+  } finally { setLoading(false); }
+}
+
 // ─── DELETE ───────────────────────────────────────────────────
 function openDel(id) {
   S.delId=id;
   const v=vehiclesCache.find(x=>x.id===id), name=v?`${v.brand} ${v.model}`:'este vehículo';
-  document.getElementById('delModalHead').textContent=`Eliminar ${name}`;
-  document.getElementById('delModalBody').textContent=`¿Seguro que quieres eliminar ${name}? Esta acción no se puede deshacer.`;
+  const hasVenta=ventasCache.some(s=>s.vehiculo_id===id);
+  document.getElementById('delModalHead').textContent=hasVenta?`No se puede eliminar ${name}`:`Eliminar ${name}`;
+  document.getElementById('delModalBody').textContent=hasVenta
+    ?`Este vehículo tiene una venta y un contrato registrados. Si lo eliminas se perdería esa información.\n\n¿Quieres archivarlo en su lugar? Quedará oculto del panel y del catálogo, pero podrás consultarlo en la pestaña Archivados.`
+    :`¿Seguro que quieres eliminar ${name}? Esta acción no se puede deshacer.`;
+  const btn=document.getElementById('delConfirmBtn');
+  btn.textContent=hasVenta?'Archivar':'Eliminar';
+  btn.onclick=hasVenta?()=>{closeDelModal();archiveVehicle(id,true);}:execDel;
   document.getElementById('delModal').classList.remove('hidden');
-  document.getElementById('delConfirmBtn').onclick=execDel;
 }
 function closeDelModal() { S.delId=null; document.getElementById('delModal').classList.add('hidden'); }
 async function execDel() {
@@ -2667,8 +2709,11 @@ async function execDel() {
     await loadData();
     toast(`${v?.brand||''} ${v?.model||''} eliminado`,3000,'success');
     S.view='home'; render();
-  } catch(err) { toast('Error al eliminar: '+(err.message||err),4000,'error'); }
-  finally { setLoading(false); }
+  } catch(err) {
+    const isFk=err.code==='23503'||String(err.message).includes('foreign key');
+    if (isFk) toast('Este vehículo tiene una venta registrada. Usa "Archivar" en su lugar.',6000,'error');
+    else toast('Error al eliminar: '+(err.message||err),4000,'error');
+  } finally { setLoading(false); }
 }
 document.getElementById('delModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeDelModal();});
 
