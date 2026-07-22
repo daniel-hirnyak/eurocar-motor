@@ -1517,8 +1517,8 @@ async function loadVehicles() {
   try {
     const { data, error } = await sb
       .from('vehiculos')
-      .select('id, marca, modelo, anio, kilometraje, color, precio_venta, fotos, destacado, combustible, cambio, potencia_cv, puertas, plazas, descripcion, etiqueta_dgt, motor, precio_mas_iva')
-      .eq('estado', 'disponible')
+      .select('id, marca, modelo, anio, kilometraje, color, precio_venta, fotos, destacado, combustible, cambio, potencia_cv, puertas, plazas, descripcion, etiqueta_dgt, motor, precio_mas_iva, publicado')
+      .eq('publicado', true)
       .eq('archivado', false)
       .gt('precio_venta', 0)
       .order('created_at', { ascending: false });

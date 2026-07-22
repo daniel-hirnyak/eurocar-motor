@@ -148,6 +148,14 @@ tbody tr:hover td{background:#FAFBFF}
 .badge-available{background:var(--success-bg);color:var(--success)}
 .badge-reserved{background:var(--warning-bg);color:var(--warning)}
 .badge-sold{background:#F1F5F9;color:var(--text-2)}
+.badge-prep{background:#FFF7ED;color:#C2410C}
+.toggle-wrap{display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+.toggle-inp{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
+.toggle-track{display:inline-flex;width:36px;height:20px;border-radius:10px;background:#CBD5E1;transition:background .2s;flex-shrink:0;align-items:center;padding:2px;box-sizing:border-box}
+.toggle-inp:checked~.toggle-track{background:#059669}
+.toggle-thumb{width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .2s;pointer-events:none}
+.toggle-inp:checked~.toggle-track .toggle-thumb{transform:translateX(16px)}
+.vcard.prep{opacity:.85}
 .days-tag{display:inline-block;padding:2px 7px;border-radius:12px;font-size:11px;font-weight:500;background:var(--bg);color:var(--text-2)}
 .days-tag.warn{background:var(--warning-bg);color:var(--warning)}
 .days-tag.alert{background:var(--danger-bg);color:var(--danger)}
@@ -941,8 +949,8 @@ const IC = {
 };
 
 // ─── CONSTANTS ────────────────────────────────────────────────
-const STATUS_LABEL = { disponible:'Disponible', reservado:'Reservado', vendido:'Vendido' };
-const STATUS_BADGE  = { disponible:'badge-available', reservado:'badge-reserved', vendido:'badge-sold' };
+const STATUS_LABEL = { en_preparacion:'En preparación', disponible:'Disponible', reservado:'Reservado', vendido:'Vendido' };
+const STATUS_BADGE  = { en_preparacion:'badge-prep', disponible:'badge-available', reservado:'badge-reserved', vendido:'badge-sold' };
 const EXP_CATS = ['Entrada en stock', 'Mantenimiento', 'Salida de venta', 'Garantía'];
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
 
@@ -1005,6 +1013,7 @@ function normalizeV(row, allGastos, allHistorial) {
     saleRealPrice: row.precio_venta_final || null,
     saleDate:      row.fecha_venta        || null,
     status:        row.estado             || 'disponible',
+    publicado:     !!row.publicado,
     notes:         row.notas              || '',
     entryDate:     row.fecha_entrada,
     photos:        row.fotos              || [],
@@ -1075,6 +1084,7 @@ function summary() {
   const avail   = vs.filter(v => v.status==='disponible' && !v.archivado);
   const reserved = vs.filter(v => v.status==='reservado' && !v.archivado);
   const sold    = vs.filter(v => v.status==='vendido' && !v.archivado);
+  const prep    = vs.filter(v => v.status==='en_preparacion' && !v.archivado);
   const soldWP  = sold.filter(v => +v.saleRealPrice);
   const now     = new Date();
 
@@ -1094,7 +1104,7 @@ function summary() {
 
   return {
     total: active.length, availCount: avail.length, reservedCount: reserved.length,
-    soldCount: sold.length, soldWithPrice: soldWP.length,
+    soldCount: sold.length, prepCount: prep.length, soldWithPrice: soldWP.length,
     invested:        active.reduce((s,v)=>s+calc(v).totalCost,0),
     potentialMargin: active.reduce((s,v)=>s+calc(v).margin,0),
     stuckCount:      stuck.length,
@@ -1151,7 +1161,7 @@ function renderDash() {
   const filterBar = `
 <div class="filter-bar">
   <div class="filter-tabs">
-    ${[['all','Todos',vehiclesCache.filter(v=>!v.archivado).length],['disponible','Disponibles',sm.availCount],['reservado','Reservados',sm.reservedCount],['vendido','Vendidos',sm.soldCount],['archivado','Archivados',vehiclesCache.filter(v=>v.archivado).length]]
+    ${[['all','Todos',vehiclesCache.filter(v=>!v.archivado).length],['en_preparacion','En preparación',sm.prepCount],['disponible','Disponibles',sm.availCount],['reservado','Reservados',sm.reservedCount],['vendido','Vendidos',sm.soldCount],['archivado','Archivados',vehiclesCache.filter(v=>v.archivado).length]]
       .map(([k,l,n])=>`<button class="ftab${S.filter===k?' active':''}" onclick="setFilter('${k}')">${l} <span style="opacity:.6">(${n})</span></button>`).join('')}
   </div>
   <span class="featured-counter${featuredCount>=5?' at-limit':featuredCount>0?' has-items':''}" title="Vehículos destacados en el catálogo público">${IC.starOn} ${featuredCount}/5 destacados</span>
@@ -1171,13 +1181,16 @@ function renderDash() {
     const dc = v.status!=='vendido'?(c.days>90?'alert':c.days>45?'warn':''):'';
     const daysVal = v.status==='vendido' ? (c.daysSold!==null?c.daysSold+'d':'—') : c.days+'d';
 
+    const pubDot = v.publicado
+      ? `<span style="display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:600;color:#059669"><span style="width:6px;height:6px;border-radius:50%;background:#059669;display:inline-block"></span>En web</span>`
+      : `<span style="display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:500;color:var(--text-2)"><span style="width:6px;height:6px;border-radius:50%;background:#CBD5E1;display:inline-block"></span>No publicado</span>`;
     return `
-<div class="vcard${isExpanded?' expanded':''}" data-id="${v.id}">
+<div class="vcard${isExpanded?' expanded':''}${v.status==='en_preparacion'?' prep':''}" data-id="${v.id}">
   <div class="vcard-summary" onclick="toggleCard('${v.id}')">
     ${thumb}
     <div class="vcard-info">
       <div class="vcard-name">${esc(v.brand)} ${esc(v.model)}${v.destacado?` <span class="badge-featured">${IC.starOn} Destacado</span>`:''}</div>
-      <div class="vcard-sub">${matTag?`<span>${matTag}</span>`:''}${v.year?`<span>${v.year}</span>`:''}${v.km?`<span>${num(v.km)} km</span>`:''}</div>
+      <div class="vcard-sub">${matTag?`<span>${matTag}</span>`:''}${v.year?`<span>${v.year}</span>`:''}${v.km?`<span>${num(v.km)} km</span>`:''}<span>${pubDot}</span></div>
     </div>
     <div class="vcard-price">${pvpDisplay}</div>
     <div class="vcard-chevron">›</div>
@@ -1302,7 +1315,7 @@ function renderForm() {
   <div class="fsec">
     <div class="fsec-title-row">
       <div class="fsec-title">Información básica</div>
-      <span class="fsec-badge pub"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Visible en la web</span>
+      <span class="fsec-badge pub"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Visible en la web</span>
     </div>
     <div class="fgrid">
       <div class="fg"><label>Marca *</label>
@@ -1317,17 +1330,28 @@ function renderForm() {
         <input type="text" name="color" value="${esc(fData.color||'')}" placeholder="Blanco" autocomplete="off"></div>
       <div class="fg"><label>Estado</label>
         <select name="status" onchange="updateSoldFields(this.value)">
-          <option value="disponible"${(fData.status||'disponible')==='disponible'?' selected':''}>Disponible</option>
+          <option value="en_preparacion"${(fData.status||'en_preparacion')==='en_preparacion'?' selected':''}>En preparación</option>
+          <option value="disponible"${fData.status==='disponible'?' selected':''}>Disponible</option>
           <option value="reservado"${fData.status==='reservado'?' selected':''}>Reservado</option>
           <option value="vendido"${fData.status==='vendido'?' selected':''}>Vendido</option>
         </select></div>
+    </div>
+    <div class="fg" style="margin-top:10px">
+      <label class="toggle-wrap">
+        <input type="checkbox" class="toggle-inp" id="pubCheck" ${fData.publicado?'checked':''}
+               onchange="refreshPubDisplay()">
+        <span class="toggle-track"><span class="toggle-thumb"></span></span>
+        <span style="font-weight:500;font-size:12px;color:var(--text)">Publicar en la web</span>
+      </label>
+      <input type="hidden" name="publicado" id="pubHidden" value="${fData.publicado?'true':'false'}">
+      <div class="input-hint" style="margin-top:4px">Cuando está activado, este vehículo aparece en tu catálogo público.</div>
     </div>
   </div>
 
   <div class="fsec">
     <div class="fsec-title-row">
       <div class="fsec-title">Características técnicas</div>
-      <span class="fsec-badge pub"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Visible en la web</span>
+      <span class="fsec-badge pub"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Visible en la web</span>
     </div>
     <div class="fgrid">
       <div class="fg"><label>Combustible</label>
@@ -1375,7 +1399,7 @@ function renderForm() {
   <div class="fsec">
     <div class="fsec-title-row">
       <div class="fsec-title">Fotos <span class="opt" style="font-weight:400;font-size:12px">· arrastra para reordenar</span></div>
-      <span class="fsec-badge pub"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Visible en la web</span>
+      <span class="fsec-badge pub"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Visible en la web</span>
     </div>
     <div id="photoGrid">${renderPhotoGrid()}</div>
     <label class="photo-upload-area" for="photoInput">
@@ -1391,7 +1415,7 @@ function renderForm() {
   <div class="fsec">
     <div class="fsec-title-row">
       <div class="fsec-title">Precio de venta</div>
-      <span class="fsec-badge pub"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Visible en la web</span>
+      <span class="fsec-badge pub"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Visible en la web</span>
     </div>
     <div class="fg">
       <label>PVP objetivo (€)</label>
@@ -1418,7 +1442,7 @@ function renderForm() {
   <div class="fsec">
     <div class="fsec-title-row">
       <div class="fsec-title">Descripción pública</div>
-      <span class="fsec-badge pub"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Visible en la web</span>
+      <span class="fsec-badge pub"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Visible en la web</span>
     </div>
     <div class="fg">
       <textarea name="descripcion" rows="4" placeholder="Estado general, equipamiento destacado, extras, historial de revisiones… (visible para los clientes en el catálogo)">${esc(fData.descripcion||'')}</textarea>
@@ -1525,7 +1549,7 @@ function renderForm() {
 function updateSoldFields(status) {
   if (status==='vendido' && fData.status!=='vendido') {
     const sel=document.querySelector('[name="status"]');
-    if (sel) sel.value = fData.status||'disponible';
+    if (sel) sel.value = fData.status||'en_preparacion';
     openSoldModal(S.editId);
     return;
   }
@@ -1590,6 +1614,23 @@ function refreshPricing() {
   document.getElementById('expTotal').textContent=eur(sumExp());
   document.getElementById('priceBox').innerHTML=renderPriceBox();
 }
+function refreshPubDisplay() {
+  const cb=document.getElementById('pubCheck');
+  const hidden=document.getElementById('pubHidden');
+  if(cb&&hidden) hidden.value=cb.checked?'true':'false';
+}
+
+async function updatePublicado(id, val) {
+  try {
+    const {error}=await sb.from('vehiculos').update({publicado:val,updated_at:new Date().toISOString()}).eq('id',id);
+    if(error) throw error;
+    const v=vehiclesCache.find(x=>x.id===id);
+    if(v) v.publicado=val;
+    toast(val?'Vehículo publicado en el catálogo':'Vehículo retirado del catálogo',2500,'success');
+    render();
+  } catch(err) { toast('Error: '+(err.message||err),4000,'error'); }
+}
+
 function refreshIvaDisplay() {
   const cb=document.getElementById('ivaCheck');
   const hidden=document.getElementById('ivaHidden');
@@ -1920,11 +1961,20 @@ function renderDetail() {
       <div class="dcard-head">Cambiar estado</div>
       <div class="dcard-body">
         <div class="status-actions">
-          ${['disponible','reservado','vendido'].map(st=>`
+          ${['en_preparacion','disponible','reservado','vendido'].map(st=>`
             <button class="btn ${v.status===st?'btn-primary':'btn-secondary'}" style="justify-content:flex-start${v.status===st?';cursor:default':''}"
               onclick="changeStatus('${v.id}','${st}')">
               ${v.status===st?'✓ ':''}${STATUS_LABEL[st]}
             </button>`).join('')}
+          <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text)">
+              <input type="checkbox" ${v.publicado?'checked':''}
+                     onchange="updatePublicado('${v.id}',this.checked)"
+                     style="width:16px;height:16px;accent-color:#059669;cursor:pointer;flex-shrink:0;margin:0">
+              Publicar en la web
+            </label>
+            <div style="font-size:11px;color:var(--text-2);margin-top:4px">${v.publicado?'Visible en el catálogo público':'No visible en el catálogo público'}</div>
+          </div>
         </div>
       </div>
     </div>
@@ -2555,7 +2605,8 @@ function buildVehicleRow(d, isSold, fotos) {
     precio_venta:       +d.salePrice || 0,
     precio_venta_final: isSold ? (+d.saleRealPrice || null) : null,
     fecha_venta:        isSold ? (d.saleDate || null) : null,
-    estado:             d.status || 'disponible',
+    estado:             d.status || 'en_preparacion',
+    publicado:          d.publicado === 'true',
     notas:              d.notes?.trim() || null,
     combustible:        d.combustible || null,
     cambio:             d.cambio || null,
