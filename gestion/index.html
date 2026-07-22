@@ -513,7 +513,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 }
 /* ── DASHBOARD TABS (Dealcar style) ──────────────────────────── */
 .home-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:16px}
-.home-title{font-size:22px;font-weight:700;line-height:1.2}
+.home-title{font-size:22px;font-weight:600;line-height:1.2}
 .home-subtitle{font-size:13px;color:var(--text-2);margin-top:3px}
 .dtabs-wrap{background:#F3F4F6;border-radius:var(--r-lg);padding:4px;margin-bottom:24px;display:inline-flex}
 .dtabs{display:flex;gap:1px}
@@ -547,11 +547,11 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .db-sec-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px}
 .db-sec-sub{font-size:12px;color:var(--text-2)}
 .db-kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
-.db-kpi{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px 18px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:5px}
+.db-kpi{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:0}
 .db-kpi-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px}
 .db-kpi-icon{color:#94A3B8;flex-shrink:0;margin-top:1px}
 .db-kpi-label{font-size:10px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.07em}
-.db-kpi-val{font-size:26px;font-weight:600;color:var(--text);letter-spacing:-.5px;line-height:1.1;font-variant-numeric:tabular-nums}
+.db-kpi-val{font-size:32px;font-weight:700;color:var(--text);letter-spacing:-.5px;line-height:1;font-variant-numeric:tabular-nums}
 .db-kpi-sub{font-size:11px;color:var(--text-2);line-height:1.4;margin-top:2px}
 .db-kpi-badge{display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:2px 7px;border-radius:20px;margin-left:6px;vertical-align:middle}
 .db-kpi-badge.pos{background:#DCFCE7;color:#15803D}
@@ -2066,6 +2066,8 @@ function showDash()  {
 function setHomeTab(tab) {
   S.homeTab=tab; S.view='home';
   const c = document.getElementById('homeContent');
+  const dc = document.getElementById('dashControls');
+  if (dc) dc.style.display = tab==='metricas'?'flex':'none';
   if (c) {
     document.querySelectorAll('.dtab[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
     c.innerHTML = renderHomeContent();
@@ -2147,138 +2149,143 @@ function renderHomeContent() {
   const maxR      = Math.max(...rCounts,1);
   const sinPvpCount = active.filter(v=>!v.salePrice||v.salePrice<=0).length;
 
-  // Delta helpers
+  // Additional computations
+  const avgMarginPerSale = pCount>0?pProfit/pCount:null;
+  const prevAvgMargin = (prevCount!==null&&prevCount>0&&prevProfit!==null)?prevProfit/prevCount:null;
+  const subLabel={mes:'este mes',mes_anterior:'el mes anterior','90dias':'los últimos 90 días','año':'este año'}[S.dashPeriod||'mes'];
+
+  // Delta helpers (with directional arrows)
   const dlt=(cur,prev)=>{
-    if(prev===null||prev===undefined)return'';
-    if(prev===0&&cur===0)return'';
+    if(prev===null||prev===undefined)return`<span style="font-size:11px;color:var(--text-2)">—</span>`;
+    if(prev===0&&cur===0)return`<span style="font-size:11px;color:var(--text-2)">—</span>`;
     if(prev===0)return`<span class="db-kpi-delta pos">↑ nuevo</span>`;
     const d=(cur-prev)/Math.abs(prev)*100;
-    return`<span class="db-kpi-delta ${d>=0?'pos':'neg'}">${d>=0?'+':''}${d.toFixed(0)}%</span>`;
+    return`<span class="db-kpi-delta ${d>=0?'pos':'neg'}">${d>=0?'↑':'↓'} ${Math.abs(d).toFixed(0)}%</span>`;
   };
   const dltEur=(cur,prev)=>{
-    if(prev===null||prev===undefined)return'';
+    if(prev===null||prev===undefined)return`<span style="font-size:11px;color:var(--text-2)">—</span>`;
     const d=cur-prev;
-    return`<span class="db-kpi-delta ${d>=0?'pos':'neg'}">${d>=0?'+':''}${eur(d)}</span>`;
+    return`<span class="db-kpi-delta ${d>=0?'pos':'neg'}">${d>=0?'↑':'↓'} ${eur(Math.abs(d))}</span>`;
   };
 
-  const periodLabel={mes:'Este mes',mes_anterior:'Mes anterior','90dias':'Últimos 90 días','año':'Este año'}[S.dashPeriod||'mes'];
-
-  const alertRow=(key,icon,label,count,level)=>{
+  // Alert row with Feather SVG by level
+  const alertRow=(key,label,count,level)=>{
+    const icoSvg={
+      crit:`<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+      warn:`<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+      info:`<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`,
+    };
+    const lvlLabel={crit:'CRÍTICO',warn:'AVISO',info:'INFORMACIÓN'};
+    const lvlColor={crit:'#dc2626',warn:'#d97706',info:'#2563eb'};
     if(!count)return`<div class="db-empty-ok"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>${label}: sin incidencias</div>`;
-    return`<div class="db-alert"><span class="db-alert-level ${level}" style="font-size:17px;line-height:1.2">${icon}</span><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--text)">${label}</div><div style="font-size:12px;color:var(--text-2);margin-top:1px">${count} vehículo${count!==1?'s':''}</div></div><button class="btn btn-secondary btn-sm db-alert-action" onclick="goAlertGroup('${key}')">Ver ›</button></div>`;
+    return`<div class="db-alert"><div style="flex-shrink:0;display:flex;align-items:flex-start;padding-top:1px">${icoSvg[level]||''}</div><div style="flex:1;min-width:0"><div style="font-size:10px;font-weight:700;color:${lvlColor[level]||'var(--text-2)'};text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px">${lvlLabel[level]||''}</div><div style="font-size:13px;font-weight:600;color:var(--text)">${label}</div><div style="font-size:12px;color:var(--text-2);margin-top:2px">${count} vehículo${count!==1?'s':''}</div></div><button class="btn btn-secondary btn-sm db-alert-action" onclick="goAlertGroup('${key}')">Ver ›</button></div>`;
   };
 
-  // Feather icons (16px, color var(--text-2))
+  // Feather icons for KPI cards (16px, color var(--text-2))
   const icoTruck=`<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h15v13H1z"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>`;
   const icoCard=`<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>`;
   const icoTag=`<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>`;
   const icoTrend=`<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>`;
   const icoClock=`<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
-  const icoWarn=`<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg>`;
+  const icoWarnSm=`<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
 
   const pctBadge=(val,den)=>{
     if(!den)return'';
     const p=val/den*100;
-    return`<span style="display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:8px;align-self:center;${p>=0?'background:#DCFCE7;color:#15803D':'background:#FEE2E2;color:#DC2626'}">${p>=0?'+':''}${p.toFixed(1)}%</span>`;
+    return`<span style="font-size:12px;font-weight:600;padding:2px 8px;border-radius:20px;margin-left:8px;white-space:nowrap;${p>=0?'background:#dcfce7;color:#16a34a':'background:#FEE2E2;color:#dc2626'}">${p>=0?'+':''}${p.toFixed(1)}%</span>`;
   };
+
+  // Section header helper
+  const secH=(t)=>`<div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">${t}</div>`;
 
   return `
 <div>
-  <div class="db-sec-hrow" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:22px">
-    <div class="db-period-sel">
-      <select onchange="changeDashPeriod(this.value)">
-        <option value="mes"${(S.dashPeriod||'mes')==='mes'?' selected':''}>Este mes</option>
-        <option value="mes_anterior"${S.dashPeriod==='mes_anterior'?' selected':''}>Mes anterior</option>
-        <option value="90dias"${S.dashPeriod==='90dias'?' selected':''}>Últimos 90 días</option>
-        <option value="año"${S.dashPeriod==='año'?' selected':''}>Este año</option>
-      </select>
-    </div>
-    <button class="db-refresh-btn" title="Actualizar datos" onclick="loadData().then(()=>{const c=document.getElementById('homeContent');if(c){c.innerHTML=renderHomeContent();initDashCharts();}})">
-      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-    </button>
-  </div>
 
   <div class="db-sec">
-    <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Situación actual</div>
+    ${secH('Situación actual')}
     <div class="db-kpi-grid">
-      <div class="db-kpi" style="position:relative;gap:0">
-        <span style="position:absolute;top:14px;right:14px;color:var(--text-2)">${icoTruck}</span>
-        <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em">Vehículos activos</div>
-        <div class="db-kpi-val" style="font-size:30px;margin-top:6px">${sm.total}</div>
-        <div style="font-size:12px;color:var(--text-2);margin-top:6px">${sm.availCount} disp. · ${sm.reservedCount} res. · ${sm.prepCount} en prep.</div>
+      <div class="db-kpi">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between"><span style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em">Vehículos activos</span><span style="color:var(--text-2)">${icoTruck}</span></div>
+        <div class="db-kpi-val" style="margin-top:8px">${sm.total}</div>
+        <div style="font-size:13px;color:var(--text-2);margin-top:4px;line-height:1.4">${sm.availCount} disp. · ${sm.reservedCount} res. · ${sm.prepCount} en prep.</div>
       </div>
-      <div class="db-kpi" style="position:relative;gap:0">
-        <span style="position:absolute;top:14px;right:14px;color:var(--text-2)">${icoCard}</span>
-        <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em">Capital invertido</div>
-        <div class="db-kpi-val" style="font-size:24px;margin-top:6px">${eur(sm.invested)}</div>
-        <div style="font-size:12px;color:var(--text-2);margin-top:6px">Compra + gastos confirmados del stock activo</div>
+      <div class="db-kpi">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between"><span style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em">Capital invertido</span><span style="color:var(--text-2)">${icoCard}</span></div>
+        <div class="db-kpi-val" style="margin-top:8px;font-size:26px">${eur(sm.invested)}</div>
+        <div style="font-size:13px;color:var(--text-2);margin-top:4px;line-height:1.4">Compra + gastos confirmados del stock activo</div>
       </div>
-      <div class="db-kpi" style="position:relative;gap:0">
-        <span style="position:absolute;top:14px;right:14px;color:var(--text-2)">${icoTag}</span>
-        <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em">Valor anunciado</div>
-        <div class="db-kpi-val" style="font-size:24px;margin-top:6px">${pvpAnunciado>0?eur(pvpAnunciado):'—'}</div>
-        <div style="font-size:12px;color:var(--text-2);margin-top:6px">PVP total del stock publicado en web</div>
+      <div class="db-kpi">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between"><span style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em">Valor anunciado</span><span style="color:var(--text-2)">${icoTag}</span></div>
+        <div class="db-kpi-val" style="margin-top:8px;font-size:26px">${pvpAnunciado>0?eur(pvpAnunciado):'—'}</div>
+        <div style="font-size:13px;color:var(--text-2);margin-top:4px;line-height:1.4">PVP total del stock publicado en web</div>
       </div>
-      <div class="db-kpi" style="position:relative;gap:0">
-        <span style="position:absolute;top:14px;right:14px;color:var(--text-2)">${icoTrend}</span>
-        <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em">Margen potencial</div>
-        <div style="display:flex;align-items:center;margin-top:6px">
-          <div class="db-kpi-val" style="font-size:24px">${pvpAnunciado>0?eur(margenPotencial):'—'}</div>
+      <div class="db-kpi">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between"><span style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em">Margen potencial</span><span style="color:var(--text-2)">${icoTrend}</span></div>
+        <div style="display:flex;align-items:center;flex-wrap:wrap;margin-top:8px">
+          <div class="db-kpi-val" style="font-size:26px">${pvpAnunciado>0?eur(margenPotencial):'—'}</div>
           ${pvpAnunciado>0?pctBadge(margenPotencial,sm.invested):''}
         </div>
-        <div style="font-size:12px;color:var(--text-2);margin-top:6px">Antes de gastos generales e impuestos</div>
+        <div style="font-size:13px;color:var(--text-2);margin-top:4px;line-height:1.4">Antes de gastos generales e impuestos</div>
       </div>
-      <div class="db-kpi" style="position:relative;gap:0">
-        <span style="position:absolute;top:14px;right:14px;color:var(--text-2)">${icoClock}</span>
-        <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em">Permanencia media</div>
-        <div class="db-kpi-val" style="font-size:30px;margin-top:6px">${avgPerm!==null?Math.round(avgPerm)+' días':'—'}</div>
-        <div style="font-size:12px;margin-top:6px;${age3>0?'color:#D97706;display:flex;align-items:center;gap:4px':'color:var(--text-2)'}">${age3>0?icoWarn+` ${age3} vehículo${age3!==1?'s':''} supera${age3===1?'':'n'} los 90 días`:'Tiempo medio en stock activo'}</div>
+      <div class="db-kpi">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between"><span style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em">Permanencia media</span><span style="color:var(--text-2)">${icoClock}</span></div>
+        <div class="db-kpi-val" style="margin-top:8px">${avgPerm!==null?Math.round(avgPerm)+' días':'—'}</div>
+        <div style="font-size:13px;margin-top:4px;line-height:1.4;${age3>0?'color:#d97706;display:flex;align-items:center;gap:4px':'color:var(--text-2)'}">${age3>0?icoWarnSm+` ${age3} vehículo${age3!==1?'s':''} supera${age3===1?'':'n'} los 90 días`:'Tiempo medio en stock activo'}</div>
       </div>
     </div>
   </div>
 
   <div class="db-sec">
-    <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Requieren atención</div>
+    ${secH('Requieren atención')}
     <div style="display:flex;flex-direction:column;gap:7px">
-      ${alertRow('margenNeg','⚠️','Vehículos con margen negativo',margenNeg.length,'crit')}
-      ${alertRow('pubSinCompra','💶','Publicados sin precio de compra',pubSinCompra.length,'warn')}
-      ${alertRow('masde90','🔴','Más de 90 días en stock',masde90.length,'crit')}
-      ${alertRow('pubPocoFotos','📷','Publicados con menos de 4 fotos',pubPocoFotos.length,'warn')}
-      ${alertRow('prepSinCompra','🔧','En preparación sin precio de compra',prepSinCompra.length,'info')}
+      ${alertRow('margenNeg','Vehículos con margen negativo',margenNeg.length,'crit')}
+      ${alertRow('pubSinCompra','Publicados sin precio de compra',pubSinCompra.length,'warn')}
+      ${alertRow('masde90','Más de 90 días en stock',masde90.length,'crit')}
+      ${alertRow('pubPocoFotos','Publicados con menos de 4 fotos',pubPocoFotos.length,'warn')}
+      ${alertRow('prepSinCompra','En preparación sin precio de compra',prepSinCompra.length,'info')}
     </div>
   </div>
 
   <div class="db-sec">
-    <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Resultados — ${periodLabel}</div>
-    <div class="db-kpi-grid" style="grid-template-columns:repeat(4,1fr)">
+    <div style="margin-bottom:14px">
+      <div style="font-size:16px;font-weight:600;color:var(--text)">Resultados del período</div>
+      <div style="font-size:13px;color:var(--text-2);margin-top:3px">Resultados comerciales correspondientes a ${subLabel}</div>
+    </div>
+    <div class="db-kpi-grid">
       <div class="db-kpi">
-        <div style="font-size:11px;font-weight:500;color:var(--text-2)">Ventas</div>
-        <div class="db-kpi-val">${pCount}</div>
-        ${dlt(pCount,prevCount)}
+        <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em">Vehículos vendidos</div>
+        <div class="db-kpi-val" style="margin-top:8px">${pCount}</div>
+        <div style="margin-top:4px">${dlt(pCount,prevCount)}</div>
       </div>
       <div class="db-kpi">
-        <div style="font-size:11px;font-weight:500;color:var(--text-2)">Ingresos</div>
-        <div class="db-kpi-val" style="font-size:20px">${pRevenue>0?eur(pRevenue):'—'}</div>
-        ${dltEur(pRevenue,prevRevenue)}
+        <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em">Importe vendido</div>
+        <div class="db-kpi-val" style="margin-top:8px;font-size:26px">${pRevenue>0?eur(pRevenue):'—'}</div>
+        <div style="margin-top:4px">${dltEur(pRevenue,prevRevenue)}</div>
       </div>
       <div class="db-kpi">
-        <div style="font-size:11px;font-weight:500;color:var(--text-2)">Beneficio</div>
-        <div class="db-kpi-val" style="font-size:20px;color:${pProfit>=0?'#059669':'#DC2626'}">${pCount>0?eur(pProfit):'—'}</div>
-        ${dltEur(pProfit,prevProfit)}
+        <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em">Margen bruto real</div>
+        <div class="db-kpi-val" style="margin-top:8px;font-size:26px;color:${pProfit>=0?'#059669':'#dc2626'}">${pCount>0?eur(pProfit):'—'}</div>
+        <div style="margin-top:4px">${dltEur(pProfit,prevProfit)}</div>
       </div>
       <div class="db-kpi">
-        <div style="font-size:11px;font-weight:500;color:var(--text-2)">Días hasta venta</div>
-        <div class="db-kpi-val">${avgDtsV!==null?Math.round(avgDtsV)+'d':'—'}</div>
-        ${avgDtsPrev!==null&&avgDtsV!==null?`<span class="db-kpi-delta ${avgDtsV<avgDtsPrev?'pos':'neg'}">${avgDtsV<avgDtsPrev?'▼':'▲'} ${Math.abs(Math.round(avgDtsV-avgDtsPrev))}d</span>`:''}
+        <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em">Margen medio</div>
+        <div class="db-kpi-val" style="margin-top:8px;font-size:26px">${avgMarginPerSale!==null?eur(avgMarginPerSale):'—'}</div>
+        <div style="margin-top:4px">${avgMarginPerSale!==null&&prevAvgMargin!==null?dltEur(avgMarginPerSale,prevAvgMargin):`<span style="font-size:11px;color:var(--text-2)">—</span>`}</div>
+      </div>
+      <div class="db-kpi">
+        <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em">Días hasta la venta</div>
+        <div class="db-kpi-val" style="margin-top:8px">${avgDtsV!==null?Math.round(avgDtsV)+'d':'—'}</div>
+        <div style="margin-top:4px">${avgDtsPrev!==null&&avgDtsV!==null?`<span class="db-kpi-delta ${avgDtsV<avgDtsPrev?'pos':'neg'}">${avgDtsV<avgDtsPrev?'↓':'↑'} ${Math.abs(Math.round(avgDtsV-avgDtsPrev))}d</span>`:`<span style="font-size:11px;color:var(--text-2)">—</span>`}</div>
       </div>
     </div>
   </div>
 
   <div class="db-sec">
-    <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Análisis del stock</div>
+    ${secH('Análisis del stock')}
     <div class="db-charts">
       <div class="db-kpi">
-        <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:12px">Antigüedad en stock</div>
+        <div style="font-size:12px;font-weight:600;color:var(--text)">Antigüedad en stock</div>
+        <div style="font-size:13px;color:var(--text-2);margin-top:2px;margin-bottom:14px">${active.length} vehículos activos</div>
         <div class="db-donut-wrap">
           ${age1+age2+age3>0?'<canvas id="dashDonut" width="130" height="130"></canvas>':'<div style="width:130px;height:130px;border-radius:50%;background:#F1F5F9;display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:11px;color:var(--text-2)">Sin datos</div>'}
           ${age1+age2+age3>0?`<div class="db-donut-center"><div style="font-size:20px;font-weight:700;color:var(--text)">${age1+age2+age3}</div><div style="font-size:10px;color:var(--text-2)">activos</div></div>`:''}
@@ -2288,7 +2295,8 @@ function renderHomeContent() {
         </div>
       </div>
       <div class="db-kpi" style="grid-column:span 2">
-        <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:12px">Stock por precio de venta</div>
+        <div style="font-size:12px;font-weight:600;color:var(--text)">Stock por precio de venta</div>
+        <div style="font-size:13px;color:var(--text-2);margin-top:2px;margin-bottom:14px">Número de vehículos por tramo</div>
         <div style="display:flex;flex-direction:column;gap:9px">
           ${rDefs.map((r,i)=>`<div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span style="color:var(--text-2)">${r.l}</span><strong style="color:var(--text)">${rCounts[i]}</strong></div><div style="height:7px;background:#F1F5F9;border-radius:4px;overflow:hidden"><div class="db-bar-fill" style="width:${rCounts[i]>0?((rCounts[i]/maxR)*100).toFixed(1)+'%':'0%'}"></div></div></div>`).join('')}
         </div>
@@ -2296,7 +2304,8 @@ function renderHomeContent() {
       </div>
     </div>
     <div class="db-kpi" style="margin-top:16px">
-      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:14px">Estado del stock activo</div>
+      <div style="font-size:12px;font-weight:600;color:var(--text)">Estado del stock activo</div>
+      <div style="font-size:13px;color:var(--text-2);margin-top:2px;margin-bottom:14px">Distribución de ${sm.total} vehículo${sm.total!==1?'s':''}</div>
       <div class="db-status-cols">
         ${[
           {l:'En preparación',n:sm.prepCount,  c:'#6b7280'},
@@ -2315,6 +2324,7 @@ function renderHomeContent() {
       <div style="font-size:11px;color:var(--text-2);margin-top:12px;text-align:center">Total: <strong>${sm.total}</strong> vehículo${sm.total!==1?'s':''} en stock activo</div>
     </div>
   </div>
+
 </div>
 <script type="application/json" id="_dashData">${JSON.stringify({age1,age2,age3})}<\/script>`;
 }
@@ -2403,7 +2413,25 @@ function renderHome() {
   return `
 <div id="homeShell">
 <div class="home-header">
-  <div><h1 class="home-title">${saludo}, Yuriy 👋</h1><p class="home-subtitle">Principales métricas y evolución de tu negocio</p></div>
+  <div>
+    <h1 class="home-title">${saludo}, Yuriy</h1>
+    <p class="home-subtitle">Principales métricas y evolución de tu negocio · <span style="color:#16a34a;font-weight:600">Actualizado ahora</span></p>
+  </div>
+  <div id="dashControls" style="display:${S.homeTab==='metricas'?'flex':'none'};align-items:center;gap:8px;flex-shrink:0">
+    <div style="position:relative;display:inline-flex;align-items:center">
+      <span style="position:absolute;left:9px;color:var(--text-2);pointer-events:none;display:flex;align-items:center"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+      <select id="dashPeriodSelect" onchange="changeDashPeriod(this.value)" style="-webkit-appearance:none;appearance:none;background:var(--white);border:1px solid var(--border);border-radius:8px;padding:7px 28px 7px 30px;font-size:12px;font-weight:500;color:var(--text);cursor:pointer;font-family:inherit;height:34px">
+        <option value="mes"${(S.dashPeriod||'mes')==='mes'?' selected':''}>Este mes</option>
+        <option value="mes_anterior"${S.dashPeriod==='mes_anterior'?' selected':''}>Mes anterior</option>
+        <option value="90dias"${S.dashPeriod==='90dias'?' selected':''}>Últimos 90 días</option>
+        <option value="año"${S.dashPeriod==='año'?' selected':''}>Este año</option>
+      </select>
+      <span style="position:absolute;right:8px;color:var(--text-2);pointer-events:none;display:flex;align-items:center"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+    </div>
+    <button class="db-refresh-btn" title="Actualizar datos" onclick="loadData().then(()=>{const c=document.getElementById('homeContent');if(c){c.innerHTML=renderHomeContent();initDashCharts();}})">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+    </button>
+  </div>
 </div>
 <div class="dtabs-wrap">
   <div class="dtabs">
