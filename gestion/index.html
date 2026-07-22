@@ -540,6 +540,63 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .stock-table-sep-title{font-size:14px;font-weight:600;color:var(--text)}
 .stock-table-sep-sub{font-size:12px;color:var(--text-2)}
 
+/* ── NEW DASHBOARD ───────────────────────────────────────── */
+.db-sec{margin-bottom:28px}
+.db-sec-head{margin-bottom:14px}
+.db-sec-hrow{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.db-sec-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px}
+.db-sec-sub{font-size:12px;color:var(--text-2)}
+.db-kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.db-kpi{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px 18px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:5px}
+.db-kpi-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px}
+.db-kpi-icon{color:#94A3B8;flex-shrink:0;margin-top:1px}
+.db-kpi-label{font-size:10px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.07em}
+.db-kpi-val{font-size:26px;font-weight:600;color:var(--text);letter-spacing:-.5px;line-height:1.1;font-variant-numeric:tabular-nums}
+.db-kpi-sub{font-size:11px;color:var(--text-2);line-height:1.4;margin-top:2px}
+.db-kpi-badge{display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:2px 7px;border-radius:20px;margin-left:6px;vertical-align:middle}
+.db-kpi-badge.pos{background:#DCFCE7;color:#15803D}
+.db-kpi-badge.neg{background:#FEE2E2;color:#DC2626}
+.db-kpi-delta{font-size:11px;font-weight:600}
+.db-kpi-delta.pos{color:#16a34a}
+.db-kpi-delta.neg{color:#dc2626}
+.db-alert-list{display:flex;flex-direction:column;gap:8px}
+.db-alert{display:flex;align-items:flex-start;gap:12px;background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:13px 16px;box-shadow:var(--shadow)}
+.db-alert-icon{flex-shrink:0;margin-top:2px}
+.db-alert-body{flex:1;min-width:0}
+.db-alert-level{font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px}
+.db-alert-level.crit{color:#dc2626}
+.db-alert-level.warn{color:#d97706}
+.db-alert-level.info{color:#1B2B4B}
+.db-alert-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px}
+.db-alert-sub{font-size:12px;color:var(--text-2)}
+.db-alert-action{flex-shrink:0;background:none;border:1px solid var(--border);border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;color:var(--primary);cursor:pointer;white-space:nowrap;font-family:inherit;transition:background .12s;align-self:center}
+.db-alert-action:hover{background:var(--primary-light)}
+.db-empty-ok{display:flex;align-items:center;gap:10px;padding:14px 18px;background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);color:#16a34a;font-size:13px;font-weight:500}
+.db-period-sel{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.db-period-sel select{font-size:12px;font-family:inherit;color:var(--text);background:var(--white);border:1px solid var(--border);border-radius:6px;padding:5px 8px;cursor:pointer;height:30px}
+.db-refresh-btn{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border:1px solid var(--border);border-radius:6px;background:var(--white);cursor:pointer;color:var(--text-2);transition:background .12s;flex-shrink:0}
+.db-refresh-btn:hover{background:var(--bg)}
+.db-charts{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.db-chart-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden}
+.db-chart-head{padding:12px 16px;border-bottom:1px solid var(--border);font-size:13px;font-weight:600;background:var(--bg);color:var(--text)}
+.db-chart-body{padding:16px}
+.db-donut-wrap{position:relative;width:130px;height:130px;margin:0 auto 14px}
+.db-donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
+.db-donut-num{font-size:24px;font-weight:700;color:var(--text);line-height:1}
+.db-donut-lbl{font-size:10px;color:var(--text-2);margin-top:2px;text-transform:uppercase;letter-spacing:.05em}
+.db-legend{display:flex;flex-direction:column;gap:7px;margin-top:4px}
+.db-legend-item{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--text-2)}
+.db-legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.db-bar-list{display:flex;flex-direction:column;gap:11px}
+.db-bar-item{display:flex;flex-direction:column;gap:4px}
+.db-bar-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text-2)}
+.db-bar-track{height:7px;background:#F1F5F9;border-radius:4px}
+.db-bar-fill{height:7px;border-radius:4px;background:#1B2B4B;transition:width .4s}
+.db-prog-list{display:flex;flex-direction:column;gap:11px}
+.db-prog-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.db-prog-track{height:5px;background:#F1F5F9;border-radius:3px}
+.db-alert-warn{font-size:11px;color:#d97706;margin-top:10px;display:flex;align-items:center;gap:5px;font-weight:500}
+
 /* ── VEHICLE CARDS ─────────────────────────────────────────── */
 .vcard-list{display:flex;flex-direction:column;gap:6px}
 .vcard{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow);transition:box-shadow .15s}
@@ -731,6 +788,15 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   .chart-age-wrap{width:80px;height:80px}
 }
 @media(max-width:480px){.home-metrics{grid-template-columns:1fr}}
+@media(max-width:900px){.db-charts{grid-template-columns:1fr}}
+@media(max-width:768px){
+  .db-kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .db-sec-hrow{flex-direction:column}
+  .db-period-sel{width:100%}
+  .db-period-sel select{flex:1}
+  .db-alert{flex-wrap:wrap}
+  .db-alert-action{width:100%;text-align:center;justify-content:center;margin-top:4px}
+}
 </style>
 </head>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -918,6 +984,7 @@ let vehiclesCache = [];
 let ventasCache   = [];
 let S = {
   view:'home', homeTab:'metricas', filter:'disponible', q:'', editId:null, detailId:null, delId:null,
+  dashPeriod:'mes', alertVehicleIds:null,
   sortCol:null, sortDir:'desc', soldTargetId:null, importPending:null, expandedCard:null,
 };
 let fData={}, fExp=[], fPhotos=[], fStorageToDelete=[];
@@ -1143,7 +1210,7 @@ function render() {
       if (c) c.innerHTML = renderHomeContent();
     }
     document.querySelectorAll('.dtab[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === S.homeTab));
-    if (S.homeTab==='metricas') initHomeCharts();
+    if (S.homeTab==='metricas') initDashCharts();
     return;
   }
   app.innerHTML = '';
@@ -2000,7 +2067,7 @@ function setHomeTab(tab) {
   if (c) {
     document.querySelectorAll('.dtab[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
     c.innerHTML = renderHomeContent();
-    if (tab==='metricas') initHomeCharts();
+    if (tab==='metricas') initDashCharts();
     if (tab==='web') loadWebAnalytics();
   } else {
     render();
@@ -2017,118 +2084,194 @@ function renderHomeContent() {
 
   if (S.homeTab === 'web') return renderWebTab();
 
-  // ── MÉTRICAS TAB (default) ─────────────────────────────────
+  // ── INICIO TAB (dashboard) ───────────────────────────────────
   const now  = new Date();
   const sm   = summary();
+  const {start, end, prevStart, prevEnd} = getDashPeriod();
   const active = vehiclesCache.filter(v => v.status!=='vendido' && !v.archivado);
 
-  const rangesDef = [
-    {label:'< 6.000 €',        fn: v=>v.salePrice>0&&v.salePrice<6000},
-    {label:'6.000 – 12.000 €', fn: v=>v.salePrice>=6000&&v.salePrice<12000},
-    {label:'12.000 – 18.000 €',fn: v=>v.salePrice>=12000&&v.salePrice<18000},
-    {label:'18.000 – 24.000 €',fn: v=>v.salePrice>=18000&&v.salePrice<24000},
-    {label:'24.000 – 35.000 €',fn: v=>v.salePrice>=24000&&v.salePrice<35000},
-    {label:'35.000 – 45.000 €',fn: v=>v.salePrice>=35000&&v.salePrice<45000},
-    {label:'45.000 – 55.000 €',fn: v=>v.salePrice>=45000&&v.salePrice<55000},
-    {label:'> 55.000 €',       fn: v=>v.salePrice>=55000},
+  // Period ventas
+  const periodVentas = ventasCache.filter(s=>{const d=new Date(s.fecha_venta);return d>=start&&d<=end;});
+  const prevVentas   = (prevStart&&prevEnd)?ventasCache.filter(s=>{const d=new Date(s.fecha_venta);return d>=prevStart&&d<=prevEnd;}):null;
+
+  const pCount   = periodVentas.length;
+  const pRevenue = periodVentas.reduce((t,s)=>t+(+s.precio_venta||0),0);
+  const pProfit  = periodVentas.reduce((t,s)=>t+(+s.margen||0),0);
+  const pDtsArr  = periodVentas.filter(s=>+s.dias_en_stock>0).map(s=>+s.dias_en_stock);
+  const avgDtsV  = pDtsArr.length?pDtsArr.reduce((a,b)=>a+b,0)/pDtsArr.length:null;
+
+  const prevCount   = prevVentas?prevVentas.length:null;
+  const prevRevenue = prevVentas?prevVentas.reduce((t,s)=>t+(+s.precio_venta||0),0):null;
+  const prevProfit  = prevVentas?prevVentas.reduce((t,s)=>t+(+s.margen||0),0):null;
+  const prevDtsArr  = prevVentas?prevVentas.filter(s=>+s.dias_en_stock>0).map(s=>+s.dias_en_stock):null;
+  const avgDtsPrev  = prevDtsArr&&prevDtsArr.length?prevDtsArr.reduce((a,b)=>a+b,0)/prevDtsArr.length:null;
+
+  // Alert groups
+  const dayOf      = v=>v.entryDate?Math.floor((now-new Date(v.entryDate))/86400000):null;
+  const sinPrecio  = active.filter(v=>!v.salePrice||v.salePrice<=0);
+  const masde90    = active.filter(v=>{const d=dayOf(v);return d!==null&&d>90;});
+  const sinFotos   = active.filter(v=>!v.photos||!v.photos.length);
+  const sinDesc    = active.filter(v=>!v.description||!v.description.trim());
+  const fichaParcial = active.filter(v=>!v.brand||!v.model||!v.year||!v.km);
+
+  window._alertGroups = {
+    sinPrecio:    sinPrecio.map(v=>v.id),
+    masde90:      masde90.map(v=>v.id),
+    sinFotos:     sinFotos.map(v=>v.id),
+    sinDesc:      sinDesc.map(v=>v.id),
+    fichaParcial: fichaParcial.map(v=>v.id),
+  };
+
+  // Donut data
+  const age1=active.filter(v=>{const d=dayOf(v);return d!==null&&d<45;}).length;
+  const age2=active.filter(v=>{const d=dayOf(v);return d!==null&&d>=45&&d<=90;}).length;
+  const age3=active.filter(v=>{const d=dayOf(v);return d!==null&&d>90;}).length;
+
+  // Price range bars
+  const rDefs=[
+    {l:'< 6.000 €',        f:v=>v.salePrice>0&&v.salePrice<6000},
+    {l:'6.000 – 12.000 €', f:v=>v.salePrice>=6000&&v.salePrice<12000},
+    {l:'12.000 – 18.000 €',f:v=>v.salePrice>=12000&&v.salePrice<18000},
+    {l:'18.000 – 24.000 €',f:v=>v.salePrice>=18000&&v.salePrice<24000},
+    {l:'> 24.000 €',       f:v=>v.salePrice>=24000},
   ];
-  const rangeCounts = rangesDef.map(r=>active.filter(r.fn).length);
-  const rangeLabels = rangesDef.map(r=>r.label);
+  const rCounts  = rDefs.map(r=>active.filter(r.f).length);
+  const maxR     = Math.max(...rCounts,1);
+  const sinPvpCount = active.filter(v=>!v.salePrice||v.salePrice<=0).length;
 
-  const dayOf = v => v.entryDate ? Math.floor((now-new Date(v.entryDate))/86400000) : null;
-  const age1 = active.filter(v=>{const d=dayOf(v);return d!==null&&d<45;}).length;
-  const age2 = active.filter(v=>{const d=dayOf(v);return d!==null&&d>=45&&d<=90;}).length;
-  const age3 = active.filter(v=>{const d=dayOf(v);return d!==null&&d>90;}).length;
+  // Delta helpers
+  const dlt=(cur,prev)=>{
+    if(prev===null||prev===undefined)return'';
+    if(prev===0&&cur===0)return'';
+    if(prev===0)return`<span class="db-kpi-delta pos">↑ nuevo</span>`;
+    const d=(cur-prev)/Math.abs(prev)*100;
+    return`<span class="db-kpi-delta ${d>=0?'pos':'neg'}">${d>=0?'+':''}${d.toFixed(0)}%</span>`;
+  };
+  const dltEur=(cur,prev)=>{
+    if(prev===null||prev===undefined)return'';
+    const d=cur-prev;
+    return`<span class="db-kpi-delta ${d>=0?'pos':'neg'}">${d>=0?'+':''}${eur(d)}</span>`;
+  };
 
-  const wp = active.filter(v=>v.salePrice>0);
-  const avgPrice = wp.length ? wp.reduce((s,v)=>s+v.salePrice,0)/wp.length : 0;
-  const wy = active.filter(v=>v.year);
-  const avgAge   = wy.length ? wy.reduce((s,v)=>s+(now.getFullYear()-v.year),0)/wy.length : null;
-  const we = active.filter(v=>v.entryDate);
-  const avgDays  = we.length ? we.reduce((s,v)=>s+dayOf(v),0)/we.length : null;
+  const periodLabel={mes:'Este mes',mes_anterior:'Mes anterior','90dias':'Últimos 90 días','año':'Este año'}[S.dashPeriod||'mes'];
 
-  const maxBar = Math.max(sm.availCount, sm.reservedCount, sm.soldCount, 1);
-  const barPct = n => ((n/maxBar)*100).toFixed(1)+'%';
+  const alertRow=(key,icon,label,count,level)=>{
+    if(!count)return`<div class="db-empty-ok"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>${label}: sin incidencias</div>`;
+    return`<div class="db-alert"><span class="db-alert-level ${level}" style="font-size:17px;line-height:1.2">${icon}</span><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--text)">${label}</div><div style="font-size:12px;color:var(--text-2);margin-top:1px">${count} vehículo${count!==1?'s':''}</div></div><button class="btn btn-secondary btn-sm db-alert-action" onclick="goAlertGroup('${key}')">Ver ›</button></div>`;
+  };
 
   return `
-<div class="home-metrics">
-  <div class="home-card">
-    <div class="hc-label">Stock actual</div>
-    <div class="hc-val">${sm.total}</div>
-    <div class="hc-sub">${sm.availCount} disponibles · ${sm.reservedCount} reservados</div>
+<div>
+  <div class="db-sec-hrow" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:22px">
+    <div class="db-period-sel" style="display:flex;align-items:center;gap:6px">
+      <select onchange="changeDashPeriod(this.value)">
+        <option value="mes"${(S.dashPeriod||'mes')==='mes'?' selected':''}>Este mes</option>
+        <option value="mes_anterior"${S.dashPeriod==='mes_anterior'?' selected':''}>Mes anterior</option>
+        <option value="90dias"${S.dashPeriod==='90dias'?' selected':''}>Últimos 90 días</option>
+        <option value="año"${S.dashPeriod==='año'?' selected':''}>Este año</option>
+      </select>
+    </div>
+    <button class="btn btn-secondary btn-sm" onclick="loadData().then(()=>{const c=document.getElementById('homeContent');if(c){c.innerHTML=renderHomeContent();initDashCharts();}})">↻ Actualizar</button>
   </div>
-  <div class="home-card">
-    <div class="hc-label">Valor total del stock</div>
-    <div class="hc-val">${eur(sm.invested)}</div>
-    <div class="hc-sub">Coste acumulado en stock activo</div>
-  </div>
-  <div class="home-card">
-    <div class="hc-label">Precio medio de venta</div>
-    <div class="hc-val">${avgPrice>0?eur(avgPrice):'—'}</div>
-    <div class="hc-sub">${avgPrice>0?'PVP medio del stock activo':'Sin datos de PVP'}</div>
-  </div>
-  <div class="home-card">
-    <div class="hc-label">Antigüedad media</div>
-    <div class="hc-val">${avgAge!==null?avgAge.toFixed(1)+' años':'—'}</div>
-    <div class="hc-sub">${avgAge!==null?'Años de media del vehículo':'Sin histórico'}</div>
-  </div>
-  <div class="home-card">
-    <div class="hc-label">Rotación media</div>
-    <div class="hc-val">${avgDays!==null?Math.round(avgDays)+' días':'—'}</div>
-    <div class="hc-sub">${avgDays!==null?'Días medio en stock activo':'Sin histórico'}</div>
-  </div>
-  <div class="home-card" style="border-top:2px solid #059669">
-    <div class="hc-label" style="color:#059669">Beneficio acumulado</div>
-    <div class="hc-val" style="color:#059669">${sm.soldWithPrice>0?eur(sm.realProfit):'—'}</div>
-    <div class="hc-sub">${sm.soldWithPrice>0?'Sobre '+sm.soldWithPrice+' venta'+(sm.soldWithPrice!==1?'s':'')+'  con precio real':'Sin ventas registradas'}</div>
-  </div>
-  <div class="home-card" style="border-top:2px solid #059669">
-    <div class="hc-label" style="color:#059669">Margen medio real</div>
-    <div class="hc-val" style="color:#059669">${sm.soldWithPrice>0?pct(sm.avgRealMargin):'—'}</div>
-    <div class="hc-sub">${sm.soldWithPrice>0?'% sobre coste, ventas cerradas':'Sin ventas registradas'}</div>
-  </div>
-</div>
-<div class="home-charts">
-  <div class="home-chart-card">
-    <div class="hcc-head">Stock por rango de precio</div>
-    <div class="hcc-body"><div class="chart-ranges-wrap"><canvas id="chartRanges"></canvas></div></div>
-  </div>
-  <div style="display:flex;flex-direction:column;gap:16px">
-    <div class="home-chart-card">
-      <div class="hcc-head">Estado del stock</div>
-      <div class="hcc-body">
-        ${[
-          {l:'Disponibles',count:sm.availCount, color:'#059669'},
-          {l:'Reservados', count:sm.reservedCount,color:'#D97706'},
-          {l:'Vendidos',   count:sm.soldCount,  color:'#94A3B8'},
-        ].map(it=>`
-        <div class="status-bar-item">
-          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px">
-            <span style="color:var(--text-2)">${it.l}</span><strong>${it.count}</strong>
-          </div>
-          <div style="height:6px;background:#F1F5F9;border-radius:3px">
-            <div style="height:6px;background:${it.color};border-radius:3px;width:${barPct(it.count)};transition:width .3s"></div>
-          </div>
-        </div>`).join('')}
+
+  <div class="db-sec">
+    <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Situación actual</div>
+    <div class="db-kpi-grid">
+      <div class="db-kpi">
+        <div style="font-size:11px;font-weight:500;color:var(--text-2)">Stock activo</div>
+        <div class="db-kpi-val">${sm.total}</div>
+        <div style="font-size:11px;color:var(--text-2)">${sm.availCount} disp. · ${sm.reservedCount} res.</div>
+      </div>
+      <div class="db-kpi">
+        <div style="font-size:11px;font-weight:500;color:var(--text-2)">Inversión total</div>
+        <div class="db-kpi-val" style="font-size:20px">${eur(sm.invested)}</div>
+        <div style="font-size:11px;color:var(--text-2)">Coste acumulado en stock</div>
+      </div>
+      <div class="db-kpi">
+        <div style="font-size:11px;font-weight:500;color:var(--text-2)">En preparación</div>
+        <div class="db-kpi-val">${sm.prepCount}</div>
+        <div style="font-size:11px;color:var(--text-2)">Pendientes de preparar</div>
+      </div>
+      <div class="db-kpi">
+        <div style="font-size:11px;font-weight:500;color:var(--text-2)">Reservados</div>
+        <div class="db-kpi-val">${sm.reservedCount}</div>
+        <div style="font-size:11px;color:var(--text-2)">Operaciones en curso</div>
+      </div>
+      <div class="db-kpi">
+        <div style="font-size:11px;font-weight:500;color:var(--text-2)">Beneficio acumulado</div>
+        <div class="db-kpi-val" style="font-size:20px;color:${sm.realProfit>=0?'#059669':'#DC2626'}">${sm.soldWithPrice>0?eur(sm.realProfit):'—'}</div>
+        <div style="font-size:11px;color:var(--text-2)">${sm.soldWithPrice>0?sm.soldWithPrice+' venta'+(sm.soldWithPrice!==1?'s':''):'Sin ventas'}</div>
       </div>
     </div>
-    <div class="home-chart-card">
-      <div class="hcc-head">Antigüedad del stock</div>
-      <div class="hcc-body hcc-age-body">
-        <div class="chart-age-wrap"><canvas id="chartAge"></canvas></div>
-        <div class="age-legend">
-          ${[
-            {label:'&lt; 45 días', color:'#059669', count:age1},
-            {label:'46 – 90 días',color:'#1E2A5E', count:age2},
-            {label:'&gt; 91 días', color:'#F97316', count:age3},
-          ].map(it=>`<div class="age-leg-item"><span class="age-dot" style="background:${it.color}"></span><span>${it.label} · <strong>${it.count}</strong></span></div>`).join('')}
-          ${age1+age2+age3===0?'<p style="font-size:12px;color:var(--text-2)">Sin datos de entrada</p>':''}
+  </div>
+
+  <div class="db-sec">
+    <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Requieren atención</div>
+    <div style="display:flex;flex-direction:column;gap:7px">
+      ${alertRow('sinPrecio','⚠️','Sin precio de venta',sinPrecio.length,'warn')}
+      ${alertRow('masde90','🔴','Más de 90 días en stock',masde90.length,'crit')}
+      ${alertRow('sinFotos','📷','Sin fotos',sinFotos.length,'warn')}
+      ${alertRow('sinDesc','📋','Sin descripción',sinDesc.length,'info')}
+      ${alertRow('fichaParcial','❗','Ficha incompleta',fichaParcial.length,'warn')}
+    </div>
+  </div>
+
+  <div class="db-sec">
+    <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Resultados — ${periodLabel}</div>
+    <div class="db-kpi-grid" style="grid-template-columns:repeat(4,1fr)">
+      <div class="db-kpi">
+        <div style="font-size:11px;font-weight:500;color:var(--text-2)">Ventas</div>
+        <div class="db-kpi-val">${pCount}</div>
+        ${dlt(pCount,prevCount)}
+      </div>
+      <div class="db-kpi">
+        <div style="font-size:11px;font-weight:500;color:var(--text-2)">Ingresos</div>
+        <div class="db-kpi-val" style="font-size:20px">${pRevenue>0?eur(pRevenue):'—'}</div>
+        ${dltEur(pRevenue,prevRevenue)}
+      </div>
+      <div class="db-kpi">
+        <div style="font-size:11px;font-weight:500;color:var(--text-2)">Beneficio</div>
+        <div class="db-kpi-val" style="font-size:20px;color:${pProfit>=0?'#059669':'#DC2626'}">${pCount>0?eur(pProfit):'—'}</div>
+        ${dltEur(pProfit,prevProfit)}
+      </div>
+      <div class="db-kpi">
+        <div style="font-size:11px;font-weight:500;color:var(--text-2)">Días hasta venta</div>
+        <div class="db-kpi-val">${avgDtsV!==null?Math.round(avgDtsV)+'d':'—'}</div>
+        ${avgDtsPrev!==null&&avgDtsV!==null?`<span class="db-kpi-delta ${avgDtsV<avgDtsPrev?'pos':'neg'}">${avgDtsV<avgDtsPrev?'▼':'▲'} ${Math.abs(Math.round(avgDtsV-avgDtsPrev))}d</span>`:''}
+      </div>
+    </div>
+  </div>
+
+  <div class="db-sec">
+    <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Análisis del stock</div>
+    <div class="db-charts">
+      <div class="db-kpi">
+        <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:12px">Antigüedad en stock</div>
+        <div class="db-donut-wrap">
+          ${age1+age2+age3>0?'<canvas id="dashDonut" width="130" height="130"></canvas>':'<div style="width:130px;height:130px;border-radius:50%;background:#F1F5F9;display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:11px;color:var(--text-2)">Sin datos</div>'}
+          ${age1+age2+age3>0?`<div class="db-donut-center"><div style="font-size:20px;font-weight:700;color:var(--text)">${age1+age2+age3}</div><div style="font-size:10px;color:var(--text-2)">activos</div></div>`:''}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-top:10px">
+          ${[{l:'&lt; 45 días',c:'#059669',n:age1},{l:'45 – 90 días',c:'#1B2B4B',n:age2},{l:'&gt; 90 días',c:'#F97316',n:age3}].map(it=>`<div style="display:flex;align-items:center;gap:7px;font-size:11px"><span style="width:8px;height:8px;border-radius:50%;background:${it.c};flex-shrink:0"></span><span style="color:var(--text-2);flex:1">${it.l}</span><strong style="color:var(--text)">${it.n}</strong></div>`).join('')}
         </div>
       </div>
+      <div class="db-kpi" style="grid-column:span 2">
+        <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:12px">Stock por precio de venta</div>
+        <div style="display:flex;flex-direction:column;gap:9px">
+          ${rDefs.map((r,i)=>`<div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span style="color:var(--text-2)">${r.l}</span><strong style="color:var(--text)">${rCounts[i]}</strong></div><div style="height:7px;background:#F1F5F9;border-radius:4px;overflow:hidden"><div class="db-bar-fill" style="width:${rCounts[i]>0?((rCounts[i]/maxR)*100).toFixed(1)+'%':'0%'}"></div></div></div>`).join('')}
+        </div>
+        ${sinPvpCount>0?`<div class="db-alert-warn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg>${sinPvpCount} sin PVP, no incluido${sinPvpCount!==1?'s':''} en la gráfica</div>`:''}
+      </div>
+    </div>
+    <div class="db-kpi" style="margin-top:16px">
+      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:12px">Estado del stock</div>
+      <div style="display:flex;flex-direction:column;gap:9px">
+        ${[{l:'En preparación',n:sm.prepCount,c:'#C2410C'},{l:'Disponibles',n:sm.availCount,c:'#059669'},{l:'Reservados',n:sm.reservedCount,c:'#D97706'},{l:'Vendidos',n:sm.soldCount,c:'#94A3B8'}].map(it=>`<div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span style="color:var(--text-2)">${it.l}</span><strong style="color:var(--text)">${it.n}</strong></div><div style="height:7px;background:#F1F5F9;border-radius:4px;overflow:hidden"><div style="height:7px;background:${it.c};border-radius:4px;width:${sm.total>0?((it.n/sm.total)*100).toFixed(1)+'%':'0%'};transition:width .4s"></div></div></div>`).join('')}
+      </div>
     </div>
   </div>
 </div>
-<script type="application/json" id="_chartData">${JSON.stringify({rangeCounts,rangeLabels,age1,age2,age3})}<\/script>`;
+<script type="application/json" id="_dashData">${JSON.stringify({age1,age2,age3})}<\/script>`;
 }
 
 // ─── VENTAS & FACTURACIÓN ─────────────────────────────────────
@@ -2221,19 +2364,19 @@ function renderHome() {
   <div class="dtabs">
     <button class="dtab${S.homeTab==='metricas'?' active':''}" data-tab="metricas" onclick="setHomeTab('metricas')">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-      Métricas
+      Inicio
     </button>
     <button class="dtab${S.homeTab==='stock'?' active':''}" data-tab="stock" onclick="setHomeTab('stock')">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3v-5l2.5-5h13L21 12v5h-2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
-      Stock
+      Vehículos
     </button>
     <button class="dtab${S.homeTab==='ventas'?' active':''}" data-tab="ventas" onclick="setHomeTab('ventas')">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-      Ventas &amp; Facturación
+      Ventas
     </button>
     <button class="dtab${S.homeTab==='web'?' active':''}" data-tab="web" onclick="setHomeTab('web')">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-      Web &amp; Visibilidad
+      Rendimiento web
     </button>
   </div>
 </div>
@@ -2502,25 +2645,43 @@ async function loadWebAnalytics() {
   }
 }
 
-function initHomeCharts() {
-  const el=document.getElementById('_chartData'); if(!el) return;
-  const {rangeCounts,rangeLabels,age1,age2,age3}=JSON.parse(el.textContent);
-  ['chartRanges','chartAge'].forEach(id=>{
-    const c=document.getElementById(id);
-    if(c && typeof Chart!=='undefined' && Chart.getChart(c)) Chart.getChart(c).destroy();
-  });
-  const rc=document.getElementById('chartRanges');
-  if(rc && typeof Chart!=='undefined') new Chart(rc,{
-    type:'bar',
-    data:{labels:rangeLabels,datasets:[{data:rangeCounts,backgroundColor:'#1E2A5E',borderRadius:4,barThickness:12}]},
-    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{precision:0,font:{size:11}},grid:{color:'#F1F5F9'}},y:{grid:{display:false},ticks:{font:{size:11}}}}}
-  });
-  const ac=document.getElementById('chartAge');
-  if(ac && typeof Chart!=='undefined' && (age1+age2+age3)>0) new Chart(ac,{
-    type:'doughnut',
-    data:{labels:['< 45 días','46-90 días','> 91 días'],datasets:[{data:[age1,age2,age3],backgroundColor:['#059669','#1E2A5E','#F97316'],borderWidth:0}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'68%'}
-  });
+function initDashCharts() {
+  const el=document.getElementById('_dashData'); if(!el) return;
+  const {age1,age2,age3}=JSON.parse(el.textContent);
+  const dc=document.getElementById('dashDonut');
+  if(dc && typeof Chart!=='undefined' && Chart.getChart(dc)) Chart.getChart(dc).destroy();
+  if(dc && typeof Chart!=='undefined' && (age1+age2+age3)>0) {
+    new Chart(dc,{
+      type:'doughnut',
+      data:{labels:['< 45 días','45-90 días','> 90 días'],datasets:[{data:[age1,age2,age3],backgroundColor:['#059669','#1B2B4B','#F97316'],borderWidth:0}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'70%'}
+    });
+  }
+}
+
+function getDashPeriod() {
+  const now=new Date();
+  const y=now.getFullYear(), m=now.getMonth();
+  const p=S.dashPeriod||'mes';
+  let start,end,prevStart,prevEnd;
+  if(p==='mes'){start=new Date(y,m,1);end=new Date(y,m+1,0,23,59,59);prevStart=new Date(y,m-1,1);prevEnd=new Date(y,m,0,23,59,59);}
+  else if(p==='mes_anterior'){start=new Date(y,m-1,1);end=new Date(y,m,0,23,59,59);prevStart=null;prevEnd=null;}
+  else if(p==='90dias'){end=now;start=new Date(now.getTime()-90*86400000);prevEnd=new Date(start.getTime()-1);prevStart=new Date(prevEnd.getTime()-90*86400000);}
+  else{start=new Date(y,0,1);end=new Date(y,11,31,23,59,59);prevStart=new Date(y-1,0,1);prevEnd=new Date(y-1,11,31,23,59,59);}
+  return{start,end,prevStart,prevEnd};
+}
+
+function changeDashPeriod(val) {
+  S.dashPeriod=val;
+  const c=document.getElementById('homeContent');
+  if(c){c.innerHTML=renderHomeContent();initDashCharts();}
+}
+
+function goAlertGroup(key) {
+  const ids=(window._alertGroups||{})[key];
+  S.alertVehicleIds=ids&&ids.length?ids:null;
+  S.filter='all';
+  setHomeTab('stock');
 }
 
 function showEdit(id)  {
@@ -2528,7 +2689,7 @@ function showEdit(id)  {
   S.view='form';S.editId=id;initForm(v);render();scrollTo(0,0);
 }
 function showDetail(id) { S.view='detail';S.detailId=id;render();scrollTo(0,0); }
-function setFilter(f)   { S.filter=f;render(); }
+function setFilter(f)   { S.alertVehicleIds=null; S.filter=f;render(); }
 function setQ(q) {
   S.q=q;render();
   setTimeout(()=>{const i=document.getElementById('searchInp');if(i){i.focus();i.setSelectionRange(q.length,q.length);}},0);
@@ -2536,7 +2697,9 @@ function setQ(q) {
 
 function filtered() {
   let vs=[...vehiclesCache];
-  if (S.filter==='archivado') {
+  if (S.alertVehicleIds) {
+    vs=vs.filter(v=>S.alertVehicleIds.includes(v.id));
+  } else if (S.filter==='archivado') {
     vs=vs.filter(v=>v.archivado);
   } else {
     vs=vs.filter(v=>!v.archivado);
