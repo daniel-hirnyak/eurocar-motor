@@ -649,33 +649,11 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .venta-pay-badge{font-size:11px;background:var(--primary-light);color:var(--primary);padding:3px 9px;border-radius:12px;font-weight:600;white-space:nowrap}
 @media(max-width:560px){.venta-pay{display:none}}
 
-/* ── AI DESCRIPTION GENERATOR ───────────────────────────────── */
-.ai-wrap{max-width:660px;margin:0 auto;padding:32px 0 48px}
-.ai-wrap h2{font-size:20px;font-weight:800;color:var(--text);margin-bottom:6px}
-.ai-wrap .ai-sub{font-size:13px;color:var(--text-2);margin-bottom:28px;line-height:1.5}
-.ai-form{display:flex;flex-direction:column;gap:16px}
-.ai-fg{display:flex;flex-direction:column;gap:6px}
-.ai-fg label{font-size:11px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em}
-.ai-sel{width:100%;padding:10px 38px 10px 12px;border:1.5px solid var(--border);border-radius:var(--r);font-size:14px;color:var(--text);background:var(--white);font-family:inherit;outline:none;transition:border-color .15s;cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:10px}
-.ai-sel:focus{border-color:var(--primary)}
-.ai-portal-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
-.ai-pbtn{padding:9px 6px;border:1.5px solid var(--border);border-radius:var(--r);font-size:11px;font-weight:600;text-align:center;cursor:pointer;background:var(--white);color:var(--text-2);transition:all .15s;line-height:1.3;font-family:inherit}
-.ai-pbtn:hover{border-color:var(--primary);color:var(--primary)}
-.ai-pbtn.active{border-color:var(--primary);background:var(--primary-light);color:var(--primary);font-weight:700}
-.ai-gen-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 22px;background:var(--primary);color:#fff;border:none;border-radius:var(--r);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;width:100%}
-.ai-gen-btn:hover:not(:disabled){background:var(--primary-hover)}
-.ai-gen-btn:disabled{opacity:.55;cursor:not-allowed}
-.ai-spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:aiSpin .7s linear infinite;flex-shrink:0}
-@keyframes aiSpin{to{transform:rotate(360deg)}}
-.ai-result{display:flex;flex-direction:column;gap:10px}
-.ai-textarea{width:100%;min-height:240px;padding:14px;border:1.5px solid var(--border);border-radius:var(--r);font-size:13px;line-height:1.75;color:var(--text);background:#FAFBFF;font-family:inherit;resize:vertical;outline:none}
-.ai-copy-btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 16px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--text);transition:all .15s;align-self:flex-start}
-.ai-copy-btn:hover{border-color:var(--primary);color:var(--primary)}
-.ai-copy-btn.copied{border-color:#059669;color:#059669}
-.ai-error{background:#FEF2F2;border:1px solid #FCA5A5;border-radius:var(--r);padding:12px 14px;font-size:13px;color:#DC2626;line-height:1.5}
-
 /* ── WEB ANALYTICS DASHBOARD ─────────────────────── */
-.web-analytics{max-width:660px;margin:0 auto;padding:32px 0 0}
+.web-analytics{padding:32px 0 0}
+.web-bar-wrap{height:180px;position:relative;margin-top:4px}
+.web-period-btn{padding:6px 14px;font-size:12px;font-weight:500;border-radius:20px;border:1px solid var(--border);background:var(--white);color:var(--text-2);cursor:pointer;font-family:inherit;transition:all .15s}
+.web-period-btn.active{background:#1E3A5F;color:#fff;border-color:#1E3A5F;font-weight:600}
 .web-analytics-title{font-size:20px;font-weight:800;color:var(--text);margin-bottom:6px}
 .web-analytics-sub{font-size:13px;color:var(--text-2);margin-bottom:24px;line-height:1.5}
 .analytics-section{margin-bottom:30px}
@@ -707,7 +685,6 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .analytics-empty{color:var(--text-2);font-size:13px;padding:20px 16px;background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);display:flex;align-items:center;gap:8px}
 .analytics-icon{display:inline-flex;align-items:center;gap:4px}
 .analytics-loading{color:var(--text-2);font-size:13px;padding:28px 0}
-.web-divider{border:none;border-top:1px solid var(--border);margin:8px 0 0}
 .hc-val-sm{font-size:16px;font-weight:700;color:var(--text);margin-top:4px;line-height:1.3;word-break:break-word}
 @media(max-width:540px){.analytics-cards{grid-template-columns:1fr}}
 @media(max-width:540px){.ranking-table{min-width:300px}}
@@ -1000,11 +977,7 @@ let S = {
 };
 let fData={}, fExp=[], fPhotos=[], fStorageToDelete=[];
 let dragSrcIdx = null;
-let _aiPortal = 'Wallapop';
-
-// ─── API KEY IA ───────────────────────────────────────────────
-// Sustituye por tu clave real de Anthropic (console.anthropic.com)
-const ANTHROPIC_API_KEY = 'TU_API_KEY_AQUI';
+let _webEvCache = null;
 
 const getVehicles = () => vehiclesCache;
 
@@ -2472,140 +2445,13 @@ function renderHome() {
 </div>`;
 }
 
-// ─── WEB & VISIBILIDAD — GENERADOR IA ────────────────────────
-const AI_PORTALS = ['Wallapop','Coches.net','AutoScout24','Autocasión','Milanuncios'];
-const AI_PORTAL_TIPS = {
-  'Wallapop':    'Tono cercano e informal, máximo 300 palabras, emojis moderados, precio al final.',
-  'Coches.net':  'Tono profesional y técnico, destaca equipamiento y estado del vehículo, formato estructurado.',
-  'AutoScout24': 'Tono neutro europeo, menciona ITV y revisiones si aplica, máximo 250 palabras.',
-  'Autocasión':  'Tono comercial y persuasivo, destaca la relación calidad-precio, llamada a la acción al final.',
-  'Milanuncios': 'Tono directo y conciso, máximo 150 palabras, precio destacado desde el principio.',
-};
-const AI_GEN_ICON = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>`;
-const AI_COPY_ICON = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
-const AI_CHECK_ICON = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
-
 function renderWebTab() {
-  const stock = vehiclesCache.filter(v => v.status !== 'vendido');
-  const opts = stock.length
-    ? stock.map(v => `<option value="${v.id}">${esc(v.brand)} ${esc(v.model)}${v.matricula?' — '+esc(v.matricula):''}${v.year?' ('+v.year+')':''}</option>`).join('')
-    : '<option value="" disabled>No hay vehículos en stock</option>';
   return `
 <div class="web-analytics">
-  <h2 class="web-analytics-title">Analítica de tu web</h2>
+  <h2 class="web-analytics-title">Rendimiento web</h2>
   <p class="web-analytics-sub">Interacciones reales de los visitantes de tu catálogo online.</p>
   <div id="webAnalyticsSection" class="analytics-loading">Cargando datos...</div>
-</div>
-<hr class="web-divider">
-<div class="ai-wrap">
-  <h2>Descripciones para portales</h2>
-  <p class="ai-sub">Selecciona un vehículo y el portal. La IA generará un texto optimizado listo para copiar y pegar.</p>
-  <div class="ai-form">
-    <div class="ai-fg">
-      <label>Vehículo</label>
-      <select class="ai-sel" id="aiVehicleSel" ${!stock.length?'disabled':''}>
-        <option value="">— Selecciona un vehículo —</option>
-        ${opts}
-      </select>
-    </div>
-    <div class="ai-fg">
-      <label>Portal</label>
-      <div class="ai-portal-grid">
-        ${AI_PORTALS.map(p=>`<button class="ai-pbtn${p===_aiPortal?' active':''}" onclick="aiSelectPortal(this,'${p}')">${esc(p)}</button>`).join('')}
-      </div>
-    </div>
-    <button class="ai-gen-btn" id="aiGenBtn" onclick="aiGenerate()">
-      ${AI_GEN_ICON} Generar descripción
-    </button>
-    <div id="aiResult" class="ai-result" style="display:none"></div>
-  </div>
 </div>`;
-}
-
-function aiSelectPortal(btn, portal) {
-  _aiPortal = portal;
-  document.querySelectorAll('.ai-pbtn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-}
-
-async function aiGenerate() {
-  const sel = document.getElementById('aiVehicleSel');
-  if (!sel || !sel.value) {
-    if (sel) { sel.style.borderColor='var(--danger)'; setTimeout(()=>sel.style.borderColor='',1500); }
-    return;
-  }
-  const v = vehiclesCache.find(x => x.id === sel.value);
-  if (!v) return;
-
-  if (!ANTHROPIC_API_KEY || ANTHROPIC_API_KEY === 'TU_API_KEY_AQUI') {
-    aiShowResult(`<div class="ai-error">Configura tu API key de Anthropic en la constante <strong>ANTHROPIC_API_KEY</strong> al inicio del script (console.anthropic.com).</div>`);
-    return;
-  }
-
-  const btn = document.getElementById('aiGenBtn');
-  if (btn) { btn.disabled=true; btn.innerHTML=`<div class="ai-spinner"></div> Generando descripción...`; }
-  const resultEl = document.getElementById('aiResult');
-  if (resultEl) resultEl.style.display='none';
-
-  const details = [
-    `Marca: ${v.brand}`, `Modelo: ${v.model}`,
-    v.matricula?`Matrícula: ${v.matricula}`:'',
-    v.year?`Año: ${v.year}`:'',
-    v.km?`Kilómetros: ${num(v.km)} km`:'',
-    v.color?`Color: ${v.color}`:'',
-    v.salePrice?`Precio de venta: ${eur(v.salePrice)}`:'',
-    v.notes?`Notas: ${v.notes}`:'',
-  ].filter(Boolean).join('\n');
-
-  const prompt = `Eres un experto en marketing de vehículos de segunda mano en España. Genera una descripción optimizada para publicar en ${_aiPortal} con el siguiente vehículo:\n\n${details}\n\nInstrucciones para ${_aiPortal}: ${AI_PORTAL_TIPS[_aiPortal]||''}\n\nEscribe solo el texto de la descripción, en español, sin títulos adicionales ni explicaciones.`;
-
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-        'content-type': 'application/json',
-        'anthropic-dangerous-direct-browser-access': 'true',
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 1000,
-        messages: [{ role:'user', content: prompt }],
-      }),
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    const text = data?.content?.[0]?.text || '';
-    if (!text) throw new Error('empty');
-    aiShowResult(`<textarea class="ai-textarea" id="aiOutput" readonly>${esc(text)}</textarea>
-<button class="ai-copy-btn" id="aiCopyBtn" onclick="aiCopy()">${AI_COPY_ICON} Copiar al portapapeles</button>`);
-  } catch(err) {
-    aiShowResult(`<div class="ai-error">Error al generar la descripción. Comprueba tu conexión e inténtalo de nuevo.</div>`);
-    console.error('Anthropic API:', err);
-  } finally {
-    if (btn) { btn.disabled=false; btn.innerHTML=`${AI_GEN_ICON} Generar descripción`; }
-  }
-}
-
-function aiShowResult(html) {
-  const el = document.getElementById('aiResult');
-  if (!el) return;
-  el.innerHTML = html;
-  el.style.display = 'flex';
-}
-
-function aiCopy() {
-  const out = document.getElementById('aiOutput');
-  if (!out) return;
-  const btn = document.getElementById('aiCopyBtn');
-  navigator.clipboard.writeText(out.value).then(() => {
-    if (btn) {
-      btn.classList.add('copied');
-      btn.innerHTML = `${AI_CHECK_ICON} ¡Copiado!`;
-      setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML=`${AI_COPY_ICON} Copiar al portapapeles`; }, 2000);
-    }
-  }).catch(() => { out.select(); document.execCommand('copy'); });
 }
 
 async function loadWebAnalytics() {
@@ -2614,58 +2460,44 @@ async function loadWebAnalytics() {
   try {
     const { data: ev, error: ee } = await sb.from('eventos_catalogo').select('tipo,vehiculo_id,timestamp');
     if (ee) throw ee;
-    const events = ev || [];
+    _webEvCache = ev || [];
+    const events = _webEvCache;
     const now = new Date();
-    const weekAgo = new Date(now.getTime() - 7 * 86400000);
+    const thirtyAgo = new Date(now.getTime() - 30 * 86400000);
 
-    // Métrica 1 — contactos esta semana
-    const callsWeek = events.filter(e => e.tipo==='clic_llamar'  && new Date(e.timestamp)>=weekAgo).length;
-    const waWeek    = events.filter(e => e.tipo==='clic_whatsapp' && new Date(e.timestamp)>=weekAgo).length;
-    const totalWeek = callsWeek + waWeek;
-    const vistasWeek = events.filter(e => e.tipo==='vista' && new Date(e.timestamp)>=weekAgo).length;
-
-    // Estadísticas por vehículo
+    // Ranking total (top 5 por vistas)
     const vstats = {};
     events.forEach(e => {
       if (!e.vehiculo_id) return;
-      if (!vstats[e.vehiculo_id]) vstats[e.vehiculo_id] = { vistas:0, contactos:0 };
+      if (!vstats[e.vehiculo_id]) vstats[e.vehiculo_id] = {vistas:0, contactos:0};
       if (e.tipo==='vista') vstats[e.vehiculo_id].vistas++;
       if (e.tipo==='clic_llamar'||e.tipo==='clic_whatsapp') vstats[e.vehiculo_id].contactos++;
     });
-
-    // Métricas 2 + 3 — ranking con tasa de contacto
     const ranked = Object.entries(vstats)
-      .map(([id, s]) => {
-        const v = vehiclesCache.find(x => x.id===id);
-        const tasa = s.vistas>0 ? Math.round((s.contactos/s.vistas)*100) : 0;
-        return { name: v?`${v.brand} ${v.model}`:'—', vistas:s.vistas, contactos:s.contactos, tasa, warn:s.vistas>=10&&tasa<5 };
+      .map(([id,s]) => {
+        const v = vehiclesCache.find(x=>x.id===id);
+        const tasa = s.vistas>0 ? Math.round(s.contactos/s.vistas*100) : 0;
+        return {name:v?`${v.brand} ${v.model}`:'—', vistas:s.vistas, contactos:s.contactos, tasa, warn:s.vistas>=10&&tasa<5};
       })
-      .sort((a,b) => b.vistas-a.vistas)
-      .slice(0,10);
+      .sort((a,b)=>b.vistas-a.vistas).slice(0,5);
 
-    const topVehicle = ranked.length>0 ? ranked[0].name : '—';
-
-    // Métrica 4 — coches fantasma
-    const ghosts = vehiclesCache
-      .filter(v => {
-        if (v.status!=='disponible') return false;
-        const ref = v.entryDate || v.createdAt; if (!ref) return false;
-        return Math.floor((now-new Date(ref))/86400000)>30 && (vstats[v.id]?.vistas||0)<5;
-      })
+    // Coches a revisar (publicados activos, peor rendimiento)
+    const cochesRevisar = vehiclesCache
+      .filter(v=>v.publicado&&v.status!=='vendido'&&!v.archivado)
       .map(v => ({
-        name:`${v.brand} ${v.model}`,
-        dias: Math.floor((now-new Date(v.entryDate||v.createdAt))/86400000),
-        vistas: vstats[v.id]?.vistas||0,
+        id: v.id,
+        name: `${v.brand} ${v.model}`,
+        dias: v.entryDate ? Math.floor((now-new Date(v.entryDate))/86400000) : 0,
+        vistasEsteMes: events.filter(e=>e.vehiculo_id===v.id&&e.tipo==='vista'&&new Date(e.timestamp)>=thirtyAgo).length,
       }))
-      .sort((a,b)=>b.dias-a.dias);
+      .sort((a,b) => b.dias-a.dias || a.vistasEsteMes-b.vistasEsteMes)
+      .slice(0,5);
 
-    // SVG icons
-    const ICeye  = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
-    const ICph   = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.56 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`;
-    const ICchk  = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+    const ICeye = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+    const ICph  = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.56 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`;
+    const ICchk = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
 
-    // Ranking table rows
-    const rankingBody = ranked.length===0 ? '' : ranked.map((r,i)=>{
+    const rankingBody = ranked.map((r,i) => {
       const tp = r.warn?'tasa-warn':r.tasa>=10?'tasa-ok':'tasa-neutral';
       return `<tr>
   <td class="td-pos td-r">${i+1}</td>
@@ -2677,7 +2509,7 @@ async function loadWebAnalytics() {
     }).join('');
 
     const rankingHTML = ranked.length===0
-      ? `<div class="analytics-empty">Aún no hay datos suficientes. Comparte tu catálogo para empezar a ver qué coches generan más interés.</div>`
+      ? `<div class="analytics-empty">Aún no hay datos. Comparte tu catálogo para ver qué vehículos generan más interés.</div>`
       : `<div class="ranking-wrap"><table class="ranking-table">
   <thead><tr>
     <th class="td-pos th-r">#</th>
@@ -2687,35 +2519,51 @@ async function loadWebAnalytics() {
     <th class="th-r">Tasa</th>
   </tr></thead>
   <tbody>${rankingBody}</tbody>
-</table></div>`;
+</table>
+<div style="font-size:12px;color:var(--text-2);margin-top:8px;text-align:right">Mostrando los 5 vehículos con más interés</div>
+</div>`;
 
     const warnNote = ranked.some(r=>r.warn)
       ? `<div class="ranking-warn-note">Muchas visitas y pocos contactos puede indicar que el precio o las fotos necesitan revisión.</div>`
       : '';
 
-    // Ghost rows
-    const ghostHTML = ghosts.length===0
-      ? `<div class="analytics-empty"><span style="color:var(--success);display:inline-flex">${ICchk}</span>Ningún coche necesita atención en este momento.</div>`
-      : `<div class="ghost-list">${ghosts.map(g=>`<div class="ghost-row"><div class="ghost-name">${esc(g.name)}</div><div class="ghost-meta">${g.dias} días en stock · ${g.vistas} ${g.vistas===1?'vista':'vistas'}</div></div>`).join('')}</div>`;
+    const revisarHTML = cochesRevisar.length===0
+      ? `<div class="analytics-empty"><span style="color:var(--success);display:inline-flex">${ICchk}</span>Todos tus vehículos están recibiendo visitas esta semana.</div>`
+      : `<div class="ghost-list">${cochesRevisar.map(g=>`<div class="ghost-row"><div class="ghost-name">${esc(g.name)}</div><div class="ghost-meta">${g.dias} días en stock · ${g.vistasEsteMes} vista${g.vistasEsteMes!==1?'s':''} este mes</div><button class="btn btn-secondary btn-sm" style="flex-shrink:0;font-size:12px;padding:5px 12px" onclick="showEdit('${g.id}')">Editar</button></div>`).join('')}</div>`;
 
     section.innerHTML = `
 <div class="analytics-section">
-  <div class="analytics-section-head">Esta semana</div>
-  <div class="analytics-cards">
-    <div class="home-card">
-      <div class="hc-label">Contactos</div>
-      <div class="hc-val">${totalWeek}</div>
-      <div class="hc-sub">${callsWeek} llamadas · ${waWeek} WhatsApp</div>
+  <div class="analytics-section-head">Resumen</div>
+  <div class="analytics-cards" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+    <div class="db-kpi" style="min-width:0">
+      <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em">Visitas al catálogo</div>
+      <div id="webKpiVisitas"></div>
     </div>
-    <div class="home-card">
-      <div class="hc-label">Vistas del catálogo</div>
-      <div class="hc-val">${vistasWeek}</div>
-      <div class="hc-sub">Últimos 7 días</div>
+    <div class="db-kpi" style="min-width:0">
+      <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em">Contactos generados</div>
+      <div id="webKpiContacts"></div>
     </div>
-    <div class="home-card">
-      <div class="hc-label">Coche más visto</div>
-      <div class="hc-val-sm">${esc(topVehicle)}</div>
+    <div class="db-kpi" style="min-width:0">
+      <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em">Tasa de conversión</div>
+      <div id="webKpiConv"></div>
     </div>
+  </div>
+</div>
+<div class="analytics-section">
+  <div class="analytics-section-head">Evolución</div>
+  <div class="db-kpi" style="min-width:0;padding:16px 20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:14px">
+        <span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-2)"><span style="width:20px;height:2px;background:#1E3A5F;border-radius:1px;display:inline-block"></span>Visitas</span>
+        <span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-2)"><span style="width:20px;height:2px;background:#3B82F6;border-radius:1px;display:inline-block"></span>Contactos</span>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="web-period-btn" data-period="week" onclick="applyWebPeriod('week')">Esta semana</button>
+        <button class="web-period-btn" data-period="mes"  onclick="applyWebPeriod('mes')">Este mes</button>
+        <button class="web-period-btn" data-period="3m"   onclick="applyWebPeriod('3m')">3 meses</button>
+      </div>
+    </div>
+    <div class="web-bar-wrap"><canvas id="webLineChart"></canvas></div>
   </div>
 </div>
 <div class="analytics-section">
@@ -2723,14 +2571,186 @@ async function loadWebAnalytics() {
   ${rankingHTML}${warnNote}
 </div>
 <div class="analytics-section">
-  <div class="analytics-section-head">Coches que necesitan atención</div>
-  ${ghostHTML}
+  <div class="analytics-section-head">Coches a revisar</div>
+  <div style="font-size:13px;color:var(--text-2);margin-bottom:10px">Vehículos publicados con menor visibilidad.</div>
+  ${revisarHTML}
 </div>`;
+
+    applyWebPeriod('mes');
+
   } catch(err) {
     console.error('Web analytics:', err);
     const s = document.getElementById('webAnalyticsSection');
     if (s) s.innerHTML = `<div class="analytics-empty">No se pudieron cargar los datos de analítica.</div>`;
   }
+}
+
+function applyWebPeriod(p) {
+  if (!_webEvCache) return;
+  const events = _webEvCache;
+  const now = new Date();
+
+  // Actualizar botones activos
+  document.querySelectorAll('.web-period-btn').forEach(b => b.classList.toggle('active', b.dataset.period === p));
+
+  // Calcular límite temporal para KPIs
+  let kpiStart;
+  if (p === 'week') {
+    kpiStart = new Date(now.getTime() - 7 * 86400000);
+  } else if (p === 'mes') {
+    kpiStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  } else {
+    kpiStart = new Date(now.getTime() - 90 * 86400000);
+  }
+
+  const inKpi = e => new Date(e.timestamp) >= kpiStart;
+  const visitas   = events.filter(e => e.tipo==='vista'         && inKpi(e)).length;
+  const calls     = events.filter(e => e.tipo==='clic_llamar'   && inKpi(e)).length;
+  const wa        = events.filter(e => e.tipo==='clic_whatsapp' && inKpi(e)).length;
+  const contactos = calls + wa;
+  const conv      = visitas > 0 ? (contactos / visitas * 100).toFixed(1) : '0.0';
+
+  const kpiLabel = p==='week' ? 'Esta semana' : p==='mes' ? 'Este mes' : 'Últimos 3 meses';
+
+  const el = id => document.getElementById(id);
+  if (el('webKpiVisitas'))
+    el('webKpiVisitas').innerHTML = `<div class="db-kpi-val" style="margin-top:8px;font-size:28px">${visitas}</div><div style="font-size:12px;color:var(--text-2);margin-top:6px">${kpiLabel}</div>`;
+  if (el('webKpiContacts'))
+    el('webKpiContacts').innerHTML = `<div class="db-kpi-val" style="margin-top:8px;font-size:28px">${contactos}</div><div style="font-size:12px;color:var(--text-2);margin-top:6px">${calls} llamadas · ${wa} WhatsApp</div>`;
+  if (el('webKpiConv'))
+    el('webKpiConv').innerHTML = `<div class="db-kpi-val" style="margin-top:8px;font-size:28px">${conv}%</div><div style="font-size:12px;color:var(--text-2);margin-top:6px">Contactos sobre visitas</div>`;
+
+  // Calcular puntos del gráfico
+  const getMonday = d => {
+    const date = new Date(d); date.setHours(0,0,0,0);
+    const day = date.getDay();
+    date.setDate(date.getDate() + (day===0 ? -6 : 1-day));
+    return date;
+  };
+
+  let labels = [], vistasData = [], contactsData = [];
+
+  if (p === 'week') {
+    // 7 puntos diarios lun-dom de la semana actual
+    const mon = getMonday(now);
+    const dias = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+    for (let i = 0; i < 7; i++) {
+      const ds = new Date(mon.getTime() + i * 86400000);
+      const de = new Date(ds.getTime() + 86400000);
+      const inD = e => { const d=new Date(e.timestamp); return d>=ds && d<de; };
+      labels.push(dias[i]);
+      vistasData.push(events.filter(e=>e.tipo==='vista'&&inD(e)).length);
+      contactsData.push(events.filter(e=>(e.tipo==='clic_llamar'||e.tipo==='clic_whatsapp')&&inD(e)).length);
+    }
+  } else if (p === 'mes') {
+    // 4 puntos semanales (últimas 4 semanas)
+    const curMon = getMonday(now);
+    for (let i = 3; i >= 0; i--) {
+      const ws = new Date(curMon.getTime() - i * 7 * 86400000);
+      const we = new Date(ws.getTime() + 7 * 86400000);
+      const inW = e => { const d=new Date(e.timestamp); return d>=ws && d<we; };
+      const d = ws.getDate(), m = ws.toLocaleString('es-ES',{month:'short'});
+      labels.push(`${d} ${m}`);
+      vistasData.push(events.filter(e=>e.tipo==='vista'&&inW(e)).length);
+      contactsData.push(events.filter(e=>(e.tipo==='clic_llamar'||e.tipo==='clic_whatsapp')&&inW(e)).length);
+    }
+  } else {
+    // 12 puntos semanales (últimas 12 semanas)
+    const curMon = getMonday(now);
+    for (let i = 11; i >= 0; i--) {
+      const ws = new Date(curMon.getTime() - i * 7 * 86400000);
+      const we = new Date(ws.getTime() + 7 * 86400000);
+      const inW = e => { const d=new Date(e.timestamp); return d>=ws && d<we; };
+      const d = ws.getDate(), m = ws.toLocaleString('es-ES',{month:'short'});
+      labels.push(`${d} ${m}`);
+      vistasData.push(events.filter(e=>e.tipo==='vista'&&inW(e)).length);
+      contactsData.push(events.filter(e=>(e.tipo==='clic_llamar'||e.tipo==='clic_whatsapp')&&inW(e)).length);
+    }
+  }
+
+  initWebChart(labels, vistasData, contactsData);
+}
+
+function initWebChart(labels, vistasData, contactsData) {
+  const canvas = document.getElementById('webLineChart');
+  if (!canvas || typeof Chart === 'undefined') return;
+
+  const existing = Chart.getChart(canvas);
+  if (existing) existing.destroy();
+
+  const ctx = canvas.getContext('2d');
+  const gradV = ctx.createLinearGradient(0, 0, 0, 180);
+  gradV.addColorStop(0, 'rgba(30,58,95,0.15)');
+  gradV.addColorStop(1, 'rgba(30,58,95,0)');
+  const gradC = ctx.createLinearGradient(0, 0, 0, 180);
+  gradC.addColorStop(0, 'rgba(59,130,246,0.15)');
+  gradC.addColorStop(1, 'rgba(59,130,246,0)');
+
+  new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Visitas',
+          data: vistasData,
+          borderColor: '#1E3A5F',
+          backgroundColor: gradV,
+          pointRadius: 4,
+          pointHoverRadius: 7,
+          pointBackgroundColor: '#1E3A5F',
+          borderWidth: 2.5,
+          fill: true,
+          tension: 0.4,
+        },
+        {
+          label: 'Contactos',
+          data: contactsData,
+          borderColor: '#3B82F6',
+          backgroundColor: gradC,
+          pointRadius: 4,
+          pointHoverRadius: 7,
+          pointBackgroundColor: '#3B82F6',
+          borderWidth: 2.5,
+          fill: true,
+          tension: 0.4,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: {duration: 600},
+      interaction: {mode: 'index', intersect: false},
+      plugins: {
+        legend: {display: false},
+        tooltip: {
+          backgroundColor: '#fff',
+          titleColor: '#1E293B',
+          bodyColor: '#475569',
+          borderColor: '#E2E8F0',
+          borderWidth: 1,
+          padding: 10,
+          callbacks: {
+            label: item => ` ${item.dataset.label}: ${item.parsed.y}`,
+          },
+        },
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {stepSize: 1, precision: 0, font: {size: 11}, color: '#94A3B8'},
+          grid: {color: 'rgba(0,0,0,0.04)'},
+          border: {display: false},
+        },
+        x: {
+          grid: {display: false},
+          ticks: {font: {size: 11}, color: '#64748B'},
+          border: {display: false},
+        },
+      },
+    },
+  });
 }
 
 function initDashCharts() {
