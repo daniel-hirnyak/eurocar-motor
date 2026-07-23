@@ -686,6 +686,12 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .analytics-icon{display:inline-flex;align-items:center;gap:4px}
 .analytics-loading{color:var(--text-2);font-size:13px;padding:28px 0}
 .hc-val-sm{font-size:16px;font-weight:700;color:var(--text);margin-top:4px;line-height:1.3;word-break:break-word}
+.web-kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:16px}
+.web-chart-grid{display:grid;grid-template-columns:65% 1fr;gap:16px;margin-bottom:16px}
+.web-attn-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.web-kpi-tip{position:relative;display:inline-flex;align-items:center;flex-shrink:0;cursor:help}
+.web-kpi-tip-box{position:absolute;top:calc(100% + 6px);right:0;background:#1E3A5F;color:#fff;border-radius:6px;padding:8px 12px;font-size:0.75rem;max-width:220px;min-width:160px;z-index:1000;pointer-events:none;white-space:normal;line-height:1.4;opacity:0;transition:opacity .15s;text-transform:none;font-weight:400;letter-spacing:0}
+.web-kpi-tip:hover .web-kpi-tip-box{opacity:1}
 @media(max-width:540px){.analytics-cards{grid-template-columns:1fr}}
 @media(max-width:540px){.ranking-table{min-width:300px}}
 @media(max-width:768px){
@@ -747,6 +753,13 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
     padding-top:8px!important;
     font-weight:600;color:var(--text);
   }
+}
+@media(max-width:768px){
+  .web-kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .web-chart-grid{grid-template-columns:1fr}
+  .web-attn-grid{grid-template-columns:1fr}
+  .web-period-btn{padding:5px 10px;font-size:11px;min-height:44px}
+  .web-col-hide-mobile{display:none!important}
 }
 @media(max-width:580px){.ai-portal-grid{grid-template-columns:repeat(3,1fr)}}
 
@@ -978,6 +991,9 @@ let S = {
 let fData={}, fExp=[], fPhotos=[], fStorageToDelete=[];
 let dragSrcIdx = null;
 let _webEvCache = null;
+let _webRankedCache = null;
+const ICphone = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:1px"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 9.71 19.79 19.79 0 0 1 1.62 1.08 2 2 0 0 1 3.62 0h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 7.91a16 16 0 0 0 6.18 6.18l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`;
+const ICwa = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:1px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`;
 
 const getVehicles = () => vehiclesCache;
 
@@ -1199,7 +1215,7 @@ function render() {
   }
   app.innerHTML = '';
   if (S.view==='form')   { app.innerHTML = renderForm();   return; }
-  if (S.view==='detail') { app.innerHTML = renderDetail(); return; }
+  if (S.view==='detail') { app.innerHTML = renderDetail(); loadDetailWebStats(S.detailId); return; }
 }
 
 // ─── VEHICLE CARDS ────────────────────────────────────────────
@@ -2030,6 +2046,7 @@ function renderDetail() {
       </div>
     </div>
   </div>
+<div id="detailWebSection"></div>
 </div>`;
 }
 
@@ -2448,9 +2465,19 @@ function renderHome() {
 function renderWebTab() {
   return `
 <div class="web-analytics">
-  <h2 class="web-analytics-title">Rendimiento web</h2>
-  <p class="web-analytics-sub">Interacciones reales de los visitantes de tu catálogo online.</p>
-  <div id="webAnalyticsSection" class="analytics-loading">Cargando datos...</div>
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:24px">
+    <div>
+      <h2 style="font-size:20px;font-weight:700;color:var(--text);margin:0 0 4px">Rendimiento web</h2>
+      <p style="font-size:13px;color:var(--text-2);margin:0">Descubre cómo interactúan los visitantes con tu catálogo online.</p>
+    </div>
+    <div style="display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap">
+      <button class="web-period-btn" data-period="week" onclick="applyWebPeriod('week')">Esta semana</button>
+      <button class="web-period-btn" data-period="mes"  onclick="applyWebPeriod('mes')">Este mes</button>
+      <button class="web-period-btn" data-period="3m"   onclick="applyWebPeriod('3m')">3 meses</button>
+      <button class="web-period-btn" data-period="12m"  onclick="applyWebPeriod('12m')">12 meses</button>
+    </div>
+  </div>
+  <div id="webAnalyticsSection" style="min-height:60px">Cargando datos...</div>
 </div>`;
 }
 
@@ -2461,131 +2488,11 @@ async function loadWebAnalytics() {
     const { data: ev, error: ee } = await sb.from('eventos_catalogo').select('tipo,vehiculo_id,timestamp');
     if (ee) throw ee;
     _webEvCache = ev || [];
-    const events = _webEvCache;
-    const now = new Date();
-    const thirtyAgo = new Date(now.getTime() - 30 * 86400000);
-
-    // Ranking total (top 5 por vistas)
-    const vstats = {};
-    events.forEach(e => {
-      if (!e.vehiculo_id) return;
-      if (!vstats[e.vehiculo_id]) vstats[e.vehiculo_id] = {vistas:0, contactos:0};
-      if (e.tipo==='vista') vstats[e.vehiculo_id].vistas++;
-      if (e.tipo==='clic_llamar'||e.tipo==='clic_whatsapp') vstats[e.vehiculo_id].contactos++;
-    });
-    const ranked = Object.entries(vstats)
-      .map(([id,s]) => {
-        const v = vehiclesCache.find(x=>x.id===id);
-        const tasa = s.vistas>0 ? Math.round(s.contactos/s.vistas*100) : 0;
-        return {name:v?`${v.brand} ${v.model}`:'—', photo:v?.photos?.[0]||null, vistas:s.vistas, contactos:s.contactos, tasa, warn:s.vistas>=10&&tasa<5};
-      })
-      .sort((a,b)=>b.vistas-a.vistas).slice(0,5);
-
-    // Coches a revisar (publicados activos, peor rendimiento)
-    const cochesRevisar = vehiclesCache
-      .filter(v=>v.publicado&&v.status!=='vendido'&&!v.archivado)
-      .map(v => ({
-        id: v.id,
-        name: `${v.brand} ${v.model}`,
-        dias: v.entryDate ? Math.floor((now-new Date(v.entryDate))/86400000) : 0,
-        vistasEsteMes: events.filter(e=>e.vehiculo_id===v.id&&e.tipo==='vista'&&new Date(e.timestamp)>=thirtyAgo).length,
-      }))
-      .sort((a,b) => b.dias-a.dias || a.vistasEsteMes-b.vistasEsteMes)
-      .slice(0,5);
-
-    const ICeye = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
-    const ICph  = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.56 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`;
-    const ICchk = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
-    const ICcar = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1l2-4h10l2 4h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="16.5" cy="17.5" r="2.5"/></svg>`;
-
-    const rankingBody = ranked.map((r,i) => {
-      const tp = r.warn?'tasa-warn':r.tasa>=10?'tasa-ok':'tasa-neutral';
-      const thumb = r.photo
-        ? `<img src="${r.photo}" style="width:40px;height:40px;border-radius:6px;object-fit:cover;flex-shrink:0">`
-        : `<div style="width:40px;height:40px;border-radius:6px;background:#F1F5F9;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#94A3B8">${ICcar}</div>`;
-      return `<tr>
-  <td class="td-pos td-r">${i+1}</td>
-  <td class="td-name"><div style="display:flex;align-items:center;gap:10px">${thumb}<span>${esc(r.name)}</span></div></td>
-  <td class="td-r">${r.vistas}</td>
-  <td class="td-r">${r.contactos}</td>
-  <td class="td-r"><span class="tasa-pill ${tp}">${r.tasa}%</span></td>
-</tr>`;
-    }).join('');
-
-    const rankingHTML = ranked.length===0
-      ? `<div class="analytics-empty">Aún no hay datos. Comparte tu catálogo para ver qué vehículos generan más interés.</div>`
-      : `<div class="ranking-wrap"><table class="ranking-table">
-  <thead><tr>
-    <th class="td-pos th-r">#</th>
-    <th>Vehículo</th>
-    <th class="th-r"><span class="analytics-icon">${ICeye} Vistas</span></th>
-    <th class="th-r"><span class="analytics-icon">${ICph} Contactos</span></th>
-    <th class="th-r">Tasa</th>
-  </tr></thead>
-  <tbody>${rankingBody}</tbody>
-</table>
-<div style="font-size:12px;color:var(--text-2);margin-top:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Mostrando los 5 vehículos con más interés</div>
-</div>`;
-
-    const warnNote = ranked.some(r=>r.warn)
-      ? `<div class="ranking-warn-note">Muchas visitas y pocos contactos puede indicar que el precio o las fotos necesitan revisión.</div>`
-      : '';
-
-    const revisarHTML = cochesRevisar.length===0
-      ? `<div class="analytics-empty"><span style="color:var(--success);display:inline-flex">${ICchk}</span>Todos tus vehículos están recibiendo visitas esta semana.</div>`
-      : `<div class="ghost-list">${cochesRevisar.map(g=>`<div class="ghost-row"><div class="ghost-name">${esc(g.name)}</div><div class="ghost-meta">${g.dias} días en stock · ${g.vistasEsteMes} vista${g.vistasEsteMes!==1?'s':''} este mes</div><button class="btn btn-secondary btn-sm" style="flex-shrink:0;font-size:12px;padding:5px 12px" onclick="showEdit('${g.id}')">Editar</button></div>`).join('')}</div>`;
-
-    section.innerHTML = `
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1.3fr;gap:16px;margin-bottom:16px">
-  <div class="db-kpi" style="min-width:0">
-    <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em">Visitas al catálogo</div>
-    <div id="webKpiVisitas"></div>
-  </div>
-  <div class="db-kpi" style="min-width:0">
-    <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em">Contactos generados</div>
-    <div id="webKpiContacts"></div>
-  </div>
-  <div class="db-kpi" style="min-width:0">
-    <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em">Tasa de conversión</div>
-    <div id="webKpiConv"></div>
-  </div>
-  <div class="db-kpi" style="min-width:0">
-    <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em">Canal de contacto</div>
-    <div style="width:90px;height:90px;margin:10px auto 0"><canvas id="webDonutChart"></canvas></div>
-    <div id="webDonutLegend" style="display:flex;justify-content:center;gap:16px;margin-top:10px"></div>
-  </div>
-</div>
-<div class="db-kpi" style="min-width:0;padding:16px 20px;margin-bottom:16px">
-  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px">
-    <div style="display:flex;align-items:center;gap:14px">
-      <span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-2)"><span style="width:20px;height:2px;background:#1E3A5F;border-radius:1px;display:inline-block"></span>Visitas</span>
-      <span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-2)"><span style="width:20px;height:2px;background:#3B82F6;border-radius:1px;display:inline-block"></span>Contactos</span>
-    </div>
-    <div style="display:flex;gap:6px">
-      <button class="web-period-btn" data-period="week" onclick="applyWebPeriod('week')">Esta semana</button>
-      <button class="web-period-btn" data-period="mes"  onclick="applyWebPeriod('mes')">Este mes</button>
-      <button class="web-period-btn" data-period="3m"   onclick="applyWebPeriod('3m')">3 meses</button>
-    </div>
-  </div>
-  <div class="web-bar-wrap"><canvas id="webLineChart"></canvas></div>
-</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-  <div>
-    <div class="analytics-section-head">Interés por vehículo</div>
-    ${rankingHTML}${warnNote}
-  </div>
-  <div>
-    <div class="analytics-section-head">Coches a revisar</div>
-    ${revisarHTML}
-  </div>
-</div>`;
-
-    applyWebPeriod('mes');
-
+    applyWebPeriod('week');
   } catch(err) {
     console.error('Web analytics:', err);
     const s = document.getElementById('webAnalyticsSection');
-    if (s) s.innerHTML = `<div class="analytics-empty">No se pudieron cargar los datos de analítica.</div>`;
+    if (s) s.innerHTML = `<div style="padding:24px;text-align:center;font-size:13px;color:var(--text-2)">No se pudieron cargar los datos de analítica.</div>`;
   }
 }
 
@@ -2593,123 +2500,341 @@ function applyWebPeriod(p) {
   if (!_webEvCache) return;
   const events = _webEvCache;
   const now = new Date();
+  const section = document.getElementById('webAnalyticsSection');
+  if (!section) return;
 
-  // Actualizar botones activos
   document.querySelectorAll('.web-period-btn').forEach(b => b.classList.toggle('active', b.dataset.period === p));
 
-  // Calcular límite temporal para KPIs
-  let kpiStart;
-  if (p === 'week') {
-    kpiStart = new Date(now.getTime() - 7 * 86400000);
-  } else if (p === 'mes') {
-    kpiStart = new Date(now.getFullYear(), now.getMonth(), 1);
-  } else {
-    kpiStart = new Date(now.getTime() - 90 * 86400000);
-  }
-
-  const inKpi = e => new Date(e.timestamp) >= kpiStart;
-  const visitas   = events.filter(e => e.tipo==='vista'         && inKpi(e)).length;
-  const calls     = events.filter(e => e.tipo==='clic_llamar'   && inKpi(e)).length;
-  const wa        = events.filter(e => e.tipo==='clic_whatsapp' && inKpi(e)).length;
-  const contactos = calls + wa;
-  const conv      = visitas > 0 ? (contactos / visitas * 100).toFixed(1) : '0.0';
-
-  const kpiLabel = p==='week' ? 'Esta semana' : p==='mes' ? 'Este mes' : 'Últimos 3 meses';
-
-  const el = id => document.getElementById(id);
-  if (el('webKpiVisitas'))
-    el('webKpiVisitas').innerHTML = `<div class="db-kpi-val" style="margin-top:8px;font-size:28px">${visitas}</div><div style="font-size:12px;color:var(--text-2);margin-top:6px">${kpiLabel}</div>`;
-  if (el('webKpiContacts'))
-    el('webKpiContacts').innerHTML = `<div class="db-kpi-val" style="margin-top:8px;font-size:28px">${contactos}</div><div style="font-size:12px;color:var(--text-2);margin-top:6px">${calls} llamadas · ${wa} WhatsApp</div>`;
-  if (el('webKpiConv'))
-    el('webKpiConv').innerHTML = `<div class="db-kpi-val" style="margin-top:8px;font-size:28px">${conv}%</div><div style="font-size:12px;color:var(--text-2);margin-top:6px">${kpiLabel}</div>`;
-
-  // Donut canal de contacto
-  const donutCanvas = el('webDonutChart');
-  if (donutCanvas && typeof Chart !== 'undefined') {
-    const existing = Chart.getChart(donutCanvas);
-    if (existing) existing.destroy();
-    if (calls + wa > 0) {
-      new Chart(donutCanvas, {
-        type: 'doughnut',
-        data: {
-          labels: ['Llamadas', 'WhatsApp'],
-          datasets: [{data:[calls,wa], backgroundColor:['#1E3A5F','#3B82F6'], borderWidth:0}],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          cutout: '65%',
-          animation: {duration: 400},
-          plugins: {
-            legend: {display: false},
-            tooltip: {
-              backgroundColor: '#fff',
-              titleColor: '#1E293B',
-              bodyColor: '#475569',
-              borderColor: '#E2E8F0',
-              borderWidth: 1,
-              padding: 8,
-            },
-          },
-        },
-      });
-    }
-    const legend = el('webDonutLegend');
-    if (legend) legend.innerHTML =
-      `<span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-2)"><span style="width:8px;height:8px;border-radius:50%;background:#1E3A5F;flex-shrink:0;display:inline-block"></span>Llamadas ${calls}</span>` +
-      `<span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-2)"><span style="width:8px;height:8px;border-radius:50%;background:#3B82F6;flex-shrink:0;display:inline-block"></span>WhatsApp ${wa}</span>`;
-  }
-
-  // Calcular puntos del gráfico
+  // Período actual y anterior (mismo tamaño)
   const getMonday = d => {
-    const date = new Date(d); date.setHours(0,0,0,0);
-    const day = date.getDay();
-    date.setDate(date.getDate() + (day===0 ? -6 : 1-day));
-    return date;
+    const dt = new Date(d); dt.setHours(0,0,0,0);
+    const day = dt.getDay();
+    dt.setDate(dt.getDate() + (day===0 ? -6 : 1-day));
+    return dt;
+  };
+  let start, prevStart, prevEnd;
+  if (p === 'week') {
+    start    = getMonday(now);
+    prevEnd  = new Date(start.getTime() - 1);
+    prevStart = getMonday(prevEnd);
+  } else if (p === 'mes') {
+    start    = new Date(now.getFullYear(), now.getMonth(), 1);
+    prevEnd  = new Date(start.getTime() - 1);
+    prevStart = new Date(prevEnd.getFullYear(), prevEnd.getMonth(), 1);
+  } else if (p === '3m') {
+    start    = new Date(now.getTime() - 90*86400000);
+    prevEnd  = new Date(start.getTime() - 1);
+    prevStart = new Date(prevEnd.getTime() - 90*86400000);
+  } else { // 12m
+    start    = new Date(now.getTime() - 365*86400000);
+    prevEnd  = new Date(start.getTime() - 1);
+    prevStart = new Date(prevEnd.getTime() - 365*86400000);
+  }
+
+  const inCur  = e => { const d=new Date(e.timestamp); return d>=start&&d<=now; };
+  const inPrev = e => { const d=new Date(e.timestamp); return d>=prevStart&&d<=prevEnd; };
+
+  // KPIs período actual
+  const pEv      = events.filter(inCur);
+  const visitas  = pEv.filter(e=>e.tipo==='vista').length;
+  const fichas   = new Set(pEv.filter(e=>e.tipo==='vista'&&e.vehiculo_id).map(e=>e.vehiculo_id)).size;
+  const calls    = pEv.filter(e=>e.tipo==='clic_llamar').length;
+  const wa       = pEv.filter(e=>e.tipo==='clic_whatsapp').length;
+  const contactos = calls+wa;
+  const conv     = visitas>0 ? (contactos/visitas*100).toFixed(1) : '0.0';
+
+  // KPIs período anterior
+  const pvEv       = events.filter(inPrev);
+  const pvVisitas  = pvEv.filter(e=>e.tipo==='vista').length;
+  const pvFichas   = new Set(pvEv.filter(e=>e.tipo==='vista'&&e.vehiculo_id).map(e=>e.vehiculo_id)).size;
+  const pvCalls    = pvEv.filter(e=>e.tipo==='clic_llamar').length;
+  const pvWa       = pvEv.filter(e=>e.tipo==='clic_whatsapp').length;
+  const pvContactos = pvCalls+pvWa;
+  const pvConv     = pvVisitas>0 ? pvContactos/pvVisitas*100 : 0;
+
+  const dlt = (cur, prev) => {
+    if (cur===prev) return `<span style="font-size:0.75rem;color:var(--text-2)">— vs. período anterior</span>`;
+    if (prev===0) return `<span style="font-size:0.75rem;color:var(--text-2)">— vs. período anterior</span>`;
+    const d = (cur-prev)/Math.abs(prev)*100;
+    return `<span style="font-size:0.75rem;font-weight:600;color:${d>0?'#16A34A':'#DC2626'}">${d>0?'↑':'↓'} ${Math.abs(d).toFixed(1).replace('.',',')}% vs. período anterior</span>`;
   };
 
-  let labels = [], vistasData = [], contactsData = [];
+  const ICcar = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1l2-4h10l2 4h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="16.5" cy="17.5" r="2.5"/></svg>`;
 
-  if (p === 'week') {
-    // 7 puntos diarios lun-dom de la semana actual
-    const mon = getMonday(now);
-    const dias = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
-    for (let i = 0; i < 7; i++) {
-      const ds = new Date(mon.getTime() + i * 86400000);
-      const de = new Date(ds.getTime() + 86400000);
-      const inD = e => { const d=new Date(e.timestamp); return d>=ds && d<de; };
-      labels.push(dias[i]);
-      vistasData.push(events.filter(e=>e.tipo==='vista'&&inD(e)).length);
-      contactsData.push(events.filter(e=>(e.tipo==='clic_llamar'||e.tipo==='clic_whatsapp')&&inD(e)).length);
+  // Tabla de vehículos (período actual)
+  const vstats = {};
+  pEv.forEach(e => {
+    if (!e.vehiculo_id) return;
+    if (!vstats[e.vehiculo_id]) vstats[e.vehiculo_id] = {vistas:0,calls:0,wa:0};
+    if (e.tipo==='vista') vstats[e.vehiculo_id].vistas++;
+    if (e.tipo==='clic_llamar') vstats[e.vehiculo_id].calls++;
+    if (e.tipo==='clic_whatsapp') vstats[e.vehiculo_id].wa++;
+  });
+  // Per-vehicle previous period stats (para columna Tendencia)
+  const pvstats = {};
+  pvEv.forEach(e => {
+    if (!e.vehiculo_id) return;
+    if (!pvstats[e.vehiculo_id]) pvstats[e.vehiculo_id] = {calls:0,wa:0};
+    if (e.tipo==='clic_llamar') pvstats[e.vehiculo_id].calls++;
+    if (e.tipo==='clic_whatsapp') pvstats[e.vehiculo_id].wa++;
+  });
+  const allRanked = Object.entries(vstats).map(([id,s]) => {
+    const v = vehiclesCache.find(x=>x.id===id);
+    const ct = s.calls+s.wa;
+    const pvCt = (pvstats[id]?.calls||0)+(pvstats[id]?.wa||0);
+    const vInfo = v ? calc(v) : null;
+    return {
+      id, name:v?`${v.brand} ${v.model}`:'—', photo:v?.photos?.[0]||null,
+      vistas:s.vistas, calls:s.calls, wa:s.wa, contactos:ct, pvContactos:pvCt,
+      tasa:s.vistas>0?ct/s.vistas*100:0,
+      dias:v?.entryDate?Math.floor((now-new Date(v.entryDate))/86400000):null,
+      pvp:vInfo?.pvp||0,
+    };
+  }).sort((a,b)=>b.vistas-a.vistas);
+  _webRankedCache = allRanked;
+
+  const maxVistas = allRanked.length > 0 ? Math.max(...allRanked.map(r=>r.vistas), 1) : 1;
+  const fichasPorVisita = visitas > 0 ? (fichas/visitas).toFixed(1).replace('.',',') : '0,0';
+
+  const mkRow = r => {
+    const thumb = r.photo
+      ? `<img src="${r.photo}" style="width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0">`
+      : `<div style="width:44px;height:44px;border-radius:8px;background:var(--border-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#94A3B8">${ICcar}</div>`;
+    const catPct = Math.round(r.vistas/maxVistas*100);
+    const tasaNum = r.vistas>0 ? r.tasa : null;
+    const tasaColor = tasaNum===null ? 'var(--text-2)' : tasaNum>15 ? '#16A34A' : tasaNum>=5 ? '#F59E0B' : '#DC2626';
+    const tasaStr = tasaNum===null ? '—' : `${tasaNum.toFixed(1).replace('.',',')}%`;
+    let canalPill = '';
+    if (r.calls>r.wa&&(r.calls+r.wa)>0) canalPill=`<span style="display:inline-flex;align-items:center;gap:3px;background:#EFF6FF;color:#1E3A5F;border-radius:10px;padding:2px 8px;font-size:11px;font-weight:600;white-space:nowrap">${ICphone} Llamadas</span>`;
+    else if (r.wa>r.calls&&(r.calls+r.wa)>0) canalPill=`<span style="display:inline-flex;align-items:center;gap:3px;background:#F0FDF4;color:#15803D;border-radius:10px;padding:2px 8px;font-size:11px;font-weight:600;white-space:nowrap">${ICwa} WhatsApp</span>`;
+    let tendencia = '<span style="color:var(--text-2)">—</span>';
+    if ((r.pvContactos||0)>0) {
+      const td=(r.contactos-(r.pvContactos||0))/(r.pvContactos||1)*100;
+      tendencia=`<span style="font-weight:600;color:${td>=0?'#16A34A':'#DC2626'}">${td>=0?'↑':'↓'} ${Math.abs(Math.round(td))}%</span>`;
     }
-  } else if (p === 'mes') {
-    // 4 puntos semanales (últimas 4 semanas)
-    const curMon = getMonday(now);
-    for (let i = 3; i >= 0; i--) {
-      const ws = new Date(curMon.getTime() - i * 7 * 86400000);
-      const we = new Date(ws.getTime() + 7 * 86400000);
-      const inW = e => { const d=new Date(e.timestamp); return d>=ws && d<we; };
-      const d = ws.getDate(), m = ws.toLocaleString('es-ES',{month:'short'});
-      labels.push(`${d} ${m}`);
-      vistasData.push(events.filter(e=>e.tipo==='vista'&&inW(e)).length);
-      contactsData.push(events.filter(e=>(e.tipo==='clic_llamar'||e.tipo==='clic_whatsapp')&&inW(e)).length);
+    const diasColor = r.dias===null?'var(--text)':r.dias>180?'#DC2626':r.dias>=90?'#F59E0B':'var(--text)';
+    const diasStr = r.dias!==null ? `<span style="color:${diasColor};font-weight:${r.dias>=90?'600':'400'}">${r.dias}d</span>` : '—';
+    const pvpStr = r.pvp>0 ? `<div style="font-size:0.8rem;color:var(--text-2);margin-top:1px">${r.pvp.toLocaleString('es-ES',{maximumFractionDigits:0})} €</div>` : '';
+    return `<tr style="cursor:pointer;border-bottom:1px solid var(--border-light)" onclick="showDetail('${r.id}')">
+  <td style="padding:10px 12px;vertical-align:middle"><div style="display:flex;align-items:center;gap:10px">${thumb}<div><div style="font-size:0.9rem;font-weight:700;color:var(--text)">${esc(r.name)}</div>${pvpStr}</div></div></td>
+  <td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.vistas}</div><div style="font-size:0.75rem;color:var(--text-2)">${catPct}% del catálogo</div></td>
+  <td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.contactos}</div><div style="font-size:0.75rem;color:var(--text-2)">${ICphone} ${r.calls} · ${ICwa} ${r.wa}</div></td>
+  <td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:${tasaColor}">${tasaStr}</div></td>
+  <td style="padding:10px 12px;text-align:center;vertical-align:middle" class="web-col-hide-mobile">${canalPill}</td>
+  <td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:0.8rem" class="web-col-hide-mobile">${tendencia}</td>
+  <td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:12px">${diasStr}</td>
+</tr>`;
+  };
+
+  const top5Rows = allRanked.length===0
+    ? `<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--text-2);font-size:13px">Sin datos para este período.</td></tr>`
+    : allRanked.slice(0,5).map(mkRow).join('');
+
+  // Tarjetas atención (top 3 por días en stock)
+  const thirtyAgo = new Date(now.getTime()-30*86400000);
+  const attnCards = vehiclesCache
+    .filter(v=>v.publicado&&v.status!=='vendido'&&!v.archivado)
+    .map(v => {
+      const dias = v.entryDate?Math.floor((now-new Date(v.entryDate))/86400000):0;
+      const vistasMes = events.filter(e=>e.vehiculo_id===v.id&&e.tipo==='vista'&&new Date(e.timestamp)>=thirtyAgo).length;
+      const ctP = pEv.filter(e=>e.vehiculo_id===v.id&&(e.tipo==='clic_llamar'||e.tipo==='clic_whatsapp')).length;
+      let diag='';
+      if (vistasMes===0) diag='Sin visitas este mes. Revisa las fotos y el precio.';
+      else if (ctP===0) diag='Visitas sin contacto. Puede que el precio o las fotos necesiten mejora.';
+      else if (dias>90) diag='Lleva más de 90 días. Valora ajustar el precio.';
+      return {id:v.id, name:`${v.brand} ${v.model}`, dias, vistasMes, diag};
+    })
+    .sort((a,b)=>b.dias-a.dias)
+    .slice(0,3)
+    .map(v=>`<div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px 18px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px">
+  <div style="font-size:14px;font-weight:600;color:var(--text)">${esc(v.name)}</div>
+  <div style="display:flex;align-items:center;gap:16px">
+    <span style="font-size:12px;${v.dias>90?'color:var(--warning);font-weight:700':'color:var(--text-2)'}">${v.dias} días en stock</span>
+    <span style="font-size:12px;color:var(--text-2)">${v.vistasMes} vista${v.vistasMes!==1?'s':''} este mes</span>
+  </div>
+  ${v.diag?`<div style="font-size:12px;color:var(--text-2);line-height:1.45;padding:7px 10px;background:var(--bg);border-radius:var(--r);border:1px solid var(--border-light)">${v.diag}</div>`:''}
+  <button class="btn btn-secondary btn-sm" style="font-size:12px;padding:5px 12px;align-self:flex-start" onclick="showEdit('${v.id}')">Editar vehículo</button>
+</div>`).join('');
+
+  // Datos del gráfico
+  let chartLabels=[], chartV=[], chartC=[], chartF=[];
+  if (p==='week') {
+    const mon=getMonday(now);
+    ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'].forEach((lbl,i)=>{
+      const ds=new Date(mon.getTime()+i*86400000), de=new Date(ds.getTime()+86400000);
+      const inD=e=>{const d=new Date(e.timestamp);return d>=ds&&d<de;};
+      chartLabels.push(lbl);
+      chartV.push(events.filter(e=>e.tipo==='vista'&&inD(e)).length);
+      chartC.push(events.filter(e=>(e.tipo==='clic_llamar'||e.tipo==='clic_whatsapp')&&inD(e)).length);
+      chartF.push(new Set(events.filter(e=>e.tipo==='vista'&&e.vehiculo_id&&inD(e)).map(e=>e.vehiculo_id)).size);
+    });
+  } else if (p==='mes'||p==='3m') {
+    const nW=p==='mes'?4:12, curMon=getMonday(now);
+    for (let i=nW-1;i>=0;i--){
+      const ws=new Date(curMon.getTime()-i*7*86400000), we=new Date(ws.getTime()+7*86400000);
+      const inW=e=>{const d=new Date(e.timestamp);return d>=ws&&d<we;};
+      chartLabels.push(`${ws.getDate()} ${ws.toLocaleString('es-ES',{month:'short'})}`);
+      chartV.push(events.filter(e=>e.tipo==='vista'&&inW(e)).length);
+      chartC.push(events.filter(e=>(e.tipo==='clic_llamar'||e.tipo==='clic_whatsapp')&&inW(e)).length);
+      chartF.push(new Set(events.filter(e=>e.tipo==='vista'&&e.vehiculo_id&&inW(e)).map(e=>e.vehiculo_id)).size);
     }
-  } else {
-    // 12 puntos semanales (últimas 12 semanas)
-    const curMon = getMonday(now);
-    for (let i = 11; i >= 0; i--) {
-      const ws = new Date(curMon.getTime() - i * 7 * 86400000);
-      const we = new Date(ws.getTime() + 7 * 86400000);
-      const inW = e => { const d=new Date(e.timestamp); return d>=ws && d<we; };
-      const d = ws.getDate(), m = ws.toLocaleString('es-ES',{month:'short'});
-      labels.push(`${d} ${m}`);
-      vistasData.push(events.filter(e=>e.tipo==='vista'&&inW(e)).length);
-      contactsData.push(events.filter(e=>(e.tipo==='clic_llamar'||e.tipo==='clic_whatsapp')&&inW(e)).length);
+  } else { // 12m → puntos mensuales
+    for (let i=11;i>=0;i--){
+      const ms=new Date(now.getFullYear(),now.getMonth()-i,1), me=new Date(now.getFullYear(),now.getMonth()-i+1,1);
+      const inM=e=>{const d=new Date(e.timestamp);return d>=ms&&d<me;};
+      chartLabels.push(ms.toLocaleString('es-ES',{month:'short',year:'2-digit'}));
+      chartV.push(events.filter(e=>e.tipo==='vista'&&inM(e)).length);
+      chartC.push(events.filter(e=>(e.tipo==='clic_llamar'||e.tipo==='clic_whatsapp')&&inM(e)).length);
+      chartF.push(new Set(events.filter(e=>e.tipo==='vista'&&e.vehiculo_id&&inM(e)).map(e=>e.vehiculo_id)).size);
     }
   }
+  const chartT = chartV.map((v,i)=>v>0?Math.round(chartC[i]/v*100):0);
 
-  initWebChart(labels, vistasData, contactsData);
+  const llPct = contactos>0?Math.round(calls/contactos*100):0;
+  const waPct = contactos>0?Math.round(wa/contactos*100):0;
+
+  section.innerHTML = `
+<div class="web-kpi-grid">
+  <div class="db-kpi" style="min-width:0">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
+      <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;line-height:1.3">Visitas al catálogo</div>
+      <span class="web-kpi-tip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2);flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span class="web-kpi-tip-box">Número de veces que se ha cargado tu catálogo online en el período seleccionado.</span></span>
+    </div>
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:8px">
+      <div>
+        <div class="db-kpi-val" style="font-size:2rem;font-weight:700">${visitas}</div>
+        <div style="margin-top:4px">${dlt(visitas,pvVisitas)}</div>
+        <div style="margin-top:3px;font-size:0.72rem;color:var(--text-2)">${pvVisitas} en el período anterior</div>
+      </div>
+      <canvas id="spV" width="80" height="30" style="flex-shrink:0;margin-bottom:4px"></canvas>
+    </div>
+  </div>
+  <div class="db-kpi" style="min-width:0">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
+      <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;line-height:1.3">Fichas vistas</div>
+      <span class="web-kpi-tip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2);flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span class="web-kpi-tip-box">Fichas de vehículos individuales visitadas. Un mismo visitante puede ver varias fichas.</span></span>
+    </div>
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:8px">
+      <div>
+        <div class="db-kpi-val" style="font-size:2rem;font-weight:700">${fichas}</div>
+        <div style="margin-top:4px">${dlt(fichas,pvFichas)}</div>
+        <div style="margin-top:3px;font-size:0.72rem;color:var(--text-2)">${fichasPorVisita} fichas por visita</div>
+      </div>
+      <canvas id="spF" width="80" height="30" style="flex-shrink:0;margin-bottom:4px"></canvas>
+    </div>
+  </div>
+  <div class="db-kpi" style="min-width:0">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
+      <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;line-height:1.3">Contactos generados</div>
+      <span class="web-kpi-tip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2);flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span class="web-kpi-tip-box">Sesiones únicas en las que el visitante ha pulsado llamar o WhatsApp. Una acción de contacto no garantiza que la conversación se haya completado.</span></span>
+    </div>
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:8px">
+      <div>
+        <div class="db-kpi-val" style="font-size:2rem;font-weight:700">${contactos}</div>
+        <div style="margin-top:4px">${dlt(contactos,pvContactos)}</div>
+        <div style="margin-top:3px;font-size:0.72rem;color:var(--text-2)">${ICphone} ${pvCalls} llamadas · ${ICwa} ${pvWa} WhatsApp</div>
+      </div>
+      <canvas id="spC" width="80" height="30" style="flex-shrink:0;margin-bottom:4px"></canvas>
+    </div>
+  </div>
+  <div class="db-kpi" style="min-width:0">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
+      <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;line-height:1.3">Tasa de conversión</div>
+      <span class="web-kpi-tip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2);flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span class="web-kpi-tip-box">Porcentaje de visitas al catálogo que generaron al menos un contacto.</span></span>
+    </div>
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:8px">
+      <div>
+        <div class="db-kpi-val" style="font-size:2rem;font-weight:700">${conv}%</div>
+        <div style="margin-top:4px">${dlt(parseFloat(conv),pvConv)}</div>
+        <div style="margin-top:3px;font-size:0.72rem;color:var(--text-2)">Visitas que generaron contacto</div>
+      </div>
+      <canvas id="spT" width="80" height="30" style="flex-shrink:0;margin-bottom:4px"></canvas>
+    </div>
+  </div>
+</div>
+<div class="web-chart-grid">
+  <div class="db-kpi" style="min-width:0;padding:16px 20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <span style="font-size:13px;font-weight:600;color:var(--text)">Evolución del rendimiento</span>
+      <div style="display:flex;align-items:center;gap:14px">
+        <span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-2)"><span style="width:16px;height:2px;background:#1E3A5F;border-radius:1px;display:inline-block"></span>Visitas</span>
+        <span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-2)"><span style="width:16px;height:2px;background:#3B82F6;border-radius:1px;display:inline-block"></span>Contactos</span>
+      </div>
+    </div>
+    <div class="web-bar-wrap"><canvas id="webLineChart"></canvas></div>
+  </div>
+  <div class="db-kpi" style="min-width:0">
+    <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em">Canal de contacto</div>
+    <div style="position:relative;width:130px;height:130px;margin:14px auto">
+      <canvas id="webDonutChart"></canvas>
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none">
+        <div style="font-size:22px;font-weight:700;color:var(--text);line-height:1">${contactos}</div>
+        <div style="font-size:10px;color:var(--text-2);margin-top:2px">contactos</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:7px">
+      <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px">
+        <span style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#1E3A5F;display:inline-block;flex-shrink:0"></span><span style="color:var(--text-2)">Llamadas</span></span>
+        <span><span style="font-weight:600;color:var(--text)">${calls}</span> <span style="color:var(--text-2);font-size:11px">${llPct}%</span></span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px">
+        <span style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#3B82F6;display:inline-block;flex-shrink:0"></span><span style="color:var(--text-2)">WhatsApp</span></span>
+        <span><span style="font-weight:600;color:var(--text)">${wa}</span> <span style="color:var(--text-2);font-size:11px">${waPct}%</span></span>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--text-2);margin-top:12px;line-height:1.4">Cada sesión se contabiliza una sola vez por canal</div>
+  </div>
+</div>
+<div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border-light);flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:600;color:var(--text)">Rendimiento por vehículo</span>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <select id="webVehicleSort" onchange="sortWebVehicleTable(this.value)" style="padding:5px 8px;font-size:12px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg);color:var(--text);outline:none;font-family:inherit;cursor:pointer">
+        <option value="vistas">Más vistas</option>
+        <option value="contactos">Más contactos</option>
+        <option value="tasa">Mejor conversión</option>
+        <option value="dias">Más días en stock</option>
+      </select>
+      <input id="webVehicleSearch" type="text" placeholder="Buscar vehículo..." oninput="filterWebVehicleTable(this.value)" style="padding:5px 10px;font-size:12px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg);color:var(--text);outline:none;width:160px;font-family:inherit">
+    </div>
+  </div>
+  <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse">
+      <thead><tr style="background:var(--bg)">
+        <th style="padding:9px 12px;font-size:11px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;text-align:left;border-bottom:1px solid var(--border)">Vehículo</th>
+        <th style="padding:9px 12px;font-size:11px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;text-align:right;border-bottom:1px solid var(--border)">Vistas</th>
+        <th style="padding:9px 12px;font-size:11px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;text-align:right;border-bottom:1px solid var(--border)">Contactos</th>
+        <th style="padding:9px 12px;font-size:11px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;text-align:right;border-bottom:1px solid var(--border)">Conversión</th>
+        <th class="web-col-hide-mobile" style="padding:9px 12px;font-size:11px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;text-align:center;border-bottom:1px solid var(--border)">Canal</th>
+        <th class="web-col-hide-mobile" style="padding:9px 12px;font-size:11px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;text-align:right;border-bottom:1px solid var(--border)">Tendencia</th>
+        <th style="padding:9px 12px;font-size:11px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;text-align:right;border-bottom:1px solid var(--border)">En stock</th>
+      </tr></thead>
+      <tbody id="webVehicleTbody">${top5Rows}</tbody>
+    </table>
+  </div>
+  ${allRanked.length>5?`<div style="padding:10px 16px;border-top:1px solid var(--border-light)"><button id="webVerTodosBtn" onclick="expandWebVehicleTable()" style="font-size:12px;font-weight:600;color:#1E3A5F;background:none;border:none;cursor:pointer;font-family:inherit;padding:0">Ver todos los vehículos → (${allRanked.length})</button></div>`:''}
+</div>
+<div>
+  <div style="font-size:11px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px">Vehículos que necesitan atención</div>
+  <div class="web-attn-grid">${attnCards||`<div style="grid-column:1/-1;padding:20px;background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);text-align:center;font-size:13px;color:var(--text-2)">Todos los vehículos están recibiendo atención.</div>`}</div>
+</div>`;
+
+  initWebChart(chartLabels, chartV, chartC);
+  drawSparkline('spV', chartV, '#16A34A');
+  drawSparkline('spF', chartF, '#16A34A');
+  drawSparkline('spC', chartC, '#16A34A');
+  drawSparkline('spT', chartT, '#16A34A');
+
+  // Donut
+  const donutC = document.getElementById('webDonutChart');
+  if (donutC && typeof Chart !== 'undefined') {
+    const ex = Chart.getChart(donutC); if (ex) ex.destroy();
+    if (calls+wa>0) new Chart(donutC, {
+      type: 'doughnut',
+      data: {labels:['Llamadas','WhatsApp'], datasets:[{data:[calls,wa], backgroundColor:['#1E3A5F','#3B82F6'], borderWidth:0}]},
+      options: {responsive:true, maintainAspectRatio:false, cutout:'68%', animation:{duration:400}, plugins:{legend:{display:false}, tooltip:{backgroundColor:'#fff',titleColor:'#1E293B',bodyColor:'#475569',borderColor:'#E2E8F0',borderWidth:1,padding:8}}},
+    });
+  }
 }
 
 function initWebChart(labels, vistasData, contactsData) {
@@ -2792,6 +2917,206 @@ function initWebChart(labels, vistasData, contactsData) {
       },
     },
   });
+}
+
+function filterWebVehicleTable(q) {
+  if (!_webRankedCache) return;
+  const tbody = document.getElementById('webVehicleTbody');
+  if (!tbody) return;
+  const IC = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1l2-4h10l2 4h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="16.5" cy="17.5" r="2.5"/></svg>`;
+  const qL = q.trim().toLowerCase();
+  const rows = qL ? _webRankedCache.filter(r => r.name.toLowerCase().includes(qL)) : _webRankedCache.slice(0,5);
+  if (rows.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--text-2);font-size:13px">Sin resultados para "${esc(q)}".</td></tr>`;
+    return;
+  }
+  const mxV = _webRankedCache.length>0?Math.max(..._webRankedCache.map(r=>r.vistas),1):1;
+  tbody.innerHTML = rows.map(r => {
+    const thumb = r.photo ? `<img src="${r.photo}" style="width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0">` : `<div style="width:44px;height:44px;border-radius:8px;background:var(--border-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#94A3B8">${IC}</div>`;
+    const catPct=Math.round(r.vistas/mxV*100);
+    const tasaNum=r.vistas>0?r.tasa:null;
+    const tasaColor=tasaNum===null?'var(--text-2)':tasaNum>15?'#16A34A':tasaNum>=5?'#F59E0B':'#DC2626';
+    const tasaStr=tasaNum===null?'—':`${tasaNum.toFixed(1).replace('.',',')}%`;
+    let canalPill='';
+    if(r.calls>r.wa&&(r.calls+r.wa)>0) canalPill=`<span style="display:inline-flex;align-items:center;gap:3px;background:#EFF6FF;color:#1E3A5F;border-radius:10px;padding:2px 8px;font-size:11px;font-weight:600;white-space:nowrap">${ICphone} Llamadas</span>`;
+    else if(r.wa>r.calls&&(r.calls+r.wa)>0) canalPill=`<span style="display:inline-flex;align-items:center;gap:3px;background:#F0FDF4;color:#15803D;border-radius:10px;padding:2px 8px;font-size:11px;font-weight:600;white-space:nowrap">${ICwa} WhatsApp</span>`;
+    let tendencia='<span style="color:var(--text-2)">—</span>';
+    if((r.pvContactos||0)>0){const td=(r.contactos-(r.pvContactos||0))/(r.pvContactos||1)*100;tendencia=`<span style="font-weight:600;color:${td>=0?'#16A34A':'#DC2626'}">${td>=0?'↑':'↓'} ${Math.abs(Math.round(td))}%</span>`;}
+    const diasColor=r.dias===null?'var(--text)':r.dias>180?'#DC2626':r.dias>=90?'#F59E0B':'var(--text)';
+    const diasStr=r.dias!==null?`<span style="color:${diasColor};font-weight:${r.dias>=90?'600':'400'}">${r.dias}d</span>`:'—';
+    const pvpStr=r.pvp>0?`<div style="font-size:0.8rem;color:var(--text-2);margin-top:1px">${r.pvp.toLocaleString('es-ES',{maximumFractionDigits:0})} €</div>`:'';
+    return `<tr style="cursor:pointer;border-bottom:1px solid var(--border-light)" onclick="showDetail('${r.id}')"><td style="padding:10px 12px;vertical-align:middle"><div style="display:flex;align-items:center;gap:10px">${thumb}<div><div style="font-size:0.9rem;font-weight:700;color:var(--text)">${esc(r.name)}</div>${pvpStr}</div></div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.vistas}</div><div style="font-size:0.75rem;color:var(--text-2)">${catPct}% del catálogo</div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.contactos}</div><div style="font-size:0.75rem;color:var(--text-2)">${ICphone} ${r.calls} · ${ICwa} ${r.wa}</div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:${tasaColor}">${tasaStr}</div></td><td style="padding:10px 12px;text-align:center;vertical-align:middle" class="web-col-hide-mobile">${canalPill}</td><td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:0.8rem" class="web-col-hide-mobile">${tendencia}</td><td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:12px">${diasStr}</td></tr>`;
+  }).join('');
+}
+
+function expandWebVehicleTable() {
+  if (!_webRankedCache) return;
+  const tbody = document.getElementById('webVehicleTbody');
+  const btnWrap = document.getElementById('webVerTodosBtn')?.closest('div');
+  if (!tbody) return;
+  const IC = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1l2-4h10l2 4h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="16.5" cy="17.5" r="2.5"/></svg>`;
+  const mxV=_webRankedCache.length>0?Math.max(..._webRankedCache.map(r=>r.vistas),1):1;
+  tbody.innerHTML = _webRankedCache.map(r => {
+    const thumb = r.photo ? `<img src="${r.photo}" style="width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0">` : `<div style="width:44px;height:44px;border-radius:8px;background:var(--border-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#94A3B8">${IC}</div>`;
+    const catPct=Math.round(r.vistas/mxV*100);
+    const tasaNum=r.vistas>0?r.tasa:null;
+    const tasaColor=tasaNum===null?'var(--text-2)':tasaNum>15?'#16A34A':tasaNum>=5?'#F59E0B':'#DC2626';
+    const tasaStr=tasaNum===null?'—':`${tasaNum.toFixed(1).replace('.',',')}%`;
+    let canalPill='';
+    if(r.calls>r.wa&&(r.calls+r.wa)>0) canalPill=`<span style="display:inline-flex;align-items:center;gap:3px;background:#EFF6FF;color:#1E3A5F;border-radius:10px;padding:2px 8px;font-size:11px;font-weight:600;white-space:nowrap">${ICphone} Llamadas</span>`;
+    else if(r.wa>r.calls&&(r.calls+r.wa)>0) canalPill=`<span style="display:inline-flex;align-items:center;gap:3px;background:#F0FDF4;color:#15803D;border-radius:10px;padding:2px 8px;font-size:11px;font-weight:600;white-space:nowrap">${ICwa} WhatsApp</span>`;
+    let tendencia='<span style="color:var(--text-2)">—</span>';
+    if((r.pvContactos||0)>0){const td=(r.contactos-(r.pvContactos||0))/(r.pvContactos||1)*100;tendencia=`<span style="font-weight:600;color:${td>=0?'#16A34A':'#DC2626'}">${td>=0?'↑':'↓'} ${Math.abs(Math.round(td))}%</span>`;}
+    const diasColor=r.dias===null?'var(--text)':r.dias>180?'#DC2626':r.dias>=90?'#F59E0B':'var(--text)';
+    const diasStr=r.dias!==null?`<span style="color:${diasColor};font-weight:${r.dias>=90?'600':'400'}">${r.dias}d</span>`:'—';
+    const pvpStr=r.pvp>0?`<div style="font-size:0.8rem;color:var(--text-2);margin-top:1px">${r.pvp.toLocaleString('es-ES',{maximumFractionDigits:0})} €</div>`:'';
+    return `<tr style="cursor:pointer;border-bottom:1px solid var(--border-light)" onclick="showDetail('${r.id}')"><td style="padding:10px 12px;vertical-align:middle"><div style="display:flex;align-items:center;gap:10px">${thumb}<div><div style="font-size:0.9rem;font-weight:700;color:var(--text)">${esc(r.name)}</div>${pvpStr}</div></div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.vistas}</div><div style="font-size:0.75rem;color:var(--text-2)">${catPct}% del catálogo</div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.contactos}</div><div style="font-size:0.75rem;color:var(--text-2)">${ICphone} ${r.calls} · ${ICwa} ${r.wa}</div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:${tasaColor}">${tasaStr}</div></td><td style="padding:10px 12px;text-align:center;vertical-align:middle" class="web-col-hide-mobile">${canalPill}</td><td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:0.8rem" class="web-col-hide-mobile">${tendencia}</td><td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:12px">${diasStr}</td></tr>`;
+  }).join('');
+  if (btnWrap) btnWrap.style.display = 'none';
+}
+
+function sortWebVehicleTable(col) {
+  if (!_webRankedCache) return;
+  if (col === 'contactos') _webRankedCache.sort((a,b) => b.contactos - a.contactos);
+  else if (col === 'tasa') _webRankedCache.sort((a,b) => b.tasa - a.tasa);
+  else if (col === 'dias') _webRankedCache.sort((a,b) => (b.dias||0) - (a.dias||0));
+  else _webRankedCache.sort((a,b) => b.vistas - a.vistas);
+  const tbody = document.getElementById('webVehicleTbody');
+  if (!tbody) return;
+  const IC = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1l2-4h10l2 4h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="16.5" cy="17.5" r="2.5"/></svg>`;
+  const q = (document.getElementById('webVehicleSearch')?.value || '').trim().toLowerCase();
+  const rows = q ? _webRankedCache.filter(r => r.name.toLowerCase().includes(q)) : _webRankedCache.slice(0,5);
+  if (rows.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--text-2);font-size:13px">Sin resultados.</td></tr>`;
+    return;
+  }
+  const mxV=_webRankedCache.length>0?Math.max(..._webRankedCache.map(r=>r.vistas),1):1;
+  tbody.innerHTML = rows.map(r => {
+    const thumb = r.photo ? `<img src="${r.photo}" style="width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0">` : `<div style="width:44px;height:44px;border-radius:8px;background:var(--border-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#94A3B8">${IC}</div>`;
+    const catPct=Math.round(r.vistas/mxV*100);
+    const tasaNum=r.vistas>0?r.tasa:null;
+    const tasaColor=tasaNum===null?'var(--text-2)':tasaNum>15?'#16A34A':tasaNum>=5?'#F59E0B':'#DC2626';
+    const tasaStr=tasaNum===null?'—':`${tasaNum.toFixed(1).replace('.',',')}%`;
+    let canalPill='';
+    if(r.calls>r.wa&&(r.calls+r.wa)>0) canalPill=`<span style="display:inline-flex;align-items:center;gap:3px;background:#EFF6FF;color:#1E3A5F;border-radius:10px;padding:2px 8px;font-size:11px;font-weight:600;white-space:nowrap">${ICphone} Llamadas</span>`;
+    else if(r.wa>r.calls&&(r.calls+r.wa)>0) canalPill=`<span style="display:inline-flex;align-items:center;gap:3px;background:#F0FDF4;color:#15803D;border-radius:10px;padding:2px 8px;font-size:11px;font-weight:600;white-space:nowrap">${ICwa} WhatsApp</span>`;
+    let tendencia='<span style="color:var(--text-2)">—</span>';
+    if((r.pvContactos||0)>0){const td=(r.contactos-(r.pvContactos||0))/(r.pvContactos||1)*100;tendencia=`<span style="font-weight:600;color:${td>=0?'#16A34A':'#DC2626'}">${td>=0?'↑':'↓'} ${Math.abs(Math.round(td))}%</span>`;}
+    const diasColor=r.dias===null?'var(--text)':r.dias>180?'#DC2626':r.dias>=90?'#F59E0B':'var(--text)';
+    const diasStr=r.dias!==null?`<span style="color:${diasColor};font-weight:${r.dias>=90?'600':'400'}">${r.dias}d</span>`:'—';
+    const pvpStr=r.pvp>0?`<div style="font-size:0.8rem;color:var(--text-2);margin-top:1px">${r.pvp.toLocaleString('es-ES',{maximumFractionDigits:0})} €</div>`:'';
+    return `<tr style="cursor:pointer;border-bottom:1px solid var(--border-light)" onclick="showDetail('${r.id}')"><td style="padding:10px 12px;vertical-align:middle"><div style="display:flex;align-items:center;gap:10px">${thumb}<div><div style="font-size:0.9rem;font-weight:700;color:var(--text)">${esc(r.name)}</div>${pvpStr}</div></div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.vistas}</div><div style="font-size:0.75rem;color:var(--text-2)">${catPct}% del catálogo</div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.contactos}</div><div style="font-size:0.75rem;color:var(--text-2)">${ICphone} ${r.calls} · ${ICwa} ${r.wa}</div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:${tasaColor}">${tasaStr}</div></td><td style="padding:10px 12px;text-align:center;vertical-align:middle" class="web-col-hide-mobile">${canalPill}</td><td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:0.8rem" class="web-col-hide-mobile">${tendencia}</td><td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:12px">${diasStr}</td></tr>`;
+  }).join('');
+}
+
+function drawSparkline(id, data, color) {
+  const c = document.getElementById(id);
+  if (!c || !data || data.length < 2) return;
+  const w = c.width, h = c.height;
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, w, h);
+  const max = Math.max(...data, 1);
+  const pts = data.map((v, i) => [i / (data.length - 1) * w, h - (v / max * (h - 4)) - 2]);
+  ctx.beginPath();
+  ctx.moveTo(...pts[0]);
+  pts.slice(1).forEach(p => ctx.lineTo(...p));
+  ctx.strokeStyle = color || '#16A34A';
+  ctx.lineWidth = 1.5;
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+  ctx.stroke();
+}
+
+async function loadDetailWebStats(vehicleId) {
+  const sec = document.getElementById('detailWebSection');
+  if (!sec || !vehicleId) return;
+  sec.innerHTML = `<div style="padding:20px;text-align:center;font-size:13px;color:var(--text-2)">Cargando rendimiento web...</div>`;
+  try {
+    const { data: ev, error } = await sb.from('eventos_catalogo').select('tipo,timestamp').eq('vehiculo_id', vehicleId);
+    if (error) throw error;
+    const events = ev || [];
+    if (events.length === 0) {
+      sec.innerHTML = `<div class="dcard" style="margin-top:18px"><div class="dcard-head">Rendimiento web</div><div class="dcard-body" style="text-align:center;font-size:13px;color:var(--text-2);padding:28px">Sin datos de visitas aún.</div></div>`;
+      return;
+    }
+    const vistas = events.filter(e => e.tipo==='vista').length;
+    const calls  = events.filter(e => e.tipo==='clic_llamar').length;
+    const wa     = events.filter(e => e.tipo==='clic_whatsapp').length;
+    const contactos = calls + wa;
+    const tasa = vistas > 0 ? (contactos/vistas*100).toFixed(1).replace('.',',') : '0,0';
+    const now = new Date();
+    const weekLabels = [], weekData = [];
+    for (let i = 7; i >= 0; i--) {
+      const ws = new Date(now.getTime() - (i+1)*7*86400000);
+      const we = new Date(now.getTime() - i*7*86400000);
+      weekLabels.push(`${ws.getDate()} ${ws.toLocaleString('es-ES',{month:'short'})}`);
+      weekData.push(events.filter(e => { const d=new Date(e.timestamp); return e.tipo==='vista'&&d>=ws&&d<we; }).length);
+    }
+    sec.innerHTML = `
+<div class="dcard" style="margin-top:18px">
+  <div class="dcard-head">Rendimiento web</div>
+  <div class="dcard-body">
+    <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap">
+      <div style="flex:1;min-width:120px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px">
+        <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em">Vistas totales</div>
+        <div style="font-size:24px;font-weight:700;color:var(--text);margin-top:6px">${vistas}</div>
+      </div>
+      <div style="flex:1;min-width:120px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px">
+        <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em">Contactos totales</div>
+        <div style="font-size:24px;font-weight:700;color:var(--text);margin-top:6px">${contactos}</div>
+        <div style="font-size:11px;color:var(--text-2);margin-top:3px">${calls} llamadas · ${wa} WA</div>
+      </div>
+      <div style="flex:1;min-width:120px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px">
+        <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em">Tasa de conversión</div>
+        <div style="font-size:24px;font-weight:700;color:var(--text);margin-top:6px">${tasa}%</div>
+      </div>
+    </div>
+    <div style="max-height:180px;position:relative"><canvas id="detailVehicleChart"></canvas></div>
+  </div>
+</div>`;
+    const canvas = document.getElementById('detailVehicleChart');
+    if (canvas && typeof Chart !== 'undefined') {
+      const ex = Chart.getChart(canvas); if (ex) ex.destroy();
+      const ctx = canvas.getContext('2d');
+      const grad = ctx.createLinearGradient(0, 0, 0, 160);
+      grad.addColorStop(0, 'rgba(30,58,95,0.15)');
+      grad.addColorStop(1, 'rgba(30,58,95,0)');
+      new Chart(canvas, {
+        type: 'line',
+        data: {
+          labels: weekLabels,
+          datasets: [{
+            data: weekData,
+            borderColor: '#1E3A5F',
+            backgroundColor: grad,
+            pointRadius: 3,
+            pointHoverRadius: 5,
+            pointBackgroundColor: '#1E3A5F',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: {duration: 400},
+          plugins: {
+            legend: {display: false},
+            tooltip: {backgroundColor:'#fff',titleColor:'#1E293B',bodyColor:'#475569',borderColor:'#E2E8F0',borderWidth:1,padding:8},
+          },
+          scales: {
+            y: {beginAtZero:true, ticks:{stepSize:1,precision:0,font:{size:10},color:'#94A3B8'}, grid:{color:'rgba(0,0,0,0.04)'}, border:{display:false}},
+            x: {grid:{display:false}, ticks:{font:{size:10},color:'#64748B'}, border:{display:false}},
+          },
+        },
+      });
+    }
+  } catch(err) {
+    console.error('Detail web stats:', err);
+    const s = document.getElementById('detailWebSection');
+    if (s) s.innerHTML = '';
+  }
 }
 
 function initDashCharts() {
