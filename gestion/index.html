@@ -760,6 +760,18 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   .web-attn-grid{grid-template-columns:1fr}
   .web-period-btn{padding:5px 10px;font-size:11px;min-height:44px}
   .web-col-hide-mobile{display:none!important}
+  /* Resetear conversión tabla→tarjetas global para la tabla de analítica */
+  .web-vehicle-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .web-vehicle-table-wrap table{display:table!important;min-width:520px}
+  .web-vehicle-table-wrap thead{display:table-header-group!important}
+  .web-vehicle-table-wrap tbody{display:table-row-group!important;flex-direction:initial!important;gap:0!important}
+  .web-vehicle-table-wrap tbody tr{display:table-row!important;border:none!important;border-radius:0!important;box-shadow:none!important;overflow:visible!important;min-height:44px}
+  .web-vehicle-table-wrap td{display:table-cell!important;width:auto!important;padding:8px 8px!important;border-bottom:1px solid var(--border-light)!important;box-sizing:content-box!important;vertical-align:middle!important;background:transparent!important;font-size:12px!important;border-top:none!important}
+  .web-vehicle-table-wrap td::before,.web-vehicle-table-wrap td::after{display:none!important;content:''!important}
+  .web-veh-price{display:none!important}
+  /* Delta KPI: una sola línea, font pequeño */
+  .web-kpi-delta{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .web-kpi-delta span{font-size:0.72rem!important}
 }
 @media(max-width:580px){.ai-portal-grid{grid-template-columns:repeat(3,1fr)}}
 
@@ -2255,7 +2267,7 @@ function renderHomeContent() {
         <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em">Vehículos vendidos</div>
         <div class="db-kpi-val" style="margin-top:8px">${pCount}</div>
         <div style="font-size:13px;color:var(--text-2);margin-top:6px">Vehículos vendidos</div>
-        <div style="margin-top:4px">${dlt(pCount,prevCount)}</div>
+        <div class="web-kpi-delta" style="margin-top:4px">${dlt(pCount,prevCount)}</div>
       </div>
       <div class="db-kpi" style="min-height:130px;display:flex;flex-direction:column">
         <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em">Importe vendido</div>
@@ -2614,7 +2626,7 @@ function applyWebPeriod(p) {
     }
     const diasColor = r.dias===null?'var(--text)':r.dias>180?'#DC2626':r.dias>=90?'#F59E0B':'var(--text)';
     const diasStr = r.dias!==null ? `<span style="color:${diasColor};font-weight:${r.dias>=90?'600':'400'}">${r.dias}d</span>` : '—';
-    const pvpStr = r.pvp>0 ? `<div style="font-size:0.8rem;color:var(--text-2);margin-top:1px">${r.pvp.toLocaleString('es-ES',{maximumFractionDigits:0})} €</div>` : '';
+    const pvpStr = r.pvp>0 ? `<div class="web-veh-price" style="font-size:0.8rem;color:var(--text-2);margin-top:1px">${r.pvp.toLocaleString('es-ES',{maximumFractionDigits:0})} €</div>` : '';
     return `<tr style="cursor:pointer;border-bottom:1px solid var(--border-light)" onclick="showDetail('${r.id}')">
   <td style="padding:10px 12px;vertical-align:middle"><div style="display:flex;align-items:center;gap:10px">${thumb}<div><div style="font-size:0.9rem;font-weight:700;color:var(--text)">${esc(r.name)}</div>${pvpStr}</div></div></td>
   <td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.vistas}</div><div style="font-size:0.75rem;color:var(--text-2)">${catPct}% del catálogo</div></td>
@@ -2703,7 +2715,7 @@ function applyWebPeriod(p) {
     <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:8px">
       <div>
         <div class="db-kpi-val" style="font-size:2rem;font-weight:700">${visitas}</div>
-        <div style="margin-top:4px">${dlt(visitas,pvVisitas)}</div>
+        <div class="web-kpi-delta" style="margin-top:4px">${dlt(visitas,pvVisitas)}</div>
         <div style="margin-top:3px;font-size:0.72rem;color:var(--text-2)">${pvVisitas} en el período anterior</div>
       </div>
       <canvas id="spV" width="80" height="30" style="flex-shrink:0;margin-bottom:4px"></canvas>
@@ -2717,7 +2729,7 @@ function applyWebPeriod(p) {
     <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:8px">
       <div>
         <div class="db-kpi-val" style="font-size:2rem;font-weight:700">${fichas}</div>
-        <div style="margin-top:4px">${dlt(fichas,pvFichas)}</div>
+        <div class="web-kpi-delta" style="margin-top:4px">${dlt(fichas,pvFichas)}</div>
         <div style="margin-top:3px;font-size:0.72rem;color:var(--text-2)">${fichasPorVisita} fichas por visita</div>
       </div>
       <canvas id="spF" width="80" height="30" style="flex-shrink:0;margin-bottom:4px"></canvas>
@@ -2731,7 +2743,7 @@ function applyWebPeriod(p) {
     <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:8px">
       <div>
         <div class="db-kpi-val" style="font-size:2rem;font-weight:700">${contactos}</div>
-        <div style="margin-top:4px">${dlt(contactos,pvContactos)}</div>
+        <div class="web-kpi-delta" style="margin-top:4px">${dlt(contactos,pvContactos)}</div>
         <div style="margin-top:3px;font-size:0.72rem;color:var(--text-2)">${ICphone} ${pvCalls} llamadas · ${ICwa} ${pvWa} WhatsApp</div>
       </div>
       <canvas id="spC" width="80" height="30" style="flex-shrink:0;margin-bottom:4px"></canvas>
@@ -2745,7 +2757,7 @@ function applyWebPeriod(p) {
     <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:8px">
       <div>
         <div class="db-kpi-val" style="font-size:2rem;font-weight:700">${conv}%</div>
-        <div style="margin-top:4px">${dlt(parseFloat(conv),pvConv)}</div>
+        <div class="web-kpi-delta" style="margin-top:4px">${dlt(parseFloat(conv),pvConv)}</div>
         <div style="margin-top:3px;font-size:0.72rem;color:var(--text-2)">Visitas que generaron contacto</div>
       </div>
       <canvas id="spT" width="80" height="30" style="flex-shrink:0;margin-bottom:4px"></canvas>
@@ -2798,7 +2810,7 @@ function applyWebPeriod(p) {
       <input id="webVehicleSearch" type="text" placeholder="Buscar vehículo..." oninput="filterWebVehicleTable(this.value)" style="padding:5px 10px;font-size:12px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg);color:var(--text);outline:none;width:160px;font-family:inherit">
     </div>
   </div>
-  <div style="overflow-x:auto">
+  <div class="web-vehicle-table-wrap" style="overflow-x:auto">
     <table style="width:100%;border-collapse:collapse">
       <thead><tr style="background:var(--bg)">
         <th style="padding:9px 12px;font-size:11px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;text-align:left;border-bottom:1px solid var(--border)">Vehículo</th>
@@ -2944,7 +2956,7 @@ function filterWebVehicleTable(q) {
     if((r.pvContactos||0)>0){const td=(r.contactos-(r.pvContactos||0))/(r.pvContactos||1)*100;tendencia=`<span style="font-weight:600;color:${td>=0?'#16A34A':'#DC2626'}">${td>=0?'↑':'↓'} ${Math.abs(Math.round(td))}%</span>`;}
     const diasColor=r.dias===null?'var(--text)':r.dias>180?'#DC2626':r.dias>=90?'#F59E0B':'var(--text)';
     const diasStr=r.dias!==null?`<span style="color:${diasColor};font-weight:${r.dias>=90?'600':'400'}">${r.dias}d</span>`:'—';
-    const pvpStr=r.pvp>0?`<div style="font-size:0.8rem;color:var(--text-2);margin-top:1px">${r.pvp.toLocaleString('es-ES',{maximumFractionDigits:0})} €</div>`:'';
+    const pvpStr=r.pvp>0?`<div class="web-veh-price" style="font-size:0.8rem;color:var(--text-2);margin-top:1px">${r.pvp.toLocaleString('es-ES',{maximumFractionDigits:0})} €</div>`:'';
     return `<tr style="cursor:pointer;border-bottom:1px solid var(--border-light)" onclick="showDetail('${r.id}')"><td style="padding:10px 12px;vertical-align:middle"><div style="display:flex;align-items:center;gap:10px">${thumb}<div><div style="font-size:0.9rem;font-weight:700;color:var(--text)">${esc(r.name)}</div>${pvpStr}</div></div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.vistas}</div><div style="font-size:0.75rem;color:var(--text-2)">${catPct}% del catálogo</div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.contactos}</div><div style="font-size:0.75rem;color:var(--text-2)">${ICphone} ${r.calls} · ${ICwa} ${r.wa}</div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:${tasaColor}">${tasaStr}</div></td><td style="padding:10px 12px;text-align:center;vertical-align:middle" class="web-col-hide-mobile">${canalPill}</td><td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:0.8rem" class="web-col-hide-mobile">${tendencia}</td><td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:12px">${diasStr}</td></tr>`;
   }).join('');
 }
@@ -2969,7 +2981,7 @@ function expandWebVehicleTable() {
     if((r.pvContactos||0)>0){const td=(r.contactos-(r.pvContactos||0))/(r.pvContactos||1)*100;tendencia=`<span style="font-weight:600;color:${td>=0?'#16A34A':'#DC2626'}">${td>=0?'↑':'↓'} ${Math.abs(Math.round(td))}%</span>`;}
     const diasColor=r.dias===null?'var(--text)':r.dias>180?'#DC2626':r.dias>=90?'#F59E0B':'var(--text)';
     const diasStr=r.dias!==null?`<span style="color:${diasColor};font-weight:${r.dias>=90?'600':'400'}">${r.dias}d</span>`:'—';
-    const pvpStr=r.pvp>0?`<div style="font-size:0.8rem;color:var(--text-2);margin-top:1px">${r.pvp.toLocaleString('es-ES',{maximumFractionDigits:0})} €</div>`:'';
+    const pvpStr=r.pvp>0?`<div class="web-veh-price" style="font-size:0.8rem;color:var(--text-2);margin-top:1px">${r.pvp.toLocaleString('es-ES',{maximumFractionDigits:0})} €</div>`:'';
     return `<tr style="cursor:pointer;border-bottom:1px solid var(--border-light)" onclick="showDetail('${r.id}')"><td style="padding:10px 12px;vertical-align:middle"><div style="display:flex;align-items:center;gap:10px">${thumb}<div><div style="font-size:0.9rem;font-weight:700;color:var(--text)">${esc(r.name)}</div>${pvpStr}</div></div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.vistas}</div><div style="font-size:0.75rem;color:var(--text-2)">${catPct}% del catálogo</div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.contactos}</div><div style="font-size:0.75rem;color:var(--text-2)">${ICphone} ${r.calls} · ${ICwa} ${r.wa}</div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:${tasaColor}">${tasaStr}</div></td><td style="padding:10px 12px;text-align:center;vertical-align:middle" class="web-col-hide-mobile">${canalPill}</td><td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:0.8rem" class="web-col-hide-mobile">${tendencia}</td><td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:12px">${diasStr}</td></tr>`;
   }).join('');
   if (btnWrap) btnWrap.style.display = 'none';
@@ -3004,7 +3016,7 @@ function sortWebVehicleTable(col) {
     if((r.pvContactos||0)>0){const td=(r.contactos-(r.pvContactos||0))/(r.pvContactos||1)*100;tendencia=`<span style="font-weight:600;color:${td>=0?'#16A34A':'#DC2626'}">${td>=0?'↑':'↓'} ${Math.abs(Math.round(td))}%</span>`;}
     const diasColor=r.dias===null?'var(--text)':r.dias>180?'#DC2626':r.dias>=90?'#F59E0B':'var(--text)';
     const diasStr=r.dias!==null?`<span style="color:${diasColor};font-weight:${r.dias>=90?'600':'400'}">${r.dias}d</span>`:'—';
-    const pvpStr=r.pvp>0?`<div style="font-size:0.8rem;color:var(--text-2);margin-top:1px">${r.pvp.toLocaleString('es-ES',{maximumFractionDigits:0})} €</div>`:'';
+    const pvpStr=r.pvp>0?`<div class="web-veh-price" style="font-size:0.8rem;color:var(--text-2);margin-top:1px">${r.pvp.toLocaleString('es-ES',{maximumFractionDigits:0})} €</div>`:'';
     return `<tr style="cursor:pointer;border-bottom:1px solid var(--border-light)" onclick="showDetail('${r.id}')"><td style="padding:10px 12px;vertical-align:middle"><div style="display:flex;align-items:center;gap:10px">${thumb}<div><div style="font-size:0.9rem;font-weight:700;color:var(--text)">${esc(r.name)}</div>${pvpStr}</div></div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.vistas}</div><div style="font-size:0.75rem;color:var(--text-2)">${catPct}% del catálogo</div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.contactos}</div><div style="font-size:0.75rem;color:var(--text-2)">${ICphone} ${r.calls} · ${ICwa} ${r.wa}</div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:${tasaColor}">${tasaStr}</div></td><td style="padding:10px 12px;text-align:center;vertical-align:middle" class="web-col-hide-mobile">${canalPill}</td><td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:0.8rem" class="web-col-hide-mobile">${tendencia}</td><td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:12px">${diasStr}</td></tr>`;
   }).join('');
 }
