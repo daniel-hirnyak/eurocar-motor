@@ -692,6 +692,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .web-kpi-tip{position:relative;display:inline-flex;align-items:center;flex-shrink:0;cursor:help}
 .web-kpi-tip-box{position:absolute;top:calc(100% + 6px);right:0;background:#1E3A5F;color:#fff;border-radius:6px;padding:8px 12px;font-size:0.75rem;max-width:220px;min-width:160px;z-index:1000;pointer-events:none;white-space:normal;line-height:1.4;opacity:0;transition:opacity .15s;text-transform:none;font-weight:400;letter-spacing:0}
 .web-kpi-tip:hover .web-kpi-tip-box{opacity:1}
+.web-mobile-metrics{display:none}
 @media(max-width:540px){.analytics-cards{grid-template-columns:1fr}}
 @media(max-width:540px){.ranking-table{min-width:300px}}
 @media(max-width:768px){
@@ -760,18 +761,29 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   .web-attn-grid{grid-template-columns:1fr}
   .web-period-btn{padding:5px 10px;font-size:11px;min-height:44px}
   .web-col-hide-mobile{display:none!important}
-  /* Resetear conversión tabla→tarjetas global para la tabla de analítica */
-  .web-vehicle-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-  .web-vehicle-table-wrap table{display:table!important;min-width:520px}
-  .web-vehicle-table-wrap thead{display:table-header-group!important}
-  .web-vehicle-table-wrap tbody{display:table-row-group!important;flex-direction:initial!important;gap:0!important}
-  .web-vehicle-table-wrap tbody tr{display:table-row!important;border:none!important;border-radius:0!important;box-shadow:none!important;overflow:visible!important;min-height:44px}
-  .web-vehicle-table-wrap td{display:table-cell!important;width:auto!important;padding:8px 8px!important;border-bottom:1px solid var(--border-light)!important;box-sizing:content-box!important;vertical-align:middle!important;background:transparent!important;font-size:12px!important;border-top:none!important}
-  .web-vehicle-table-wrap td::before,.web-vehicle-table-wrap td::after{display:none!important;content:''!important}
+  /* ARREGLO 1: KPI cards altura fija */
+  .web-kpi-grid>.db-kpi{padding:12px!important;height:110px!important;overflow:hidden!important;position:relative!important}
+  .web-kpi-label{font-size:0.6rem!important;white-space:nowrap!important;overflow:hidden!important}
+  .web-kpi-grid .db-kpi-val{font-size:1.6rem!important}
+  .web-kpi-delta{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .web-kpi-delta span{font-size:0.65rem!important}
+  .web-kpi-secondary{font-size:0.65rem!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  .web-kpi-grid canvas{position:absolute!important;bottom:8px!important;right:8px!important;width:60px!important;height:24px!important}
   .web-veh-price{display:none!important}
-  /* Delta KPI: una sola línea, font pequeño */
-  .web-kpi-delta{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .web-kpi-delta span{font-size:0.72rem!important}
+  /* ARREGLO 2: tabla → tarjetas de fila */
+  .web-vehicle-table-wrap{overflow-x:initial}
+  .web-vehicle-table-wrap table{display:block!important;min-width:0!important}
+  .web-vehicle-table-wrap thead{display:none!important}
+  .web-vehicle-table-wrap tbody{display:flex!important;flex-direction:column!important;gap:0!important}
+  .web-vehicle-table-wrap tbody tr{display:flex!important;align-items:center!important;gap:10px!important;padding:10px 12px!important;min-height:60px!important;cursor:pointer!important;border-radius:0!important;box-shadow:none!important;border-top:none!important;overflow:visible!important;border-bottom:1px solid var(--border-light)!important}
+  .web-vehicle-table-wrap td{display:none!important;border:none!important;padding:0!important}
+  .web-vehicle-table-wrap td::before,.web-vehicle-table-wrap td::after{display:none!important;content:''!important}
+  .web-vehicle-table-wrap td:nth-child(1){display:flex!important;align-items:center!important;flex:1!important;min-width:0!important}
+  .web-vehicle-table-wrap td:nth-child(1)>div{display:flex!important;align-items:center!important;gap:10px!important;min-width:0!important;width:100%!important}
+  .web-vehicle-table-wrap .web-veh-thumb{width:48px!important;height:48px!important;border-radius:8px!important;flex-shrink:0!important}
+  .web-vehicle-table-wrap td:nth-child(1)>div>*:last-child{min-width:0!important;flex:1!important}
+  .web-vehicle-table-wrap .web-veh-name{font-size:0.85rem!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  .web-mobile-metrics{display:flex!important;align-items:center!important;flex-shrink:0!important;padding:0!important}
 }
 @media(max-width:580px){.ai-portal-grid{grid-template-columns:repeat(3,1fr)}}
 
@@ -2610,8 +2622,8 @@ function applyWebPeriod(p) {
 
   const mkRow = r => {
     const thumb = r.photo
-      ? `<img src="${r.photo}" style="width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0">`
-      : `<div style="width:44px;height:44px;border-radius:8px;background:var(--border-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#94A3B8">${ICcar}</div>`;
+      ? `<img src="${r.photo}" class="web-veh-thumb" style="width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0">`
+      : `<div class="web-veh-thumb" style="width:44px;height:44px;border-radius:8px;background:var(--border-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#94A3B8">${ICcar}</div>`;
     const catPct = Math.round(r.vistas/maxVistas*100);
     const tasaNum = r.vistas>0 ? r.tasa : null;
     const tasaColor = tasaNum===null ? 'var(--text-2)' : tasaNum>15 ? '#16A34A' : tasaNum>=5 ? '#F59E0B' : '#DC2626';
@@ -2627,19 +2639,21 @@ function applyWebPeriod(p) {
     const diasColor = r.dias===null?'var(--text)':r.dias>180?'#DC2626':r.dias>=90?'#F59E0B':'var(--text)';
     const diasStr = r.dias!==null ? `<span style="color:${diasColor};font-weight:${r.dias>=90?'600':'400'}">${r.dias}d</span>` : '—';
     const pvpStr = r.pvp>0 ? `<div class="web-veh-price" style="font-size:0.8rem;color:var(--text-2);margin-top:1px">${r.pvp.toLocaleString('es-ES',{maximumFractionDigits:0})} €</div>` : '';
+    const mobileMetrics = `<td class="web-mobile-metrics"><div style="display:flex;align-items:center;gap:5px;flex-shrink:0"><div style="text-align:center"><div style="font-size:0.6rem;color:var(--text-2);font-weight:600;line-height:1.3">Vis.</div><div style="font-size:0.8rem;font-weight:700;color:var(--text);line-height:1.3">${r.vistas}</div></div><span style="color:var(--border-light);padding:0 1px">·</span><div style="text-align:center"><div style="font-size:0.6rem;color:var(--text-2);font-weight:600;line-height:1.3">Con.</div><div style="font-size:0.8rem;font-weight:700;color:var(--text);line-height:1.3">${r.contactos}</div></div><span style="color:var(--border-light);padding:0 1px">·</span><div style="text-align:center"><div style="font-size:0.6rem;color:var(--text-2);font-weight:600;line-height:1.3">Conv.</div><div style="font-size:0.8rem;font-weight:700;color:${tasaColor};line-height:1.3">${tasaStr}</div></div></div></td>`;
     return `<tr style="cursor:pointer;border-bottom:1px solid var(--border-light)" onclick="showDetail('${r.id}')">
-  <td style="padding:10px 12px;vertical-align:middle"><div style="display:flex;align-items:center;gap:10px">${thumb}<div><div style="font-size:0.9rem;font-weight:700;color:var(--text)">${esc(r.name)}</div>${pvpStr}</div></div></td>
+  <td style="padding:10px 12px;vertical-align:middle"><div style="display:flex;align-items:center;gap:10px">${thumb}<div style="min-width:0"><div class="web-veh-name" style="font-size:0.9rem;font-weight:700;color:var(--text)">${esc(r.name)}</div>${pvpStr}</div></div></td>
   <td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.vistas}</div><div style="font-size:0.75rem;color:var(--text-2)">${catPct}% del catálogo</div></td>
   <td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.contactos}</div><div style="font-size:0.75rem;color:var(--text-2)">${ICphone} ${r.calls} · ${ICwa} ${r.wa}</div></td>
   <td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:${tasaColor}">${tasaStr}</div></td>
   <td style="padding:10px 12px;text-align:center;vertical-align:middle" class="web-col-hide-mobile">${canalPill}</td>
   <td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:0.8rem" class="web-col-hide-mobile">${tendencia}</td>
   <td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:12px">${diasStr}</td>
+  ${mobileMetrics}
 </tr>`;
   };
 
   const top5Rows = allRanked.length===0
-    ? `<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--text-2);font-size:13px">Sin datos para este período.</td></tr>`
+    ? `<tr><td colspan="8" style="padding:24px;text-align:center;color:var(--text-2);font-size:13px">Sin datos para este período.</td></tr>`
     : allRanked.slice(0,5).map(mkRow).join('');
 
   // Tarjetas atención (top 3 por días en stock)
@@ -2709,56 +2723,56 @@ function applyWebPeriod(p) {
 <div class="web-kpi-grid">
   <div class="db-kpi" style="min-width:0">
     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
-      <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;line-height:1.3">Visitas al catálogo</div>
+      <div class="web-kpi-label" style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;line-height:1.3">Visitas al catálogo</div>
       <span class="web-kpi-tip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2);flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span class="web-kpi-tip-box">Número de veces que se ha cargado tu catálogo online en el período seleccionado.</span></span>
     </div>
     <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:8px">
       <div>
         <div class="db-kpi-val" style="font-size:2rem;font-weight:700">${visitas}</div>
         <div class="web-kpi-delta" style="margin-top:4px">${dlt(visitas,pvVisitas)}</div>
-        <div style="margin-top:3px;font-size:0.72rem;color:var(--text-2)">${pvVisitas} en el período anterior</div>
+        <div class="web-kpi-secondary" style="margin-top:3px;font-size:0.72rem;color:var(--text-2)">${pvVisitas} en el período anterior</div>
       </div>
       <canvas id="spV" width="80" height="30" style="flex-shrink:0;margin-bottom:4px"></canvas>
     </div>
   </div>
   <div class="db-kpi" style="min-width:0">
     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
-      <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;line-height:1.3">Fichas vistas</div>
+      <div class="web-kpi-label" style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;line-height:1.3">Fichas vistas</div>
       <span class="web-kpi-tip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2);flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span class="web-kpi-tip-box">Fichas de vehículos individuales visitadas. Un mismo visitante puede ver varias fichas.</span></span>
     </div>
     <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:8px">
       <div>
         <div class="db-kpi-val" style="font-size:2rem;font-weight:700">${fichas}</div>
         <div class="web-kpi-delta" style="margin-top:4px">${dlt(fichas,pvFichas)}</div>
-        <div style="margin-top:3px;font-size:0.72rem;color:var(--text-2)">${fichasPorVisita} fichas por visita</div>
+        <div class="web-kpi-secondary" style="margin-top:3px;font-size:0.72rem;color:var(--text-2)">${fichasPorVisita} fichas por visita</div>
       </div>
       <canvas id="spF" width="80" height="30" style="flex-shrink:0;margin-bottom:4px"></canvas>
     </div>
   </div>
   <div class="db-kpi" style="min-width:0">
     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
-      <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;line-height:1.3">Contactos generados</div>
+      <div class="web-kpi-label" style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;line-height:1.3">Contactos generados</div>
       <span class="web-kpi-tip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2);flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span class="web-kpi-tip-box">Sesiones únicas en las que el visitante ha pulsado llamar o WhatsApp. Una acción de contacto no garantiza que la conversación se haya completado.</span></span>
     </div>
     <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:8px">
       <div>
         <div class="db-kpi-val" style="font-size:2rem;font-weight:700">${contactos}</div>
         <div class="web-kpi-delta" style="margin-top:4px">${dlt(contactos,pvContactos)}</div>
-        <div style="margin-top:3px;font-size:0.72rem;color:var(--text-2)">${ICphone} ${pvCalls} llamadas · ${ICwa} ${pvWa} WhatsApp</div>
+        <div class="web-kpi-secondary" style="margin-top:3px;font-size:0.72rem;color:var(--text-2)">${ICphone} ${pvCalls} llamadas · ${ICwa} ${pvWa} WhatsApp</div>
       </div>
       <canvas id="spC" width="80" height="30" style="flex-shrink:0;margin-bottom:4px"></canvas>
     </div>
   </div>
   <div class="db-kpi" style="min-width:0">
     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px">
-      <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;line-height:1.3">Tasa de conversión</div>
+      <div class="web-kpi-label" style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;line-height:1.3">Tasa de conversión</div>
       <span class="web-kpi-tip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2);flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span class="web-kpi-tip-box">Porcentaje de visitas al catálogo que generaron al menos un contacto.</span></span>
     </div>
     <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:8px">
       <div>
         <div class="db-kpi-val" style="font-size:2rem;font-weight:700">${conv}%</div>
         <div class="web-kpi-delta" style="margin-top:4px">${dlt(parseFloat(conv),pvConv)}</div>
-        <div style="margin-top:3px;font-size:0.72rem;color:var(--text-2)">Visitas que generaron contacto</div>
+        <div class="web-kpi-secondary" style="margin-top:3px;font-size:0.72rem;color:var(--text-2)">Visitas que generaron contacto</div>
       </div>
       <canvas id="spT" width="80" height="30" style="flex-shrink:0;margin-bottom:4px"></canvas>
     </div>
@@ -2939,12 +2953,12 @@ function filterWebVehicleTable(q) {
   const qL = q.trim().toLowerCase();
   const rows = qL ? _webRankedCache.filter(r => r.name.toLowerCase().includes(qL)) : _webRankedCache.slice(0,5);
   if (rows.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--text-2);font-size:13px">Sin resultados para "${esc(q)}".</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8" style="padding:24px;text-align:center;color:var(--text-2);font-size:13px">Sin resultados para "${esc(q)}".</td></tr>`;
     return;
   }
   const mxV = _webRankedCache.length>0?Math.max(..._webRankedCache.map(r=>r.vistas),1):1;
   tbody.innerHTML = rows.map(r => {
-    const thumb = r.photo ? `<img src="${r.photo}" style="width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0">` : `<div style="width:44px;height:44px;border-radius:8px;background:var(--border-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#94A3B8">${IC}</div>`;
+    const thumb = r.photo ? `<img src="${r.photo}" class="web-veh-thumb" style="width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0">` : `<div class="web-veh-thumb" style="width:44px;height:44px;border-radius:8px;background:var(--border-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#94A3B8">${IC}</div>`;
     const catPct=Math.round(r.vistas/mxV*100);
     const tasaNum=r.vistas>0?r.tasa:null;
     const tasaColor=tasaNum===null?'var(--text-2)':tasaNum>15?'#16A34A':tasaNum>=5?'#F59E0B':'#DC2626';
@@ -2957,7 +2971,8 @@ function filterWebVehicleTable(q) {
     const diasColor=r.dias===null?'var(--text)':r.dias>180?'#DC2626':r.dias>=90?'#F59E0B':'var(--text)';
     const diasStr=r.dias!==null?`<span style="color:${diasColor};font-weight:${r.dias>=90?'600':'400'}">${r.dias}d</span>`:'—';
     const pvpStr=r.pvp>0?`<div class="web-veh-price" style="font-size:0.8rem;color:var(--text-2);margin-top:1px">${r.pvp.toLocaleString('es-ES',{maximumFractionDigits:0})} €</div>`:'';
-    return `<tr style="cursor:pointer;border-bottom:1px solid var(--border-light)" onclick="showDetail('${r.id}')"><td style="padding:10px 12px;vertical-align:middle"><div style="display:flex;align-items:center;gap:10px">${thumb}<div><div style="font-size:0.9rem;font-weight:700;color:var(--text)">${esc(r.name)}</div>${pvpStr}</div></div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.vistas}</div><div style="font-size:0.75rem;color:var(--text-2)">${catPct}% del catálogo</div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.contactos}</div><div style="font-size:0.75rem;color:var(--text-2)">${ICphone} ${r.calls} · ${ICwa} ${r.wa}</div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:${tasaColor}">${tasaStr}</div></td><td style="padding:10px 12px;text-align:center;vertical-align:middle" class="web-col-hide-mobile">${canalPill}</td><td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:0.8rem" class="web-col-hide-mobile">${tendencia}</td><td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:12px">${diasStr}</td></tr>`;
+    const mm=`<td class="web-mobile-metrics"><div style="display:flex;align-items:center;gap:5px;flex-shrink:0"><div style="text-align:center"><div style="font-size:0.6rem;color:var(--text-2);font-weight:600;line-height:1.3">Vis.</div><div style="font-size:0.8rem;font-weight:700;color:var(--text);line-height:1.3">${r.vistas}</div></div><span style="color:var(--border-light);padding:0 1px">·</span><div style="text-align:center"><div style="font-size:0.6rem;color:var(--text-2);font-weight:600;line-height:1.3">Con.</div><div style="font-size:0.8rem;font-weight:700;color:var(--text);line-height:1.3">${r.contactos}</div></div><span style="color:var(--border-light);padding:0 1px">·</span><div style="text-align:center"><div style="font-size:0.6rem;color:var(--text-2);font-weight:600;line-height:1.3">Conv.</div><div style="font-size:0.8rem;font-weight:700;color:${tasaColor};line-height:1.3">${tasaStr}</div></div></div></td>`;
+    return `<tr style="cursor:pointer;border-bottom:1px solid var(--border-light)" onclick="showDetail('${r.id}')"><td style="padding:10px 12px;vertical-align:middle"><div style="display:flex;align-items:center;gap:10px">${thumb}<div style="min-width:0"><div class="web-veh-name" style="font-size:0.9rem;font-weight:700;color:var(--text)">${esc(r.name)}</div>${pvpStr}</div></div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.vistas}</div><div style="font-size:0.75rem;color:var(--text-2)">${catPct}% del catálogo</div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.contactos}</div><div style="font-size:0.75rem;color:var(--text-2)">${ICphone} ${r.calls} · ${ICwa} ${r.wa}</div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:${tasaColor}">${tasaStr}</div></td><td style="padding:10px 12px;text-align:center;vertical-align:middle" class="web-col-hide-mobile">${canalPill}</td><td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:0.8rem" class="web-col-hide-mobile">${tendencia}</td><td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:12px">${diasStr}</td>${mm}</tr>`;
   }).join('');
 }
 
@@ -2969,7 +2984,7 @@ function expandWebVehicleTable() {
   const IC = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1l2-4h10l2 4h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="16.5" cy="17.5" r="2.5"/></svg>`;
   const mxV=_webRankedCache.length>0?Math.max(..._webRankedCache.map(r=>r.vistas),1):1;
   tbody.innerHTML = _webRankedCache.map(r => {
-    const thumb = r.photo ? `<img src="${r.photo}" style="width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0">` : `<div style="width:44px;height:44px;border-radius:8px;background:var(--border-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#94A3B8">${IC}</div>`;
+    const thumb = r.photo ? `<img src="${r.photo}" class="web-veh-thumb" style="width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0">` : `<div class="web-veh-thumb" style="width:44px;height:44px;border-radius:8px;background:var(--border-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#94A3B8">${IC}</div>`;
     const catPct=Math.round(r.vistas/mxV*100);
     const tasaNum=r.vistas>0?r.tasa:null;
     const tasaColor=tasaNum===null?'var(--text-2)':tasaNum>15?'#16A34A':tasaNum>=5?'#F59E0B':'#DC2626';
@@ -2982,7 +2997,8 @@ function expandWebVehicleTable() {
     const diasColor=r.dias===null?'var(--text)':r.dias>180?'#DC2626':r.dias>=90?'#F59E0B':'var(--text)';
     const diasStr=r.dias!==null?`<span style="color:${diasColor};font-weight:${r.dias>=90?'600':'400'}">${r.dias}d</span>`:'—';
     const pvpStr=r.pvp>0?`<div class="web-veh-price" style="font-size:0.8rem;color:var(--text-2);margin-top:1px">${r.pvp.toLocaleString('es-ES',{maximumFractionDigits:0})} €</div>`:'';
-    return `<tr style="cursor:pointer;border-bottom:1px solid var(--border-light)" onclick="showDetail('${r.id}')"><td style="padding:10px 12px;vertical-align:middle"><div style="display:flex;align-items:center;gap:10px">${thumb}<div><div style="font-size:0.9rem;font-weight:700;color:var(--text)">${esc(r.name)}</div>${pvpStr}</div></div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.vistas}</div><div style="font-size:0.75rem;color:var(--text-2)">${catPct}% del catálogo</div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.contactos}</div><div style="font-size:0.75rem;color:var(--text-2)">${ICphone} ${r.calls} · ${ICwa} ${r.wa}</div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:${tasaColor}">${tasaStr}</div></td><td style="padding:10px 12px;text-align:center;vertical-align:middle" class="web-col-hide-mobile">${canalPill}</td><td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:0.8rem" class="web-col-hide-mobile">${tendencia}</td><td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:12px">${diasStr}</td></tr>`;
+    const mm=`<td class="web-mobile-metrics"><div style="display:flex;align-items:center;gap:5px;flex-shrink:0"><div style="text-align:center"><div style="font-size:0.6rem;color:var(--text-2);font-weight:600;line-height:1.3">Vis.</div><div style="font-size:0.8rem;font-weight:700;color:var(--text);line-height:1.3">${r.vistas}</div></div><span style="color:var(--border-light);padding:0 1px">·</span><div style="text-align:center"><div style="font-size:0.6rem;color:var(--text-2);font-weight:600;line-height:1.3">Con.</div><div style="font-size:0.8rem;font-weight:700;color:var(--text);line-height:1.3">${r.contactos}</div></div><span style="color:var(--border-light);padding:0 1px">·</span><div style="text-align:center"><div style="font-size:0.6rem;color:var(--text-2);font-weight:600;line-height:1.3">Conv.</div><div style="font-size:0.8rem;font-weight:700;color:${tasaColor};line-height:1.3">${tasaStr}</div></div></div></td>`;
+    return `<tr style="cursor:pointer;border-bottom:1px solid var(--border-light)" onclick="showDetail('${r.id}')"><td style="padding:10px 12px;vertical-align:middle"><div style="display:flex;align-items:center;gap:10px">${thumb}<div style="min-width:0"><div class="web-veh-name" style="font-size:0.9rem;font-weight:700;color:var(--text)">${esc(r.name)}</div>${pvpStr}</div></div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.vistas}</div><div style="font-size:0.75rem;color:var(--text-2)">${catPct}% del catálogo</div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.contactos}</div><div style="font-size:0.75rem;color:var(--text-2)">${ICphone} ${r.calls} · ${ICwa} ${r.wa}</div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:${tasaColor}">${tasaStr}</div></td><td style="padding:10px 12px;text-align:center;vertical-align:middle" class="web-col-hide-mobile">${canalPill}</td><td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:0.8rem" class="web-col-hide-mobile">${tendencia}</td><td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:12px">${diasStr}</td>${mm}</tr>`;
   }).join('');
   if (btnWrap) btnWrap.style.display = 'none';
 }
@@ -2999,12 +3015,12 @@ function sortWebVehicleTable(col) {
   const q = (document.getElementById('webVehicleSearch')?.value || '').trim().toLowerCase();
   const rows = q ? _webRankedCache.filter(r => r.name.toLowerCase().includes(q)) : _webRankedCache.slice(0,5);
   if (rows.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--text-2);font-size:13px">Sin resultados.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8" style="padding:24px;text-align:center;color:var(--text-2);font-size:13px">Sin resultados.</td></tr>`;
     return;
   }
   const mxV=_webRankedCache.length>0?Math.max(..._webRankedCache.map(r=>r.vistas),1):1;
   tbody.innerHTML = rows.map(r => {
-    const thumb = r.photo ? `<img src="${r.photo}" style="width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0">` : `<div style="width:44px;height:44px;border-radius:8px;background:var(--border-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#94A3B8">${IC}</div>`;
+    const thumb = r.photo ? `<img src="${r.photo}" class="web-veh-thumb" style="width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0">` : `<div class="web-veh-thumb" style="width:44px;height:44px;border-radius:8px;background:var(--border-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#94A3B8">${IC}</div>`;
     const catPct=Math.round(r.vistas/mxV*100);
     const tasaNum=r.vistas>0?r.tasa:null;
     const tasaColor=tasaNum===null?'var(--text-2)':tasaNum>15?'#16A34A':tasaNum>=5?'#F59E0B':'#DC2626';
@@ -3017,7 +3033,8 @@ function sortWebVehicleTable(col) {
     const diasColor=r.dias===null?'var(--text)':r.dias>180?'#DC2626':r.dias>=90?'#F59E0B':'var(--text)';
     const diasStr=r.dias!==null?`<span style="color:${diasColor};font-weight:${r.dias>=90?'600':'400'}">${r.dias}d</span>`:'—';
     const pvpStr=r.pvp>0?`<div class="web-veh-price" style="font-size:0.8rem;color:var(--text-2);margin-top:1px">${r.pvp.toLocaleString('es-ES',{maximumFractionDigits:0})} €</div>`:'';
-    return `<tr style="cursor:pointer;border-bottom:1px solid var(--border-light)" onclick="showDetail('${r.id}')"><td style="padding:10px 12px;vertical-align:middle"><div style="display:flex;align-items:center;gap:10px">${thumb}<div><div style="font-size:0.9rem;font-weight:700;color:var(--text)">${esc(r.name)}</div>${pvpStr}</div></div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.vistas}</div><div style="font-size:0.75rem;color:var(--text-2)">${catPct}% del catálogo</div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.contactos}</div><div style="font-size:0.75rem;color:var(--text-2)">${ICphone} ${r.calls} · ${ICwa} ${r.wa}</div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:${tasaColor}">${tasaStr}</div></td><td style="padding:10px 12px;text-align:center;vertical-align:middle" class="web-col-hide-mobile">${canalPill}</td><td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:0.8rem" class="web-col-hide-mobile">${tendencia}</td><td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:12px">${diasStr}</td></tr>`;
+    const mm=`<td class="web-mobile-metrics"><div style="display:flex;align-items:center;gap:5px;flex-shrink:0"><div style="text-align:center"><div style="font-size:0.6rem;color:var(--text-2);font-weight:600;line-height:1.3">Vis.</div><div style="font-size:0.8rem;font-weight:700;color:var(--text);line-height:1.3">${r.vistas}</div></div><span style="color:var(--border-light);padding:0 1px">·</span><div style="text-align:center"><div style="font-size:0.6rem;color:var(--text-2);font-weight:600;line-height:1.3">Con.</div><div style="font-size:0.8rem;font-weight:700;color:var(--text);line-height:1.3">${r.contactos}</div></div><span style="color:var(--border-light);padding:0 1px">·</span><div style="text-align:center"><div style="font-size:0.6rem;color:var(--text-2);font-weight:600;line-height:1.3">Conv.</div><div style="font-size:0.8rem;font-weight:700;color:${tasaColor};line-height:1.3">${tasaStr}</div></div></div></td>`;
+    return `<tr style="cursor:pointer;border-bottom:1px solid var(--border-light)" onclick="showDetail('${r.id}')"><td style="padding:10px 12px;vertical-align:middle"><div style="display:flex;align-items:center;gap:10px">${thumb}<div style="min-width:0"><div class="web-veh-name" style="font-size:0.9rem;font-weight:700;color:var(--text)">${esc(r.name)}</div>${pvpStr}</div></div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.vistas}</div><div style="font-size:0.75rem;color:var(--text-2)">${catPct}% del catálogo</div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.contactos}</div><div style="font-size:0.75rem;color:var(--text-2)">${ICphone} ${r.calls} · ${ICwa} ${r.wa}</div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:${tasaColor}">${tasaStr}</div></td><td style="padding:10px 12px;text-align:center;vertical-align:middle" class="web-col-hide-mobile">${canalPill}</td><td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:0.8rem" class="web-col-hide-mobile">${tendencia}</td><td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:12px">${diasStr}</td>${mm}</tr>`;
   }).join('');
 }
 
