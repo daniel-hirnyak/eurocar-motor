@@ -693,6 +693,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .web-kpi-tip-box{position:absolute;top:calc(100% + 6px);right:0;background:#1E3A5F;color:#fff;border-radius:6px;padding:8px 12px;font-size:0.75rem;max-width:220px;min-width:160px;z-index:1000;pointer-events:none;white-space:normal;line-height:1.4;opacity:0;transition:opacity .15s;text-transform:none;font-weight:400;letter-spacing:0}
 .web-kpi-tip:hover .web-kpi-tip-box{opacity:1}
 .web-mobile-metrics{display:none}
+#rendimiento-vehiculos-movil{display:none}
 @media(max-width:540px){.analytics-cards{grid-template-columns:1fr}}
 @media(max-width:540px){.ranking-table{min-width:300px}}
 @media(max-width:768px){
@@ -761,29 +762,20 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   .web-attn-grid{grid-template-columns:1fr}
   .web-period-btn{padding:5px 10px;font-size:11px;min-height:44px}
   .web-col-hide-mobile{display:none!important}
-  /* ARREGLO 1: KPI cards altura fija */
-  .web-kpi-grid>.db-kpi{padding:12px!important;height:110px!important;overflow:hidden!important;position:relative!important}
-  .web-kpi-label{font-size:0.6rem!important;white-space:nowrap!important;overflow:hidden!important}
+  /* KPI cards: altura auto, sparkline oculto */
+  .web-kpi-grid>.db-kpi{padding:12px!important;min-height:100px;height:auto!important;overflow:visible!important}
+  .web-kpi-label{font-size:0.6rem!important;letter-spacing:.04em!important;line-height:1.2!important;white-space:normal!important;overflow-wrap:break-word!important;overflow:visible!important}
   .web-kpi-grid .db-kpi-val{font-size:1.6rem!important}
-  .web-kpi-delta{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-  .web-kpi-delta span{font-size:0.65rem!important}
-  .web-kpi-secondary{font-size:0.65rem!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
-  .web-kpi-grid canvas{position:absolute!important;bottom:8px!important;right:8px!important;width:60px!important;height:24px!important}
-  .web-veh-price{display:none!important}
-  /* ARREGLO 2: tabla → tarjetas de fila */
-  .web-vehicle-table-wrap{overflow-x:initial}
-  .web-vehicle-table-wrap table{display:block!important;min-width:0!important}
-  .web-vehicle-table-wrap thead{display:none!important}
-  .web-vehicle-table-wrap tbody{display:flex!important;flex-direction:column!important;gap:0!important}
-  .web-vehicle-table-wrap tbody tr{display:flex!important;align-items:center!important;gap:10px!important;padding:10px 12px!important;min-height:60px!important;cursor:pointer!important;border-radius:0!important;box-shadow:none!important;border-top:none!important;overflow:visible!important;border-bottom:1px solid var(--border-light)!important}
-  .web-vehicle-table-wrap td{display:none!important;border:none!important;padding:0!important}
-  .web-vehicle-table-wrap td::before,.web-vehicle-table-wrap td::after{display:none!important;content:''!important}
-  .web-vehicle-table-wrap td:nth-child(1){display:flex!important;align-items:center!important;flex:1!important;min-width:0!important}
-  .web-vehicle-table-wrap td:nth-child(1)>div{display:flex!important;align-items:center!important;gap:10px!important;min-width:0!important;width:100%!important}
-  .web-vehicle-table-wrap .web-veh-thumb{width:48px!important;height:48px!important;border-radius:8px!important;flex-shrink:0!important}
-  .web-vehicle-table-wrap td:nth-child(1)>div>*:last-child{min-width:0!important;flex:1!important}
-  .web-vehicle-table-wrap .web-veh-name{font-size:0.85rem!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
-  .web-mobile-metrics{display:flex!important;align-items:center!important;flex-shrink:0!important;padding:0!important}
+  .web-kpi-delta span{font-size:0.75rem!important;white-space:nowrap!important}
+  .web-kpi-delta-vs{display:none!important}
+  .web-kpi-secondary{font-size:0.65rem!important;white-space:normal!important;overflow:hidden!important;display:-webkit-box!important;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical!important}
+  .web-kpi-grid canvas{display:none!important}
+  /* Lista vehículos: ocultar tabla desktop, mostrar lista móvil */
+  .web-vehicle-table-wrap{display:none!important}
+  #rendimiento-vehiculos-movil{display:block!important}
+  /* Controles full-width */
+  .web-veh-controls{flex-direction:column!important;width:100%!important}
+  .web-veh-controls select,.web-veh-controls input{width:100%!important;box-sizing:border-box!important}
 }
 @media(max-width:580px){.ai-portal-grid{grid-template-columns:repeat(3,1fr)}}
 
@@ -2577,10 +2569,10 @@ function applyWebPeriod(p) {
   const pvConv     = pvVisitas>0 ? pvContactos/pvVisitas*100 : 0;
 
   const dlt = (cur, prev) => {
-    if (cur===prev) return `<span style="font-size:0.75rem;color:var(--text-2)">— vs. período anterior</span>`;
-    if (prev===0) return `<span style="font-size:0.75rem;color:var(--text-2)">— vs. período anterior</span>`;
+    if (cur===prev) return `<span style="font-size:0.75rem;color:var(--text-2)">—<span class="web-kpi-delta-vs"> vs. período anterior</span></span>`;
+    if (prev===0) return `<span style="font-size:0.75rem;color:var(--text-2)">—<span class="web-kpi-delta-vs"> vs. período anterior</span></span>`;
     const d = (cur-prev)/Math.abs(prev)*100;
-    return `<span style="font-size:0.75rem;font-weight:600;color:${d>0?'#16A34A':'#DC2626'}">${d>0?'↑':'↓'} ${Math.abs(d).toFixed(1).replace('.',',')}% vs. período anterior</span>`;
+    return `<span style="font-size:0.75rem;font-weight:600;color:${d>0?'#16A34A':'#DC2626'}">${d>0?'↑':'↓'} ${Math.abs(d).toFixed(1).replace('.',',')}%<span class="web-kpi-delta-vs"> vs. período anterior</span></span>`;
   };
 
   const ICcar = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1l2-4h10l2 4h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="16.5" cy="17.5" r="2.5"/></svg>`;
@@ -2655,6 +2647,9 @@ function applyWebPeriod(p) {
   const top5Rows = allRanked.length===0
     ? `<tr><td colspan="8" style="padding:24px;text-align:center;color:var(--text-2);font-size:13px">Sin datos para este período.</td></tr>`
     : allRanked.slice(0,5).map(mkRow).join('');
+  const top5MobileRows = allRanked.length===0
+    ? `<div style="padding:24px;text-align:center;color:var(--text-2);font-size:13px">Sin datos para este período.</div>`
+    : allRanked.slice(0,5).map(mkMobileItem).join('');
 
   // Tarjetas atención (top 3 por días en stock)
   const thirtyAgo = new Date(now.getTime()-30*86400000);
@@ -2814,7 +2809,7 @@ function applyWebPeriod(p) {
 <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden">
   <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border-light);flex-wrap:wrap">
     <span style="font-size:13px;font-weight:600;color:var(--text)">Rendimiento por vehículo</span>
-    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+    <div class="web-veh-controls" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
       <select id="webVehicleSort" onchange="sortWebVehicleTable(this.value)" style="padding:5px 8px;font-size:12px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg);color:var(--text);outline:none;font-family:inherit;cursor:pointer">
         <option value="vistas">Más vistas</option>
         <option value="contactos">Más contactos</option>
@@ -2838,6 +2833,7 @@ function applyWebPeriod(p) {
       <tbody id="webVehicleTbody">${top5Rows}</tbody>
     </table>
   </div>
+  <div id="rendimiento-vehiculos-movil">${top5MobileRows}</div>
   ${allRanked.length>5?`<div style="padding:10px 16px;border-top:1px solid var(--border-light)"><button id="webVerTodosBtn" onclick="expandWebVehicleTable()" style="font-size:12px;font-weight:600;color:#1E3A5F;background:none;border:none;cursor:pointer;font-family:inherit;padding:0">Ver todos los vehículos → (${allRanked.length})</button></div>`:''}
 </div>
 <div>
@@ -2954,6 +2950,8 @@ function filterWebVehicleTable(q) {
   const rows = qL ? _webRankedCache.filter(r => r.name.toLowerCase().includes(qL)) : _webRankedCache.slice(0,5);
   if (rows.length === 0) {
     tbody.innerHTML = `<tr><td colspan="8" style="padding:24px;text-align:center;color:var(--text-2);font-size:13px">Sin resultados para "${esc(q)}".</td></tr>`;
+    const mEl=document.getElementById('rendimiento-vehiculos-movil');
+    if(mEl) mEl.innerHTML=`<div style="padding:24px;text-align:center;color:var(--text-2);font-size:13px">Sin resultados para "${esc(q)}".</div>`;
     return;
   }
   const mxV = _webRankedCache.length>0?Math.max(..._webRankedCache.map(r=>r.vistas),1):1;
@@ -2974,6 +2972,8 @@ function filterWebVehicleTable(q) {
     const mm=`<td class="web-mobile-metrics"><div style="display:flex;align-items:center;gap:5px;flex-shrink:0"><div style="text-align:center"><div style="font-size:0.6rem;color:var(--text-2);font-weight:600;line-height:1.3">Vis.</div><div style="font-size:0.8rem;font-weight:700;color:var(--text);line-height:1.3">${r.vistas}</div></div><span style="color:var(--border-light);padding:0 1px">·</span><div style="text-align:center"><div style="font-size:0.6rem;color:var(--text-2);font-weight:600;line-height:1.3">Con.</div><div style="font-size:0.8rem;font-weight:700;color:var(--text);line-height:1.3">${r.contactos}</div></div><span style="color:var(--border-light);padding:0 1px">·</span><div style="text-align:center"><div style="font-size:0.6rem;color:var(--text-2);font-weight:600;line-height:1.3">Conv.</div><div style="font-size:0.8rem;font-weight:700;color:${tasaColor};line-height:1.3">${tasaStr}</div></div></div></td>`;
     return `<tr style="cursor:pointer;border-bottom:1px solid var(--border-light)" onclick="showDetail('${r.id}')"><td style="padding:10px 12px;vertical-align:middle"><div style="display:flex;align-items:center;gap:10px">${thumb}<div style="min-width:0"><div class="web-veh-name" style="font-size:0.9rem;font-weight:700;color:var(--text)">${esc(r.name)}</div>${pvpStr}</div></div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.vistas}</div><div style="font-size:0.75rem;color:var(--text-2)">${catPct}% del catálogo</div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.contactos}</div><div style="font-size:0.75rem;color:var(--text-2)">${ICphone} ${r.calls} · ${ICwa} ${r.wa}</div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:${tasaColor}">${tasaStr}</div></td><td style="padding:10px 12px;text-align:center;vertical-align:middle" class="web-col-hide-mobile">${canalPill}</td><td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:0.8rem" class="web-col-hide-mobile">${tendencia}</td><td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:12px">${diasStr}</td>${mm}</tr>`;
   }).join('');
+  const mEl=document.getElementById('rendimiento-vehiculos-movil');
+  if(mEl) mEl.innerHTML=rows.map(mkMobileItem).join('');
 }
 
 function expandWebVehicleTable() {
@@ -3001,6 +3001,8 @@ function expandWebVehicleTable() {
     return `<tr style="cursor:pointer;border-bottom:1px solid var(--border-light)" onclick="showDetail('${r.id}')"><td style="padding:10px 12px;vertical-align:middle"><div style="display:flex;align-items:center;gap:10px">${thumb}<div style="min-width:0"><div class="web-veh-name" style="font-size:0.9rem;font-weight:700;color:var(--text)">${esc(r.name)}</div>${pvpStr}</div></div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.vistas}</div><div style="font-size:0.75rem;color:var(--text-2)">${catPct}% del catálogo</div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.contactos}</div><div style="font-size:0.75rem;color:var(--text-2)">${ICphone} ${r.calls} · ${ICwa} ${r.wa}</div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:${tasaColor}">${tasaStr}</div></td><td style="padding:10px 12px;text-align:center;vertical-align:middle" class="web-col-hide-mobile">${canalPill}</td><td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:0.8rem" class="web-col-hide-mobile">${tendencia}</td><td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:12px">${diasStr}</td>${mm}</tr>`;
   }).join('');
   if (btnWrap) btnWrap.style.display = 'none';
+  const mElE=document.getElementById('rendimiento-vehiculos-movil');
+  if(mElE) mElE.innerHTML=_webRankedCache.map(mkMobileItem).join('');
 }
 
 function sortWebVehicleTable(col) {
@@ -3016,6 +3018,8 @@ function sortWebVehicleTable(col) {
   const rows = q ? _webRankedCache.filter(r => r.name.toLowerCase().includes(q)) : _webRankedCache.slice(0,5);
   if (rows.length === 0) {
     tbody.innerHTML = `<tr><td colspan="8" style="padding:24px;text-align:center;color:var(--text-2);font-size:13px">Sin resultados.</td></tr>`;
+    const mElS=document.getElementById('rendimiento-vehiculos-movil');
+    if(mElS) mElS.innerHTML=`<div style="padding:24px;text-align:center;color:var(--text-2);font-size:13px">Sin resultados.</div>`;
     return;
   }
   const mxV=_webRankedCache.length>0?Math.max(..._webRankedCache.map(r=>r.vistas),1):1;
@@ -3036,6 +3040,27 @@ function sortWebVehicleTable(col) {
     const mm=`<td class="web-mobile-metrics"><div style="display:flex;align-items:center;gap:5px;flex-shrink:0"><div style="text-align:center"><div style="font-size:0.6rem;color:var(--text-2);font-weight:600;line-height:1.3">Vis.</div><div style="font-size:0.8rem;font-weight:700;color:var(--text);line-height:1.3">${r.vistas}</div></div><span style="color:var(--border-light);padding:0 1px">·</span><div style="text-align:center"><div style="font-size:0.6rem;color:var(--text-2);font-weight:600;line-height:1.3">Con.</div><div style="font-size:0.8rem;font-weight:700;color:var(--text);line-height:1.3">${r.contactos}</div></div><span style="color:var(--border-light);padding:0 1px">·</span><div style="text-align:center"><div style="font-size:0.6rem;color:var(--text-2);font-weight:600;line-height:1.3">Conv.</div><div style="font-size:0.8rem;font-weight:700;color:${tasaColor};line-height:1.3">${tasaStr}</div></div></div></td>`;
     return `<tr style="cursor:pointer;border-bottom:1px solid var(--border-light)" onclick="showDetail('${r.id}')"><td style="padding:10px 12px;vertical-align:middle"><div style="display:flex;align-items:center;gap:10px">${thumb}<div style="min-width:0"><div class="web-veh-name" style="font-size:0.9rem;font-weight:700;color:var(--text)">${esc(r.name)}</div>${pvpStr}</div></div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.vistas}</div><div style="font-size:0.75rem;color:var(--text-2)">${catPct}% del catálogo</div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:var(--text)">${r.contactos}</div><div style="font-size:0.75rem;color:var(--text-2)">${ICphone} ${r.calls} · ${ICwa} ${r.wa}</div></td><td style="padding:10px 12px;text-align:right;vertical-align:middle"><div style="font-size:13px;font-weight:700;color:${tasaColor}">${tasaStr}</div></td><td style="padding:10px 12px;text-align:center;vertical-align:middle" class="web-col-hide-mobile">${canalPill}</td><td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:0.8rem" class="web-col-hide-mobile">${tendencia}</td><td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:12px">${diasStr}</td>${mm}</tr>`;
   }).join('');
+  const mElR=document.getElementById('rendimiento-vehiculos-movil');
+  if(mElR) mElR.innerHTML=rows.map(mkMobileItem).join('');
+}
+
+function mkMobileItem(r) {
+  const ICcar = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block"><path d="M5 17H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1l2-4h10l2 4h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="16.5" cy="17.5" r="2.5"/></svg>`;
+  const thumb = r.photo
+    ? `<img src="${r.photo}" style="width:48px;height:48px;border-radius:8px;object-fit:cover;flex-shrink:0">`
+    : `<div style="width:48px;height:48px;border-radius:8px;background:var(--border-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#94A3B8">${ICcar}</div>`;
+  const tasaNum = r.vistas > 0 ? r.tasa : null;
+  const tasaColor = tasaNum===null ? 'var(--text-2)' : tasaNum>15 ? '#16A34A' : tasaNum>=5 ? '#F59E0B' : '#DC2626';
+  const tasaStr = tasaNum===null ? '—' : `${Math.round(tasaNum)}%`;
+  return `<div style="display:flex;align-items:center;padding:12px;border-bottom:1px solid var(--border);cursor:pointer;min-height:64px" onclick="showDetail('${r.id}')">
+  ${thumb}
+  <div style="flex:1;margin:0 12px;min-width:0;font-weight:600;font-size:0.85rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(r.name)}</div>
+  <div style="display:flex;gap:14px;flex-shrink:0;text-align:center">
+    <div><div style="font-size:0.9rem;font-weight:700;color:var(--text)">${r.vistas}</div><div style="font-size:0.58rem;text-transform:uppercase;color:var(--text-2);margin-top:2px">Vistas</div></div>
+    <div><div style="font-size:0.9rem;font-weight:700;color:var(--text)">${r.contactos}</div><div style="font-size:0.58rem;text-transform:uppercase;color:var(--text-2);margin-top:2px">Contactos</div></div>
+    <div><div style="font-size:0.9rem;font-weight:700;color:${tasaColor}">${tasaStr}</div><div style="font-size:0.58rem;text-transform:uppercase;color:var(--text-2);margin-top:2px">Conv.</div></div>
+  </div>
+</div>`;
 }
 
 function drawSparkline(id, data, color) {
