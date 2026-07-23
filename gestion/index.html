@@ -2477,7 +2477,7 @@ async function loadWebAnalytics() {
       .map(([id,s]) => {
         const v = vehiclesCache.find(x=>x.id===id);
         const tasa = s.vistas>0 ? Math.round(s.contactos/s.vistas*100) : 0;
-        return {name:v?`${v.brand} ${v.model}`:'—', vistas:s.vistas, contactos:s.contactos, tasa, warn:s.vistas>=10&&tasa<5};
+        return {name:v?`${v.brand} ${v.model}`:'—', photo:v?.photos?.[0]||null, vistas:s.vistas, contactos:s.contactos, tasa, warn:s.vistas>=10&&tasa<5};
       })
       .sort((a,b)=>b.vistas-a.vistas).slice(0,5);
 
@@ -2496,12 +2496,16 @@ async function loadWebAnalytics() {
     const ICeye = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
     const ICph  = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.56 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`;
     const ICchk = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+    const ICcar = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1l2-4h10l2 4h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="16.5" cy="17.5" r="2.5"/></svg>`;
 
     const rankingBody = ranked.map((r,i) => {
       const tp = r.warn?'tasa-warn':r.tasa>=10?'tasa-ok':'tasa-neutral';
+      const thumb = r.photo
+        ? `<img src="${r.photo}" style="width:40px;height:40px;border-radius:6px;object-fit:cover;flex-shrink:0">`
+        : `<div style="width:40px;height:40px;border-radius:6px;background:#F1F5F9;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#94A3B8">${ICcar}</div>`;
       return `<tr>
   <td class="td-pos td-r">${i+1}</td>
-  <td class="td-name">${esc(r.name)}</td>
+  <td class="td-name"><div style="display:flex;align-items:center;gap:10px">${thumb}<span>${esc(r.name)}</span></div></td>
   <td class="td-r">${r.vistas}</td>
   <td class="td-r">${r.contactos}</td>
   <td class="td-r"><span class="tasa-pill ${tp}">${r.tasa}%</span></td>
@@ -2520,7 +2524,7 @@ async function loadWebAnalytics() {
   </tr></thead>
   <tbody>${rankingBody}</tbody>
 </table>
-<div style="font-size:12px;color:var(--text-2);margin-top:8px;text-align:right">Mostrando los 5 vehículos con más interés</div>
+<div style="font-size:12px;color:var(--text-2);margin-top:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Mostrando los 5 vehículos con más interés</div>
 </div>`;
 
     const warnNote = ranked.some(r=>r.warn)
@@ -2532,48 +2536,48 @@ async function loadWebAnalytics() {
       : `<div class="ghost-list">${cochesRevisar.map(g=>`<div class="ghost-row"><div class="ghost-name">${esc(g.name)}</div><div class="ghost-meta">${g.dias} días en stock · ${g.vistasEsteMes} vista${g.vistasEsteMes!==1?'s':''} este mes</div><button class="btn btn-secondary btn-sm" style="flex-shrink:0;font-size:12px;padding:5px 12px" onclick="showEdit('${g.id}')">Editar</button></div>`).join('')}</div>`;
 
     section.innerHTML = `
-<div class="analytics-section">
-  <div class="analytics-section-head">Resumen</div>
-  <div class="analytics-cards" style="grid-template-columns:repeat(3,minmax(0,1fr))">
-    <div class="db-kpi" style="min-width:0">
-      <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em">Visitas al catálogo</div>
-      <div id="webKpiVisitas"></div>
-    </div>
-    <div class="db-kpi" style="min-width:0">
-      <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em">Contactos generados</div>
-      <div id="webKpiContacts"></div>
-    </div>
-    <div class="db-kpi" style="min-width:0">
-      <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em">Tasa de conversión</div>
-      <div id="webKpiConv"></div>
-    </div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1.3fr;gap:16px;margin-bottom:16px">
+  <div class="db-kpi" style="min-width:0">
+    <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em">Visitas al catálogo</div>
+    <div id="webKpiVisitas"></div>
+  </div>
+  <div class="db-kpi" style="min-width:0">
+    <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em">Contactos generados</div>
+    <div id="webKpiContacts"></div>
+  </div>
+  <div class="db-kpi" style="min-width:0">
+    <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em">Tasa de conversión</div>
+    <div id="webKpiConv"></div>
+  </div>
+  <div class="db-kpi" style="min-width:0">
+    <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em">Canal de contacto</div>
+    <div style="width:90px;height:90px;margin:10px auto 0"><canvas id="webDonutChart"></canvas></div>
+    <div id="webDonutLegend" style="display:flex;justify-content:center;gap:16px;margin-top:10px"></div>
   </div>
 </div>
-<div class="analytics-section">
-  <div class="analytics-section-head">Evolución</div>
-  <div class="db-kpi" style="min-width:0;padding:16px 20px">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px">
-      <div style="display:flex;align-items:center;gap:14px">
-        <span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-2)"><span style="width:20px;height:2px;background:#1E3A5F;border-radius:1px;display:inline-block"></span>Visitas</span>
-        <span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-2)"><span style="width:20px;height:2px;background:#3B82F6;border-radius:1px;display:inline-block"></span>Contactos</span>
-      </div>
-      <div style="display:flex;gap:6px">
-        <button class="web-period-btn" data-period="week" onclick="applyWebPeriod('week')">Esta semana</button>
-        <button class="web-period-btn" data-period="mes"  onclick="applyWebPeriod('mes')">Este mes</button>
-        <button class="web-period-btn" data-period="3m"   onclick="applyWebPeriod('3m')">3 meses</button>
-      </div>
+<div class="db-kpi" style="min-width:0;padding:16px 20px;margin-bottom:16px">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px">
+    <div style="display:flex;align-items:center;gap:14px">
+      <span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-2)"><span style="width:20px;height:2px;background:#1E3A5F;border-radius:1px;display:inline-block"></span>Visitas</span>
+      <span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-2)"><span style="width:20px;height:2px;background:#3B82F6;border-radius:1px;display:inline-block"></span>Contactos</span>
     </div>
-    <div class="web-bar-wrap"><canvas id="webLineChart"></canvas></div>
+    <div style="display:flex;gap:6px">
+      <button class="web-period-btn" data-period="week" onclick="applyWebPeriod('week')">Esta semana</button>
+      <button class="web-period-btn" data-period="mes"  onclick="applyWebPeriod('mes')">Este mes</button>
+      <button class="web-period-btn" data-period="3m"   onclick="applyWebPeriod('3m')">3 meses</button>
+    </div>
   </div>
+  <div class="web-bar-wrap"><canvas id="webLineChart"></canvas></div>
 </div>
-<div class="analytics-section">
-  <div class="analytics-section-head">Interés por vehículo</div>
-  ${rankingHTML}${warnNote}
-</div>
-<div class="analytics-section">
-  <div class="analytics-section-head">Coches a revisar</div>
-  <div style="font-size:13px;color:var(--text-2);margin-bottom:10px">Vehículos publicados con menor visibilidad.</div>
-  ${revisarHTML}
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+  <div>
+    <div class="analytics-section-head">Interés por vehículo</div>
+    ${rankingHTML}${warnNote}
+  </div>
+  <div>
+    <div class="analytics-section-head">Coches a revisar</div>
+    ${revisarHTML}
+  </div>
 </div>`;
 
     applyWebPeriod('mes');
@@ -2618,7 +2622,44 @@ function applyWebPeriod(p) {
   if (el('webKpiContacts'))
     el('webKpiContacts').innerHTML = `<div class="db-kpi-val" style="margin-top:8px;font-size:28px">${contactos}</div><div style="font-size:12px;color:var(--text-2);margin-top:6px">${calls} llamadas · ${wa} WhatsApp</div>`;
   if (el('webKpiConv'))
-    el('webKpiConv').innerHTML = `<div class="db-kpi-val" style="margin-top:8px;font-size:28px">${conv}%</div><div style="font-size:12px;color:var(--text-2);margin-top:6px">Contactos sobre visitas</div>`;
+    el('webKpiConv').innerHTML = `<div class="db-kpi-val" style="margin-top:8px;font-size:28px">${conv}%</div><div style="font-size:12px;color:var(--text-2);margin-top:6px">${kpiLabel}</div>`;
+
+  // Donut canal de contacto
+  const donutCanvas = el('webDonutChart');
+  if (donutCanvas && typeof Chart !== 'undefined') {
+    const existing = Chart.getChart(donutCanvas);
+    if (existing) existing.destroy();
+    if (calls + wa > 0) {
+      new Chart(donutCanvas, {
+        type: 'doughnut',
+        data: {
+          labels: ['Llamadas', 'WhatsApp'],
+          datasets: [{data:[calls,wa], backgroundColor:['#1E3A5F','#3B82F6'], borderWidth:0}],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '65%',
+          animation: {duration: 400},
+          plugins: {
+            legend: {display: false},
+            tooltip: {
+              backgroundColor: '#fff',
+              titleColor: '#1E293B',
+              bodyColor: '#475569',
+              borderColor: '#E2E8F0',
+              borderWidth: 1,
+              padding: 8,
+            },
+          },
+        },
+      });
+    }
+    const legend = el('webDonutLegend');
+    if (legend) legend.innerHTML =
+      `<span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-2)"><span style="width:8px;height:8px;border-radius:50%;background:#1E3A5F;flex-shrink:0;display:inline-block"></span>Llamadas ${calls}</span>` +
+      `<span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-2)"><span style="width:8px;height:8px;border-radius:50%;background:#3B82F6;flex-shrink:0;display:inline-block"></span>WhatsApp ${wa}</span>`;
+  }
 
   // Calcular puntos del gráfico
   const getMonday = d => {
