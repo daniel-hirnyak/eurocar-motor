@@ -2642,12 +2642,13 @@ function applyWebPeriod(p) {
   <td style="padding:12px 12px;text-align:center;vertical-align:middle">${convPill}</td>
   <td style="padding:12px 12px;text-align:center;vertical-align:middle" class="web-col-hide-mobile">${canalPill}</td>
   <td style="padding:12px 12px;text-align:right;vertical-align:middle;font-size:12px">${diasStr}</td>
+  <td style="padding:12px 4px;text-align:right;vertical-align:middle"><button onclick="openWebVehMenu(event,'${r.id}')" style="background:none;border:none;cursor:pointer;padding:5px 8px;font-size:1rem;color:var(--text-2);border-radius:6px;line-height:1" onmouseenter="this.style.background='var(--border-light)'" onmouseleave="this.style.background=''">⋯</button></td>
   ${mobileMetrics}
 </tr>`;
   };
 
   const top5Rows = allRanked.length===0
-    ? `<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--text-2);font-size:13px">Sin datos para este período.</td></tr>`
+    ? `<tr><td colspan="8" style="padding:24px;text-align:center;color:var(--text-2);font-size:13px">Sin datos para este período.</td></tr>`
     : allRanked.slice(0,5).map(mkRow).join('');
   const top5MobileRows = allRanked.length===0
     ? `<div style="padding:24px;text-align:center;color:var(--text-2);font-size:13px">Sin datos para este período.</div>`
@@ -2779,7 +2780,7 @@ function applyWebPeriod(p) {
     </div>
   </div>
 </div>
-<div class="web-chart-grid">
+${pEv.length === 0 ? `<div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:60px 20px;text-align:center;margin-bottom:20px"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2);opacity:.4;display:block;margin:0 auto 16px"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg><div style="font-size:1rem;font-weight:600;color:var(--text);margin-bottom:8px">Sin datos para este período</div><div style="font-size:0.82rem;color:var(--text-2);max-width:360px;margin:0 auto;line-height:1.5">Cuando los visitantes interactúen con tu catálogo, aparecerán aquí los resultados.</div></div>` : `<div class="web-chart-grid">
   <div class="db-kpi" style="min-width:0;padding:16px 20px">
     <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px">
       <div><div style="font-size:0.95rem;font-weight:600;color:var(--text)">Evolución del rendimiento</div><div style="font-size:0.78rem;color:var(--text-2);margin-top:2px">Visitas y contactos generados durante el período</div></div>
@@ -2838,6 +2839,7 @@ function applyWebPeriod(p) {
         <th style="padding:9px 12px;font-size:11px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;text-align:right;border-bottom:1px solid var(--border)">Conversión</th>
         <th class="web-col-hide-mobile" style="padding:9px 12px;font-size:11px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;text-align:center;border-bottom:1px solid var(--border)">Canal</th>
         <th style="padding:9px 12px;font-size:11px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;text-align:right;border-bottom:1px solid var(--border)">En stock</th>
+        <th style="padding:9px 4px;width:40px;border-bottom:1px solid var(--border)"></th>
       </tr></thead>
       <tbody id="webVehicleTbody">${top5Rows}</tbody>
     </table>
@@ -2848,23 +2850,26 @@ function applyWebPeriod(p) {
 <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:20px">
   <div style="margin-bottom:16px"><div style="font-size:0.95rem;font-weight:600;color:var(--text)">Vehículos que necesitan atención</div><div style="font-size:0.78rem;color:var(--text-2);margin-top:2px">Stock con poca actividad o con margen de mejora</div></div>
   <div class="web-attn-grid">${attnCards||`<div style="grid-column:1/-1;padding:20px;text-align:center;font-size:13px;color:var(--text-2)">Todos los vehículos están recibiendo atención.</div>`}</div>
-</div>`;
+</div>`}`;
 
-  initWebChart(chartLabels, chartV, chartC);
   drawSparkline('spV', chartV, '#16A34A');
   drawSparkline('spF', chartF, '#16A34A');
   drawSparkline('spC', chartC, '#16A34A');
   drawSparkline('spT', chartT, '#16A34A');
 
-  // Donut
-  const donutC = document.getElementById('webDonutChart');
-  if (donutC && typeof Chart !== 'undefined') {
-    const ex = Chart.getChart(donutC); if (ex) ex.destroy();
-    if (calls+wa>0) new Chart(donutC, {
-      type: 'doughnut',
-      data: {labels:['Llamadas','WhatsApp'], datasets:[{data:[calls,wa], backgroundColor:['#1E3A5F','#3B82F6'], borderWidth:0}]},
-      options: {responsive:true, maintainAspectRatio:false, cutout:'68%', animation:{duration:400}, plugins:{legend:{display:false}, tooltip:{backgroundColor:'#fff',titleColor:'#1E293B',bodyColor:'#475569',borderColor:'#E2E8F0',borderWidth:1,padding:8}}},
-    });
+  if (pEv.length > 0) {
+    initWebChart(chartLabels, chartV, chartC);
+
+    // Donut
+    const donutC = document.getElementById('webDonutChart');
+    if (donutC && typeof Chart !== 'undefined') {
+      const ex = Chart.getChart(donutC); if (ex) ex.destroy();
+      if (calls+wa>0) new Chart(donutC, {
+        type: 'doughnut',
+        data: {labels:['Llamadas','WhatsApp'], datasets:[{data:[calls,wa], backgroundColor:['#1E3A5F','#3B82F6'], borderWidth:0}]},
+        options: {responsive:true, maintainAspectRatio:false, cutout:'68%', animation:{duration:400}, plugins:{legend:{display:false}, tooltip:{backgroundColor:'#fff',titleColor:'#1E293B',bodyColor:'#475569',borderColor:'#E2E8F0',borderWidth:1,padding:8}}},
+      });
+    }
   }
 }
 
@@ -2958,7 +2963,7 @@ function filterWebVehicleTable(q) {
   const qL = q.trim().toLowerCase();
   const rows = qL ? _webRankedCache.filter(r => r.name.toLowerCase().includes(qL)) : _webRankedCache.slice(0,5);
   if (rows.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--text-2);font-size:13px">Sin resultados para "${esc(q)}".</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8" style="padding:24px;text-align:center;color:var(--text-2);font-size:13px">Sin resultados para "${esc(q)}".</td></tr>`;
     const mEl=document.getElementById('rendimiento-vehiculos-movil');
     if(mEl) mEl.innerHTML=`<div style="padding:24px;text-align:center;color:var(--text-2);font-size:13px">Sin resultados para "${esc(q)}".</div>`;
     return;
@@ -2982,7 +2987,7 @@ function filterWebVehicleTable(q) {
     const diasStr=r.dias!==null?`<span style="color:${diasColor};font-weight:${r.dias>=90?'600':'400'}">${r.dias}d</span>`:'—';
     const pvpStr=r.pvp>0?`<div class="web-veh-price" style="font-size:0.78rem;color:var(--text-2);margin-top:1px">${r.pvp.toLocaleString('es-ES',{maximumFractionDigits:0})} €</div>`:'';
     const mm=`<td class="web-mobile-metrics"><div style="display:flex;align-items:center;gap:5px;flex-shrink:0"><div style="text-align:center"><div style="font-size:0.6rem;color:var(--text-2);font-weight:600;line-height:1.3">Vis.</div><div style="font-size:0.8rem;font-weight:700;color:var(--text);line-height:1.3">${r.vistas}</div></div><span style="color:var(--border-light);padding:0 1px">·</span><div style="text-align:center"><div style="font-size:0.6rem;color:var(--text-2);font-weight:600;line-height:1.3">Con.</div><div style="font-size:0.8rem;font-weight:700;color:var(--text);line-height:1.3">${r.contactos}</div></div><span style="color:var(--border-light);padding:0 1px">·</span><div style="text-align:center"><div style="font-size:0.6rem;color:var(--text-2);font-weight:600;line-height:1.3">Conv.</div><div style="font-size:0.8rem;font-weight:700;color:${pillColor};line-height:1.3">${tasaStr}</div></div></div></td>`;
-    return `<tr style="cursor:pointer;border-bottom:1px solid var(--border-light)" onclick="showDetail('${r.id}')" onmouseenter="this.style.background='#F9FAFB'" onmouseleave="this.style.background=''"><td style="padding:12px 12px;vertical-align:middle"><div style="display:flex;align-items:center;gap:10px">${thumb}<div style="min-width:0"><div class="web-veh-name" style="font-size:0.85rem;font-weight:600;color:var(--text)">${esc(r.name)}</div>${pvpStr}</div></div></td><td style="padding:12px 12px;text-align:center;vertical-align:middle"><div style="font-size:0.95rem;font-weight:700;color:var(--text)">${r.vistas}</div><div style="font-size:0.7rem;color:var(--text-2)">${catPct}% del catálogo</div></td><td style="padding:12px 12px;text-align:center;vertical-align:middle"><div style="font-size:0.95rem;font-weight:700;color:var(--text)">${r.contactos}</div><div style="font-size:0.7rem;color:var(--text-2)">${r.calls} llamadas · ${r.wa} WhatsApp</div></td><td style="padding:12px 12px;text-align:center;vertical-align:middle">${convPill}</td><td style="padding:12px 12px;text-align:center;vertical-align:middle" class="web-col-hide-mobile">${canalPill}</td><td style="padding:12px 12px;text-align:right;vertical-align:middle;font-size:12px">${diasStr}</td>${mm}</tr>`;
+    return `<tr style="cursor:pointer;border-bottom:1px solid var(--border-light)" onclick="showDetail('${r.id}')" onmouseenter="this.style.background='#F9FAFB'" onmouseleave="this.style.background=''"><td style="padding:12px 12px;vertical-align:middle"><div style="display:flex;align-items:center;gap:10px">${thumb}<div style="min-width:0"><div class="web-veh-name" style="font-size:0.85rem;font-weight:600;color:var(--text)">${esc(r.name)}</div>${pvpStr}</div></div></td><td style="padding:12px 12px;text-align:center;vertical-align:middle"><div style="font-size:0.95rem;font-weight:700;color:var(--text)">${r.vistas}</div><div style="font-size:0.7rem;color:var(--text-2)">${catPct}% del catálogo</div></td><td style="padding:12px 12px;text-align:center;vertical-align:middle"><div style="font-size:0.95rem;font-weight:700;color:var(--text)">${r.contactos}</div><div style="font-size:0.7rem;color:var(--text-2)">${r.calls} llamadas · ${r.wa} WhatsApp</div></td><td style="padding:12px 12px;text-align:center;vertical-align:middle">${convPill}</td><td style="padding:12px 12px;text-align:center;vertical-align:middle" class="web-col-hide-mobile">${canalPill}</td><td style="padding:12px 12px;text-align:right;vertical-align:middle;font-size:12px">${diasStr}</td><td style="padding:12px 4px;text-align:right;vertical-align:middle"><button onclick="openWebVehMenu(event,'${r.id}')" style="background:none;border:none;cursor:pointer;padding:5px 8px;font-size:1rem;color:var(--text-2);border-radius:6px;line-height:1" onmouseenter="this.style.background='var(--border-light)'" onmouseleave="this.style.background=''">⋯</button></td>${mm}</tr>`;
   }).join('');
   const mEl=document.getElementById('rendimiento-vehiculos-movil');
   if(mEl) mEl.innerHTML=rows.map(mkMobileItem).join('');
@@ -3013,7 +3018,7 @@ function expandWebVehicleTable() {
     const diasStr=r.dias!==null?`<span style="color:${diasColor};font-weight:${r.dias>=90?'600':'400'}">${r.dias}d</span>`:'—';
     const pvpStr=r.pvp>0?`<div class="web-veh-price" style="font-size:0.78rem;color:var(--text-2);margin-top:1px">${r.pvp.toLocaleString('es-ES',{maximumFractionDigits:0})} €</div>`:'';
     const mm=`<td class="web-mobile-metrics"><div style="display:flex;align-items:center;gap:5px;flex-shrink:0"><div style="text-align:center"><div style="font-size:0.6rem;color:var(--text-2);font-weight:600;line-height:1.3">Vis.</div><div style="font-size:0.8rem;font-weight:700;color:var(--text);line-height:1.3">${r.vistas}</div></div><span style="color:var(--border-light);padding:0 1px">·</span><div style="text-align:center"><div style="font-size:0.6rem;color:var(--text-2);font-weight:600;line-height:1.3">Con.</div><div style="font-size:0.8rem;font-weight:700;color:var(--text);line-height:1.3">${r.contactos}</div></div><span style="color:var(--border-light);padding:0 1px">·</span><div style="text-align:center"><div style="font-size:0.6rem;color:var(--text-2);font-weight:600;line-height:1.3">Conv.</div><div style="font-size:0.8rem;font-weight:700;color:${pillColor};line-height:1.3">${tasaStr}</div></div></div></td>`;
-    return `<tr style="cursor:pointer;border-bottom:1px solid var(--border-light)" onclick="showDetail('${r.id}')" onmouseenter="this.style.background='#F9FAFB'" onmouseleave="this.style.background=''"><td style="padding:12px 12px;vertical-align:middle"><div style="display:flex;align-items:center;gap:10px">${thumb}<div style="min-width:0"><div class="web-veh-name" style="font-size:0.85rem;font-weight:600;color:var(--text)">${esc(r.name)}</div>${pvpStr}</div></div></td><td style="padding:12px 12px;text-align:center;vertical-align:middle"><div style="font-size:0.95rem;font-weight:700;color:var(--text)">${r.vistas}</div><div style="font-size:0.7rem;color:var(--text-2)">${catPct}% del catálogo</div></td><td style="padding:12px 12px;text-align:center;vertical-align:middle"><div style="font-size:0.95rem;font-weight:700;color:var(--text)">${r.contactos}</div><div style="font-size:0.7rem;color:var(--text-2)">${r.calls} llamadas · ${r.wa} WhatsApp</div></td><td style="padding:12px 12px;text-align:center;vertical-align:middle">${convPill}</td><td style="padding:12px 12px;text-align:center;vertical-align:middle" class="web-col-hide-mobile">${canalPill}</td><td style="padding:12px 12px;text-align:right;vertical-align:middle;font-size:12px">${diasStr}</td>${mm}</tr>`;
+    return `<tr style="cursor:pointer;border-bottom:1px solid var(--border-light)" onclick="showDetail('${r.id}')" onmouseenter="this.style.background='#F9FAFB'" onmouseleave="this.style.background=''"><td style="padding:12px 12px;vertical-align:middle"><div style="display:flex;align-items:center;gap:10px">${thumb}<div style="min-width:0"><div class="web-veh-name" style="font-size:0.85rem;font-weight:600;color:var(--text)">${esc(r.name)}</div>${pvpStr}</div></div></td><td style="padding:12px 12px;text-align:center;vertical-align:middle"><div style="font-size:0.95rem;font-weight:700;color:var(--text)">${r.vistas}</div><div style="font-size:0.7rem;color:var(--text-2)">${catPct}% del catálogo</div></td><td style="padding:12px 12px;text-align:center;vertical-align:middle"><div style="font-size:0.95rem;font-weight:700;color:var(--text)">${r.contactos}</div><div style="font-size:0.7rem;color:var(--text-2)">${r.calls} llamadas · ${r.wa} WhatsApp</div></td><td style="padding:12px 12px;text-align:center;vertical-align:middle">${convPill}</td><td style="padding:12px 12px;text-align:center;vertical-align:middle" class="web-col-hide-mobile">${canalPill}</td><td style="padding:12px 12px;text-align:right;vertical-align:middle;font-size:12px">${diasStr}</td><td style="padding:12px 4px;text-align:right;vertical-align:middle"><button onclick="openWebVehMenu(event,'${r.id}')" style="background:none;border:none;cursor:pointer;padding:5px 8px;font-size:1rem;color:var(--text-2);border-radius:6px;line-height:1" onmouseenter="this.style.background='var(--border-light)'" onmouseleave="this.style.background=''">⋯</button></td>${mm}</tr>`;
   }).join('');
   if (btnWrap) btnWrap.style.display = 'none';
   const mElE=document.getElementById('rendimiento-vehiculos-movil');
@@ -3032,7 +3037,7 @@ function sortWebVehicleTable(col) {
   const q = (document.getElementById('webVehicleSearch')?.value || '').trim().toLowerCase();
   const rows = q ? _webRankedCache.filter(r => r.name.toLowerCase().includes(q)) : _webRankedCache.slice(0,5);
   if (rows.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--text-2);font-size:13px">Sin resultados.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8" style="padding:24px;text-align:center;color:var(--text-2);font-size:13px">Sin resultados.</td></tr>`;
     const mElS=document.getElementById('rendimiento-vehiculos-movil');
     if(mElS) mElS.innerHTML=`<div style="padding:24px;text-align:center;color:var(--text-2);font-size:13px">Sin resultados.</div>`;
     return;
@@ -3056,12 +3061,30 @@ function sortWebVehicleTable(col) {
     const diasStr=r.dias!==null?`<span style="color:${diasColor};font-weight:${r.dias>=90?'600':'400'}">${r.dias}d</span>`:'—';
     const pvpStr=r.pvp>0?`<div class="web-veh-price" style="font-size:0.78rem;color:var(--text-2);margin-top:1px">${r.pvp.toLocaleString('es-ES',{maximumFractionDigits:0})} €</div>`:'';
     const mm=`<td class="web-mobile-metrics"><div style="display:flex;align-items:center;gap:5px;flex-shrink:0"><div style="text-align:center"><div style="font-size:0.6rem;color:var(--text-2);font-weight:600;line-height:1.3">Vis.</div><div style="font-size:0.8rem;font-weight:700;color:var(--text);line-height:1.3">${r.vistas}</div></div><span style="color:var(--border-light);padding:0 1px">·</span><div style="text-align:center"><div style="font-size:0.6rem;color:var(--text-2);font-weight:600;line-height:1.3">Con.</div><div style="font-size:0.8rem;font-weight:700;color:var(--text);line-height:1.3">${r.contactos}</div></div><span style="color:var(--border-light);padding:0 1px">·</span><div style="text-align:center"><div style="font-size:0.6rem;color:var(--text-2);font-weight:600;line-height:1.3">Conv.</div><div style="font-size:0.8rem;font-weight:700;color:${pillColor};line-height:1.3">${tasaStr}</div></div></div></td>`;
-    return `<tr style="cursor:pointer;border-bottom:1px solid var(--border-light)" onclick="showDetail('${r.id}')" onmouseenter="this.style.background='#F9FAFB'" onmouseleave="this.style.background=''"><td style="padding:12px 12px;vertical-align:middle"><div style="display:flex;align-items:center;gap:10px">${thumb}<div style="min-width:0"><div class="web-veh-name" style="font-size:0.85rem;font-weight:600;color:var(--text)">${esc(r.name)}</div>${pvpStr}</div></div></td><td style="padding:12px 12px;text-align:center;vertical-align:middle"><div style="font-size:0.95rem;font-weight:700;color:var(--text)">${r.vistas}</div><div style="font-size:0.7rem;color:var(--text-2)">${catPct}% del catálogo</div></td><td style="padding:12px 12px;text-align:center;vertical-align:middle"><div style="font-size:0.95rem;font-weight:700;color:var(--text)">${r.contactos}</div><div style="font-size:0.7rem;color:var(--text-2)">${r.calls} llamadas · ${r.wa} WhatsApp</div></td><td style="padding:12px 12px;text-align:center;vertical-align:middle">${convPill}</td><td style="padding:12px 12px;text-align:center;vertical-align:middle" class="web-col-hide-mobile">${canalPill}</td><td style="padding:12px 12px;text-align:right;vertical-align:middle;font-size:12px">${diasStr}</td>${mm}</tr>`;
+    return `<tr style="cursor:pointer;border-bottom:1px solid var(--border-light)" onclick="showDetail('${r.id}')" onmouseenter="this.style.background='#F9FAFB'" onmouseleave="this.style.background=''"><td style="padding:12px 12px;vertical-align:middle"><div style="display:flex;align-items:center;gap:10px">${thumb}<div style="min-width:0"><div class="web-veh-name" style="font-size:0.85rem;font-weight:600;color:var(--text)">${esc(r.name)}</div>${pvpStr}</div></div></td><td style="padding:12px 12px;text-align:center;vertical-align:middle"><div style="font-size:0.95rem;font-weight:700;color:var(--text)">${r.vistas}</div><div style="font-size:0.7rem;color:var(--text-2)">${catPct}% del catálogo</div></td><td style="padding:12px 12px;text-align:center;vertical-align:middle"><div style="font-size:0.95rem;font-weight:700;color:var(--text)">${r.contactos}</div><div style="font-size:0.7rem;color:var(--text-2)">${r.calls} llamadas · ${r.wa} WhatsApp</div></td><td style="padding:12px 12px;text-align:center;vertical-align:middle">${convPill}</td><td style="padding:12px 12px;text-align:center;vertical-align:middle" class="web-col-hide-mobile">${canalPill}</td><td style="padding:12px 12px;text-align:right;vertical-align:middle;font-size:12px">${diasStr}</td><td style="padding:12px 4px;text-align:right;vertical-align:middle"><button onclick="openWebVehMenu(event,'${r.id}')" style="background:none;border:none;cursor:pointer;padding:5px 8px;font-size:1rem;color:var(--text-2);border-radius:6px;line-height:1" onmouseenter="this.style.background='var(--border-light)'" onmouseleave="this.style.background=''">⋯</button></td>${mm}</tr>`;
   }).join('');
   const mElR=document.getElementById('rendimiento-vehiculos-movil');
   if(mElR) mElR.innerHTML=rows.map(mkMobileItem).join('');
 }
 
+function openWebVehMenu(e, id) {
+  e.stopPropagation();
+  document.querySelectorAll('.web-veh-menu').forEach(m => m.remove());
+  document.removeEventListener('click', _closeWebVehMenu);
+  const btn = e.currentTarget;
+  const rect = btn.getBoundingClientRect();
+  const catUrl = location.origin + '/catalogo/?vehiculo=' + encodeURIComponent(id);
+  const menu = document.createElement('div');
+  menu.className = 'web-veh-menu';
+  menu.style.cssText = 'position:fixed;top:' + (rect.bottom + 4) + 'px;right:' + (window.innerWidth - rect.right) + 'px;background:var(--white);border:1px solid var(--border);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.12);z-index:9999;min-width:180px;overflow:hidden';
+  menu.innerHTML = `<a href="${catUrl}" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:8px;padding:10px 14px;font-size:0.85rem;color:var(--text);text-decoration:none" onclick="this.closest('.web-veh-menu').remove()" onmouseenter="this.style.background='var(--bg)'" onmouseleave="this.style.background=''"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Ver ficha pública</a><div style="display:flex;align-items:center;gap:8px;padding:10px 14px;font-size:0.85rem;color:var(--text);cursor:pointer;border-top:1px solid var(--border-light)" onclick="document.querySelectorAll('.web-veh-menu').forEach(m=>m.remove());showEdit('${id}')" onmouseenter="this.style.background='var(--bg)'" onmouseleave="this.style.background=''"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Editar vehículo</div>`;
+  document.body.appendChild(menu);
+  setTimeout(() => document.addEventListener('click', _closeWebVehMenu), 0);
+}
+function _closeWebVehMenu() {
+  document.querySelectorAll('.web-veh-menu').forEach(m => m.remove());
+  document.removeEventListener('click', _closeWebVehMenu);
+}
 function mkMobileItem(r) {
   const ICcar = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block"><path d="M5 17H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1l2-4h10l2 4h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="16.5" cy="17.5" r="2.5"/></svg>`;
   const thumb = r.photo
