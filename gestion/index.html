@@ -651,6 +651,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 
 /* ── VENTAS TAB REDESIGN ─────────────────────────────────────── */
 .ventas-kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:24px}
+.ventas-detail-outer{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .ventas-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
 .ventas-doc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .ventas-table-wrap{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden}
@@ -666,6 +667,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .ventas-table td.td-c{text-align:center}
 @media(max-width:768px){
   .ventas-kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .ventas-detail-outer{grid-template-columns:1fr}
   .ventas-detail-grid{grid-template-columns:1fr}
   .ventas-doc-grid{grid-template-columns:1fr}
 }
@@ -1280,10 +1282,10 @@ function renderDash() {
         <div class="vstat"><div class="vstat-l">Estado</div><div class="vstat-v"><span class="badge ${STATUS_BADGE[v.status]}">${STATUS_LABEL[v.status]}</span></div></div>
       </div>
       <div class="vcard-actions">
-        ${(!v.archivado&&v.status!=='vendido')?`<button class="btn btn-primary btn-sm" onclick="openSoldModal('${v.id}');event.stopPropagation()">Vender</button>`:''}
+        ${(v.status==='disponible'||v.status==='reservado')?`<button class="btn btn-primary btn-sm" onclick="openSoldModal('${v.id}');event.stopPropagation()">Vender</button>`:''}
         <button class="btn btn-secondary btn-sm" onclick="showDetail('${v.id}');event.stopPropagation()">${IC.eye} Ver</button>
         <button class="btn btn-secondary btn-sm" onclick="showEdit('${v.id}');event.stopPropagation()">${IC.edit} Editar</button>
-        <button onclick="openVehCardMenu(event,'${v.id}',${!!v.destacado},${!!v.archivado})" style="background:var(--white);border:1px solid var(--border);border-radius:var(--r);cursor:pointer;padding:5px 10px;font-size:0.95rem;color:var(--text-2);line-height:1;font-family:inherit;transition:background .12s" onmouseenter="this.style.background='var(--bg)'" onmouseleave="this.style.background='var(--white)'">⋯</button>
+        <button onclick="openVehCardMenu(event,'${v.id}',${!!v.destacado},${!!v.archivado},'${v.status}')" style="background:var(--white);border:1px solid var(--border);border-radius:var(--r);cursor:pointer;padding:5px 10px;font-size:0.95rem;color:var(--text-2);line-height:1;font-family:inherit;transition:background .12s" onmouseenter="this.style.background='var(--bg)'" onmouseleave="this.style.background='var(--white)'">⋯</button>
       </div>
     </div>
   </div>
@@ -2461,8 +2463,8 @@ function mkVentaRow(s) {
   <td class="td-r"><span style="font-weight:600;color:${margen>=0?'#059669':'#DC2626'}">${margen>=0?'+':''}${eur(margen)}</span></td>
   <td class="td-c" style="color:var(--text-2)">${dias!==null?dias+'d':'—'}</td>
   <td class="td-c">${tipoPill}</td>
-  <td class="td-c" onclick="event.stopPropagation()">
-    <button class="btn btn-secondary btn-sm" onclick="redownloadContrato('${s.id}')" title="Descargar PDF">${IC_DL} PDF</button>
+  <td class="td-c">
+    <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();redownloadContrato('${s.id}')" title="Descargar PDF">${IC_DL} PDF</button>
   </td>
 </tr>`;
 }
@@ -2472,82 +2474,112 @@ function renderVentaDetail(saleId) {
   if (!s) { S.ventasDetail=null; return renderVentas(); }
   const veh = vehiclesCache.find(x => x.id === s.vehiculo_id);
 
-  const venta  = +s.precio_venta||0;
-  const coste  = +s.coste_total||0;
-  const margen = +s.margen||0;
-  const compra = +s.precio_compra || (veh ? +veh.purchasePrice||0 : 0);
-  const gastos = Math.max(0, coste - compra);
-  const tipo   = s.tipo_iva || 'rebu';
-  const ivaVal = tipo==='iva_21' ? venta*0.21/1.21 : Math.max(0,(venta-compra)*0.21/1.21);
-  const baseImp= tipo==='iva_21' ? venta-ivaVal : Math.max(0,venta-compra)-ivaVal;
-  const dias   = s.dias_en_stock!=null ? +s.dias_en_stock : null;
-  const maskDni= d => d&&d.length>5 ? '*'.repeat(d.length-5)+d.slice(-5) : (d||'—');
-  const name   = `${esc(s.marca||'')} ${esc(s.modelo||'')}`.trim();
-  const mat    = s.matricula ? `<span style="font-size:12px;background:#F1F5F9;color:#475569;border-radius:4px;padding:2px 6px;font-weight:600;margin-left:8px">${esc(s.matricula)}</span>` : '';
+  const venta       = +s.precio_venta||0;
+  const compra      = +s.precio_compra || (veh ? +veh.purchasePrice||0 : 0);
+  const gastosConf  = veh ? (veh.expenses||[]).reduce((t,e) => t+(+e.amount||0), 0) : Math.max(0, (+s.coste_total||0) - compra);
+  const costeCalc   = compra + gastosConf;
+  const margenCalc  = venta - costeCalc;
+  const margenPct   = costeCalc > 0 ? margenCalc / costeCalc * 100 : 0;
+  const tipo        = s.tipo_iva || 'rebu';
+  const ivaVal      = tipo === 'iva_21' ? venta*0.21/1.21 : Math.max(0,(venta-compra)*0.21/1.21);
+  const dias        = s.dias_en_stock!=null ? +s.dias_en_stock : null;
+  const maskDni     = d => !d ? '—' : d.length <= 5 ? d : '*'.repeat(d.length-5)+d.slice(-5);
+  const dtLong      = d => d ? new Date(d).toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'}) : '—';
+  const name        = `${esc(s.marca||'')} ${esc(s.modelo||'')}`.trim();
+  const mat         = s.matricula;
 
-  const ecoRow = (l,v,bold,extra='') =>
-    `<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;${extra}">
+  const ecoRow = (l, v, bold=false, borderTop=false) =>
+    `<div style="display:flex;justify-content:space-between;align-items:baseline;padding:7px 0${borderTop?';border-top:1px solid var(--border-light);margin-top:4px;padding-top:11px':''}">
       <span style="font-size:13px;color:var(--text-2)">${l}</span>
-      <span style="font-size:13px;font-weight:${bold?'700':'500'};color:${bold?'var(--text)':'inherit'}">${v}</span>
+      <span style="font-size:13px;font-weight:${bold?'700':'500'};color:var(--text)">${v}</span>
     </div>`;
-  const opRow = (l,v) =>
-    `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border-light)">
+  const opRow = (l, v) =>
+    `<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border-light)">
       <span style="font-size:13px;color:var(--text-2)">${l}</span>
       <span style="font-size:13px;font-weight:500;color:var(--text)">${v}</span>
     </div>`;
 
+  const hasContrato = !!s.numero_contrato;
+  const tipoPill = tipo==='rebu'
+    ? `<span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;background:#F0FDF4;color:#15803D">REBU</span>`
+    : `<span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;background:#EFF6FF;color:#1E40AF">IVA 21%</span>`;
+
   return `
 <div>
-  <div style="display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:20px">
-    <button onclick="closeVentasDetail()" style="display:inline-flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;font-size:13px;color:var(--text-2);padding:6px 10px;border-radius:var(--r);font-family:inherit" onmouseenter="this.style.background='var(--border-light)'" onmouseleave="this.style.background=''">
+  <div style="margin-bottom:24px">
+    <button onclick="closeVentasDetail()" style="display:inline-flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;font-size:13px;color:var(--text-2);padding:4px 0;font-family:inherit;margin-bottom:12px" onmouseenter="this.style.color='var(--text)'" onmouseleave="this.style.color='var(--text-2)'">
       ${IC.arrowLeft} Volver a ventas
     </button>
-    <div style="width:1px;height:20px;background:var(--border)"></div>
-    <div style="font-size:16px;font-weight:700;color:var(--text)">${name}${mat}</div>
-    <span style="display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:var(--success-bg);color:var(--success)">Vendido</span>
-  </div>
-
-  <div class="ventas-detail-grid">
-    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow)">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-2);margin-bottom:14px">Resumen económico</div>
-      ${ecoRow('Precio de venta final', eur(venta), true)}
-      ${ecoRow('Precio de compra', eur(compra), false)}
-      ${ecoRow('Gastos', eur(gastos), false)}
-      ${ecoRow('Coste total', eur(coste), false, 'border-top:1px solid var(--border-light);margin-top:6px;padding-top:10px')}
-      ${ecoRow('Margen bruto', `<span style="color:${margen>=0?'#059669':'#DC2626'}">${margen>=0?'+':''}${eur(margen)}</span>`, false)}
-      ${ecoRow('Base imponible', eur(Math.max(0,baseImp)), false, 'border-top:1px solid var(--border-light);margin-top:6px;padding-top:10px')}
-      ${ecoRow('IVA ('+( tipo==='rebu'?'REBU':'21%')+')', eur(ivaVal), false)}
-    </div>
-    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow)">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-2);margin-bottom:14px">Datos de la operación</div>
-      ${veh ? opRow('Fecha entrada', dt(veh.entryDate)) : ''}
-      ${opRow('Fecha venta', dt(s.fecha_venta))}
-      ${dias!==null ? opRow('Días en stock', dias+'d') : ''}
-      ${opRow('Forma de pago', esc(s.forma_pago||'—'))}
-      ${opRow('Tipo de factura', tipo==='rebu'?'REBU':'IVA 21%')}
-      ${opRow('Nº contrato', esc(s.numero_contrato||'—'))}
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+      <div>
+        <div style="font-size:22px;font-weight:700;color:var(--text);line-height:1.2">${name}</div>
+        ${mat ? `<div style="font-size:13px;color:var(--text-2);margin-top:4px;font-weight:500">${esc(mat)}</div>` : ''}
+      </div>
+      <span style="display:inline-block;padding:4px 12px;border-radius:12px;font-size:12px;font-weight:600;background:var(--success-bg);color:var(--success);white-space:nowrap;flex-shrink:0;margin-top:4px">Vendido</span>
     </div>
   </div>
 
-  <div class="ventas-doc-grid">
-    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow)">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-2);margin-bottom:14px">Comprador</div>
-      <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:8px">${esc(s.nombre_comprador||'—')}</div>
-      <div style="font-size:13px;color:var(--text-2);margin-bottom:4px">DNI/NIE: ${maskDni(s.dni_comprador||'')}</div>
-      <div style="font-size:13px;color:var(--text-2)">${esc(s.direccion_comprador||'—')}</div>
-    </div>
-    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow)">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-2);margin-bottom:14px">Documentación</div>
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-light)">
-        <div>
-          <div style="font-size:13px;font-weight:600;color:var(--text)">Contrato de compraventa</div>
-          <div style="font-size:11px;color:var(--text-2);margin-top:2px">${dt(s.fecha_venta)}</div>
+  <div class="ventas-detail-outer">
+    <div style="display:flex;flex-direction:column;gap:16px">
+
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow)">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-2);margin-bottom:12px">Resumen económico</div>
+        ${ecoRow('Precio final de venta', `<strong>${eur(venta)}</strong>`)}
+        ${ecoRow('Precio de compra', eur(compra))}
+        ${ecoRow('Gastos confirmados', eur(gastosConf))}
+        ${ecoRow('Coste total', eur(costeCalc), false, true)}
+        <div style="height:1px;background:var(--border-light);margin:8px 0"></div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:7px 0">
+          <span style="font-size:13px;color:var(--text-2)">Margen bruto</span>
+          <span style="font-size:13px;font-weight:700;color:${margenCalc>=0?'#059669':'#DC2626'}">${margenCalc>=0?'+':''}${eur(margenCalc)}&nbsp;<span style="font-size:11px;font-weight:500">(${margenPct>=0?'+':''}${margenPct.toFixed(1).replace('.',',')}%)</span></span>
         </div>
-        <div style="display:flex;gap:8px;flex-shrink:0">
-          <button class="btn btn-secondary btn-sm" onclick="redownloadContrato('${s.id}')">${IC_DL} Descargar</button>
-          <button class="btn btn-secondary btn-sm" onclick="redownloadContrato('${s.id}')" title="Regenerar PDF">↻ Regenerar</button>
+        ${ecoRow('IVA repercutido', eur(ivaVal), false, true)}
+        ${ecoRow('Tipo de factura', tipoPill)}
+      </div>
+
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow)">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-2);margin-bottom:12px">Datos de la operación</div>
+        ${opRow('Fecha de venta', dtLong(s.fecha_venta))}
+        ${dias!==null ? opRow('Días hasta la venta', dias+'d') : ''}
+        ${opRow('Forma de pago', esc(s.forma_pago||'—'))}
+      </div>
+
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow)">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-2);margin-bottom:12px">Comprador</div>
+        ${opRow('Nombre', esc(s.nombre_comprador||'—'))}
+        ${opRow('DNI/NIE', maskDni(s.dni_comprador||''))}
+        ${opRow('Dirección', s.direccion_comprador ? esc(s.direccion_comprador) : `<span style="color:var(--text-2);font-style:italic">No especificada</span>`)}
+      </div>
+
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow)">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-2);margin-bottom:12px">Documentación</div>
+        <div style="padding-bottom:14px;margin-bottom:14px;border-bottom:1px solid var(--border-light)">
+          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px">Contrato de compraventa</div>
+          ${hasContrato
+            ? `<div style="display:flex;align-items:center;gap:8px">
+                <span style="font-size:11px;color:var(--text-2);flex:1">${esc(s.numero_contrato)}</span>
+                <button class="btn btn-secondary btn-sm" onclick="redownloadContrato('${s.id}')">${IC_DL} Descargar PDF</button>
+              </div>`
+            : `<div style="font-size:13px;color:var(--text-2);font-style:italic">Sin contrato generado</div>`}
+        </div>
+        <div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+            <div style="font-size:13px;font-weight:600;color:var(--text)">Archivos adjuntos</div>
+            <label style="display:inline-flex;align-items:center;gap:5px;background:#EFF6FF;color:var(--primary);border:1px solid #DBEAFE;border-radius:var(--r);padding:5px 10px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;transition:background .12s" onmouseenter="this.style.background='#DBEAFE'" onmouseleave="this.style.background='#EFF6FF'">
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Adjuntar
+              <input type="file" accept=".pdf,.jpg,.jpeg,.png" style="display:none" onchange="uploadVentaAdjunto('${s.id}',this)">
+            </label>
+          </div>
+          <div id="ventaAdjuntos-${s.id}">
+            <div style="font-size:12px;color:var(--text-2);padding:8px 0">Cargando adjuntos…</div>
+          </div>
         </div>
       </div>
+
     </div>
   </div>
 </div>`;
@@ -2561,6 +2593,7 @@ function openVentasDetail(saleId) {
   S.ventasDetail=saleId;
   const c=document.getElementById('homeContent'); if(c) c.innerHTML=renderHomeContent();
   scrollTo(0,0);
+  loadVentaAdjuntos(saleId);
 }
 function closeVentasDetail() {
   S.ventasDetail=null;
@@ -2580,6 +2613,57 @@ function redownloadContrato(saleId) {
     generateContractPDF(v,s.nombre_comprador||'',s.dni_comprador||'',s.direccion_comprador||'',
       +s.precio_venta||null,s.forma_pago||'—',saleDate);
   } catch(err){toast('Error al regenerar el PDF',3000,'error');console.error(err);}
+}
+
+async function loadVentaAdjuntos(saleId) {
+  const el = document.getElementById('ventaAdjuntos-' + saleId);
+  if (!el) return;
+  try {
+    const { data, error } = await sb.storage.from('vehiculos-fotos').list('ventas/' + saleId, { limit: 50, sortBy: { column: 'created_at', order: 'desc' } });
+    if (error) throw error;
+    const files = (data || []).filter(f => f.name && !f.name.startsWith('.'));
+    if (!files.length) {
+      el.innerHTML = `<div style="font-size:12px;color:var(--text-2);padding:8px 0">Sin archivos adjuntos</div>`;
+      return;
+    }
+    el.innerHTML = files.map(f => {
+      const { data: ud } = sb.storage.from('vehiculos-fotos').getPublicUrl('ventas/' + saleId + '/' + f.name);
+      const url = ud.publicUrl;
+      const ext = (f.name.split('.').pop() || '').toLowerCase();
+      const isImg = ['jpg','jpeg','png','gif','webp'].includes(ext);
+      return `<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border-light)">
+        ${isImg
+          ? `<img src="${url}" style="width:32px;height:32px;border-radius:4px;object-fit:cover;flex-shrink:0;border:1px solid var(--border)">`
+          : `<div style="width:32px;height:32px;border-radius:4px;background:var(--bg);border:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--text-2);text-transform:uppercase">${ext}</div>`}
+        <span style="flex:1;font-size:12px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0" title="${esc(f.name)}">${esc(f.name)}</span>
+        <a href="${url}" download="${esc(f.name)}" target="_blank" class="btn btn-secondary btn-sm" style="flex-shrink:0;text-decoration:none">${IC_DL}</a>
+      </div>`;
+    }).join('');
+  } catch(err) {
+    const el2 = document.getElementById('ventaAdjuntos-' + saleId);
+    if (el2) el2.innerHTML = `<div style="font-size:12px;color:var(--text-2)">No se pudieron cargar los adjuntos</div>`;
+  }
+}
+
+async function uploadVentaAdjunto(saleId, input) {
+  const file = input.files[0];
+  if (!file) return;
+  input.disabled = true;
+  const el = document.getElementById('ventaAdjuntos-' + saleId);
+  if (el) el.innerHTML = `<div style="font-size:12px;color:var(--text-2);padding:8px 0">Subiendo…</div>`;
+  try {
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const { error } = await sb.storage.from('vehiculos-fotos').upload('ventas/' + saleId + '/' + safeName, file, { upsert: true });
+    if (error) throw error;
+    toast('Archivo adjuntado', 2500, 'success');
+    await loadVentaAdjuntos(saleId);
+  } catch(err) {
+    toast('Error al adjuntar: ' + (err.message || err), 4000, 'error');
+    await loadVentaAdjuntos(saleId);
+  } finally {
+    input.value = '';
+    input.disabled = false;
+  }
 }
 
 function renderHome() {
@@ -3237,7 +3321,7 @@ function _closeWebVehMenu() {
   document.removeEventListener('click', _closeWebVehMenu);
 }
 
-function openVehCardMenu(e, id, destacado, archivado) {
+function openVehCardMenu(e, id, destacado, archivado, status) {
   e.stopPropagation();
   document.querySelectorAll('.veh-card-menu').forEach(m => m.remove());
   document.removeEventListener('click', _closeVehCardMenu);
@@ -3255,9 +3339,18 @@ function openVehCardMenu(e, id, destacado, archivado) {
     d.onclick = () => { document.querySelectorAll('.veh-card-menu').forEach(m=>m.remove()); fn(); };
     return d;
   };
-  menu.appendChild(mi(destacado ? '☆ Quitar destacado' : '★ Destacar', () => toggleDestacado(id, null)));
-  menu.appendChild(mi(archivado ? '↩ Desarchivar' : 'Archivar', () => archiveVehicle(id, !archivado)));
-  menu.appendChild(mi('Eliminar', () => openDel(id), true));
+  const vStatus = status || vehiclesCache.find(x=>x.id===id)?.status || (archivado?'archivado':'disponible');
+  if (vStatus === 'archivado') {
+    menu.appendChild(mi('↩ Desarchivar', () => archiveVehicle(id, false)));
+    menu.appendChild(mi('Eliminar', () => openDel(id), true));
+  } else if (vStatus === 'vendido') {
+    menu.appendChild(mi('Archivar', () => archiveVehicle(id, true)));
+    menu.appendChild(mi('Eliminar', () => openDel(id), true));
+  } else {
+    menu.appendChild(mi(destacado ? '☆ Quitar destacado' : '★ Destacar', () => toggleDestacado(id, null)));
+    menu.appendChild(mi('Archivar', () => archiveVehicle(id, true)));
+    menu.appendChild(mi('Eliminar', () => openDel(id), true));
+  }
   document.body.appendChild(menu);
   setTimeout(() => document.addEventListener('click', _closeVehCardMenu), 0);
 }
