@@ -2470,8 +2470,8 @@ function mkVentaRow(s) {
 }
 
 function renderVentaDetail(saleId) {
-  const s = ventasCache.find(x => x.id === saleId);
-  if (!s) { S.ventasDetail=null; return renderVentas(); }
+  const s = ventasCache.find(x => String(x.id) === String(saleId));
+  if (!s) { console.error('[renderVentaDetail] sale not found in cache:', saleId, 'cache ids:', ventasCache.map(x=>x.id)); S.ventasDetail=null; return renderVentas(); }
   const veh = vehiclesCache.find(x => x.id === s.vehiculo_id);
 
   const venta       = +s.precio_venta||0;
@@ -2590,9 +2590,12 @@ function setVentasPeriod(p) {
   const c=document.getElementById('homeContent'); if(c) c.innerHTML=renderHomeContent();
 }
 function openVentasDetail(saleId) {
-  S.ventasDetail=saleId;
-  const c=document.getElementById('homeContent'); if(c) c.innerHTML=renderHomeContent();
-  scrollTo(0,0);
+  console.log('[openVentasDetail] called with', saleId, '| homeTab:', S.homeTab, '| cacheSize:', ventasCache.length);
+  S.ventasDetail = saleId;
+  S.homeTab = 'ventas';
+  const c = document.getElementById('homeContent');
+  if (c) c.innerHTML = renderHomeContent();
+  scrollTo(0, 0);
   loadVentaAdjuntos(saleId);
 }
 function closeVentasDetail() {
