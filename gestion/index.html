@@ -649,6 +649,27 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .venta-pay-badge{font-size:11px;background:var(--primary-light);color:var(--primary);padding:3px 9px;border-radius:12px;font-weight:600;white-space:nowrap}
 @media(max-width:560px){.venta-pay{display:none}}
 
+/* ── VENTAS TAB REDESIGN ─────────────────────────────────────── */
+.ventas-kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:24px}
+.ventas-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.ventas-doc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ventas-table-wrap{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden}
+.ventas-table{width:100%;border-collapse:collapse;font-size:13px;min-width:700px}
+.ventas-table thead th{padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;background:var(--bg);border-bottom:1px solid var(--border)}
+.ventas-table thead th.th-r{text-align:right}
+.ventas-table thead th.th-c{text-align:center}
+.ventas-table tbody tr{cursor:pointer;transition:background .12s}
+.ventas-table tbody tr:not(:last-child) td{border-bottom:1px solid var(--border-light)}
+.ventas-table tbody tr:hover{background:#F9FAFB}
+.ventas-table td{padding:12px 14px;vertical-align:middle}
+.ventas-table td.td-r{text-align:right}
+.ventas-table td.td-c{text-align:center}
+@media(max-width:768px){
+  .ventas-kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .ventas-detail-grid{grid-template-columns:1fr}
+  .ventas-doc-grid{grid-template-columns:1fr}
+}
+
 /* ── WEB ANALYTICS DASHBOARD ─────────────────────── */
 .web-analytics{padding:32px 0 0}
 .web-bar-wrap{height:180px;position:relative;margin-top:4px}
@@ -898,54 +919,12 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   </div>
 </div>
 
-<!-- ── SOLD MODAL ───────────────────────────────────────────── -->
+<!-- ── SOLD MODAL (3-step) ────────────────────────────────── -->
 <div class="overlay hidden" id="soldModal">
-  <div class="modal" style="max-width:520px">
-    <div class="modal-head">Registrar venta y generar contrato</div>
-    <div class="modal-body" style="padding-bottom:4px;max-height:80vh;overflow-y:auto">
-      <p style="margin-bottom:16px;font-size:12px;color:var(--text-2);background:var(--primary-light);border-radius:6px;padding:10px 12px;line-height:1.5">Los datos del comprador se incluirán en el contrato PDF que se descargará automáticamente.</p>
-
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--primary);margin-bottom:10px">Datos del comprador</div>
-      <div class="fg" style="margin-bottom:10px">
-        <label>Nombre completo <span style="color:var(--danger)">*</span></label>
-        <input type="text" id="buyerName" placeholder="Juan García López" style="width:100%" autocomplete="off">
-      </div>
-      <div class="fg" style="margin-bottom:10px">
-        <label>DNI / NIE <span style="color:var(--danger)">*</span></label>
-        <input type="text" id="buyerDni" placeholder="12345678A" style="width:100%" autocomplete="off">
-      </div>
-      <div class="fg" style="margin-bottom:10px">
-        <label>Dirección <span style="color:var(--danger)">*</span></label>
-        <input type="text" id="buyerAddr" placeholder="Calle Mayor, 5, 1º, 08001 Barcelona" style="width:100%" autocomplete="off">
-      </div>
-      <div class="fg" style="margin-bottom:10px">
-        <label>Forma de pago</label>
-        <select id="buyerPayment" style="width:100%">
-          <option value="Efectivo">Efectivo</option>
-          <option value="Transferencia bancaria">Transferencia bancaria</option>
-          <option value="Financiación">Financiación</option>
-        </select>
-      </div>
-
-      <div style="height:1px;background:var(--border);margin:14px 0"></div>
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--primary);margin-bottom:10px">Datos de la operación</div>
-
-      <div class="fg" style="margin-bottom:10px">
-        <label>Precio de venta final (€)</label>
-        <input type="number" id="soldPriceInp" min="0" step="1" placeholder="11200" style="width:100%">
-      </div>
-      <div class="fg" style="margin-bottom:6px">
-        <label>Fecha de venta</label>
-        <input type="date" id="soldDateInp" style="width:100%">
-      </div>
-    </div>
-    <div class="modal-foot">
-      <button class="btn btn-secondary" onclick="closeSoldModal()">Cancelar</button>
-      <button class="btn btn-primary" onclick="confirmSold()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        Generar contrato y confirmar venta
-      </button>
-    </div>
+  <div class="modal" style="max-width:540px">
+    <div class="modal-head" id="soldModalTitle">Registrar venta</div>
+    <div id="soldModalBody" style="padding:20px 22px;max-height:calc(80vh - 110px);overflow-y:auto"></div>
+    <div id="soldModalFoot" class="modal-foot"></div>
   </div>
 </div>
 
@@ -986,17 +965,24 @@ const sb = createClient(
 //   modelo              TEXT,
 //   matricula           TEXT,
 //   precio_venta        NUMERIC,
+//   precio_compra       NUMERIC,
 //   coste_total         NUMERIC,
 //   margen              NUMERIC,
 //   forma_pago          TEXT,
+//   tipo_iva            TEXT DEFAULT 'rebu',
 //   nombre_comprador    TEXT,
 //   dni_comprador       TEXT,
 //   direccion_comprador TEXT,
 //   fecha_venta         TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-//   numero_contrato     TEXT
+//   numero_contrato     TEXT,
+//   dias_en_stock       INTEGER
 // );
 // ALTER TABLE ventas ENABLE ROW LEVEL SECURITY;
 // CREATE POLICY "auth_only" ON ventas USING (auth.role() = 'authenticated');
+// -- Columnas añadidas a ventas existentes:
+// ALTER TABLE ventas ADD COLUMN IF NOT EXISTS precio_compra NUMERIC;
+// ALTER TABLE ventas ADD COLUMN IF NOT EXISTS tipo_iva TEXT DEFAULT 'rebu';
+// ALTER TABLE ventas ADD COLUMN IF NOT EXISTS dias_en_stock INTEGER;
 
 // ─── STATE ───────────────────────────────────────────────────
 let vehiclesCache = [];
@@ -1005,8 +991,10 @@ let S = {
   view:'home', homeTab:'metricas', filter:'disponible', q:'', editId:null, detailId:null, delId:null,
   dashPeriod:'mes', alertVehicleIds:null,
   sortCol:null, sortDir:'desc', soldTargetId:null, importPending:null, expandedCard:null,
+  ventasPeriod:'mes', ventasDetail:null,
 };
 let fData={}, fExp=[], fPhotos=[], fStorageToDelete=[];
+let _saleStep=1, _saleVehicleId=null, _saleData={};
 let dragSrcIdx = null;
 let _webEvCache = null;
 let _webRankedCache = null;
@@ -1292,11 +1280,10 @@ function renderDash() {
         <div class="vstat"><div class="vstat-l">Estado</div><div class="vstat-v"><span class="badge ${STATUS_BADGE[v.status]}">${STATUS_LABEL[v.status]}</span></div></div>
       </div>
       <div class="vcard-actions">
-        <button class="btn btn-secondary btn-sm btn-star${v.destacado?' active':''}" onclick="toggleDestacado('${v.id}',event)" title="${v.destacado?'Quitar de destacados':'Destacar en catálogo'}">${v.destacado?IC.starOn:IC.starOff} ${v.destacado?'Destacado':'Destacar'}</button>
-        <button class="btn btn-secondary btn-sm" onclick="showDetail('${v.id}')">${IC.eye} Ver</button>
-        <button class="btn btn-secondary btn-sm" onclick="showEdit('${v.id}')">${IC.edit} Editar</button>
-        <button class="btn btn-secondary btn-sm" onclick="archiveVehicle('${v.id}',${!v.archivado})">${v.archivado?'↩ Desarchivar':'Archivar'}</button>
-        <button class="btn btn-danger-soft btn-sm" onclick="openDel('${v.id}')">${IC.trash} Eliminar</button>
+        ${(!v.archivado&&v.status!=='vendido')?`<button class="btn btn-primary btn-sm" onclick="openSoldModal('${v.id}');event.stopPropagation()">Vender</button>`:''}
+        <button class="btn btn-secondary btn-sm" onclick="showDetail('${v.id}');event.stopPropagation()">${IC.eye} Ver</button>
+        <button class="btn btn-secondary btn-sm" onclick="showEdit('${v.id}');event.stopPropagation()">${IC.edit} Editar</button>
+        <button onclick="openVehCardMenu(event,'${v.id}',${!!v.destacado},${!!v.archivado})" style="background:var(--white);border:1px solid var(--border);border-radius:var(--r);cursor:pointer;padding:5px 10px;font-size:0.95rem;color:var(--text-2);line-height:1;font-family:inherit;transition:background .12s" onmouseenter="this.style.background='var(--bg)'" onmouseleave="this.style.background='var(--white)'">⋯</button>
       </div>
     </div>
   </div>
@@ -2358,63 +2345,227 @@ function renderHomeContent() {
 const IC_DL = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
 
 function renderVentas() {
+  if (S.ventasDetail) return renderVentaDetail(S.ventasDetail);
+
   const now = new Date();
-  const thisMonth = ventasCache.filter(s=>{
-    const d=new Date(s.fecha_venta);
-    return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth();
-  });
-  const totalMes    = thisMonth.length;
-  const ingresosMes = thisMonth.reduce((t,s)=>t+(+s.precio_venta||0),0);
-  const margenMes   = thisMonth.reduce((t,s)=>t+(+s.margen||0),0);
+  const p = S.ventasPeriod || 'mes';
+  let start, end;
+  if (p === 'mes') {
+    start = new Date(now.getFullYear(), now.getMonth(), 1); end = now;
+  } else if (p === 'mes_anterior') {
+    end = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59);
+    start = new Date(end.getFullYear(), end.getMonth(), 1);
+  } else if (p === '3m') {
+    start = new Date(now.getTime() - 90*86400000); end = now;
+  } else {
+    start = new Date(now.getFullYear(), 0, 1); end = now;
+  }
 
-  const cards = `
-<div class="home-metrics" style="margin-bottom:24px;grid-template-columns:repeat(3,1fr)">
-  <div class="home-card">
-    <div class="hc-label">Ventas este mes</div>
-    <div class="hc-val">${totalMes}</div>
-    <div class="hc-sub">${ventasCache.length} en total</div>
-  </div>
-  <div class="home-card">
-    <div class="hc-label">Ingresos del mes</div>
-    <div class="hc-val">${eur(ingresosMes)}</div>
-    <div class="hc-sub">Precio de venta acumulado</div>
-  </div>
-  <div class="home-card">
-    <div class="hc-label">Margen del mes</div>
-    <div class="hc-val ${margenMes>=0?'pos':'neg'}">${eur(margenMes)}</div>
-    <div class="hc-sub">Beneficio bruto acumulado</div>
-  </div>
+  const pv = ventasCache.filter(s => { const d=new Date(s.fecha_venta); return d>=start&&d<=end; });
+  const count   = pv.length;
+  const importe = pv.reduce((t,s) => t+(+s.precio_venta||0), 0);
+  const margen  = pv.reduce((t,s) => t+(+s.margen||0), 0);
+  const iva     = pv.reduce((t,s) => {
+    const venta = +s.precio_venta||0;
+    if ((s.tipo_iva||'rebu') === 'iva_21') return t + venta*0.21/1.21;
+    const compra = +s.precio_compra||0;
+    return t + Math.max(0, (venta-compra)*0.21/1.21);
+  }, 0);
+
+  const periodLabel = {mes:'Este mes', mes_anterior:'Mes anterior', '3m':'Últimos 3 meses', año:'Este año'}[p]||'';
+  const periodPills = [['mes','Este mes'],['mes_anterior','Mes anterior'],['3m','3 meses'],['año','Este año']]
+    .map(([k,l])=>`<button onclick="setVentasPeriod('${k}')" style="padding:6px 14px;font-size:12px;font-weight:${p===k?'600':'500'};border-radius:20px;border:1px solid ${p===k?'#1E3A5F':'var(--border)'};background:${p===k?'#1E3A5F':'var(--white)'};color:${p===k?'#fff':'var(--text-2)'};cursor:pointer;font-family:inherit;transition:all .15s">${l}</button>`).join('');
+
+  const kpiCard = (label, val, sub, color='var(--text)') =>
+    `<div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px 20px;box-shadow:var(--shadow)">
+      <div style="font-size:0.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text-2);margin-bottom:10px">${label}</div>
+      <div style="font-size:2.1rem;font-weight:700;color:${color};line-height:1.1;font-variant-numeric:tabular-nums">${val}</div>
+      <div style="font-size:0.78rem;color:var(--text-2);margin-top:6px">${sub}</div>
+    </div>`;
+
+  const emptyState = `
+<div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:60px 20px;text-align:center">
+  <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2);opacity:.3;display:block;margin:0 auto 16px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+  <div style="font-size:1rem;font-weight:600;color:var(--text);margin-bottom:8px">Sin ventas registradas en este período</div>
+  <div style="font-size:0.82rem;color:var(--text-2)">Las operaciones cerradas aparecerán aquí.</div>
 </div>`;
 
-  if(!ventasCache.length) return cards+`
-<div class="empty">
-  <div class="empty-icon">${IC.carGrayLg}</div>
-  <div class="empty-title">Aún no hay ventas registradas</div>
-  <div class="empty-desc">Las ventas aparecerán aquí cuando confirmes una venta con el formulario de contrato.</div>
-</div>`;
+  const tableRows = pv.map(s => mkVentaRow(s)).join('');
 
-  const rows = ventasCache.map(s=>{
-    const date=new Date(s.fecha_venta).toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit',year:'numeric'});
-    const margen=+s.margen||0;
-    return `
-<div class="venta-row">
-  <div class="venta-row-inner">
-    <div class="venta-date">${date}</div>
-    <div class="venta-vehicle">
-      <div class="venta-vehicle-name">${esc(s.marca)} ${esc(s.modelo)}</div>
-      <div class="venta-vehicle-sub">${s.matricula?esc(s.matricula)+' · ':''}${esc(s.nombre_comprador||'—')}</div>
+  return `
+<div>
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+    <div>
+      <h2 style="font-size:20px;font-weight:700;color:var(--text);margin:0 0 4px">Ventas</h2>
+      <p style="font-size:13px;color:var(--text-2);margin:0">Historial de operaciones y análisis financiero</p>
     </div>
-    <div class="venta-nums">
-      <div class="venta-price">${eur(s.precio_venta)}</div>
-      <div class="venta-margin ${margen>=0?'pos':'neg'}">${margen>=0?'+':''}${eur(margen)}</div>
+    <button class="btn btn-primary" onclick="openSoldModal(null)">${IC.plus} Registrar venta</button>
+  </div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px">${periodPills}</div>
+  <div class="ventas-kpi-grid">
+    ${kpiCard('Vehículos vendidos', count, periodLabel)}
+    ${kpiCard('Importe vendido', eur(importe), 'Precio de venta acumulado')}
+    ${kpiCard('Margen bruto real', eur(margen), 'Beneficio bruto acumulado', margen>=0?'#059669':'#DC2626')}
+    ${kpiCard('IVA a liquidar', eur(iva), 'Estimado (REBU / IVA 21%)')}
+  </div>
+  ${pv.length===0 ? emptyState : `
+<div class="ventas-table-wrap">
+  <div style="overflow-x:auto">
+    <table class="ventas-table">
+      <thead><tr>
+        <th>Vehículo</th>
+        <th>Fecha venta</th>
+        <th class="th-r">Precio final</th>
+        <th class="th-r">Coste total</th>
+        <th class="th-r">Margen</th>
+        <th class="th-c">Días</th>
+        <th class="th-c">Tipo</th>
+        <th class="th-c">Contrato</th>
+      </tr></thead>
+      <tbody>${tableRows}</tbody>
+    </table>
+  </div>
+</div>`}
+</div>`;
+}
+
+function mkVentaRow(s) {
+  const veh = vehiclesCache.find(x => x.id === s.vehiculo_id);
+  const thumb = veh && veh.photos && veh.photos[0]
+    ? `<img src="${veh.photos[0]}" style="width:36px;height:36px;border-radius:6px;object-fit:cover;flex-shrink:0">`
+    : `<div style="width:36px;height:36px;border-radius:6px;background:var(--border-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#94A3B8">${IC.carGray}</div>`;
+  const name = `${esc(s.marca||'')} ${esc(s.modelo||'')}`.trim();
+  const mat = s.matricula ? `<span style="font-size:11px;background:#F1F5F9;color:#475569;border-radius:4px;padding:1px 5px;font-weight:600;margin-left:4px">${esc(s.matricula)}</span>` : '';
+  const margen = +s.margen||0;
+  const dias = s.dias_en_stock!=null ? +s.dias_en_stock : null;
+  const tipo = s.tipo_iva || 'rebu';
+  const tipoPill = tipo==='iva_21'
+    ? `<span style="display:inline-block;padding:3px 8px;border-radius:12px;font-size:11px;font-weight:600;background:#EFF6FF;color:#1E40AF">IVA 21%</span>`
+    : `<span style="display:inline-block;padding:3px 8px;border-radius:12px;font-size:11px;font-weight:600;background:#F0FDF4;color:#15803D">REBU</span>`;
+  return `<tr onclick="openVentasDetail('${s.id}')">
+  <td>
+    <div style="display:flex;align-items:center;gap:10px">
+      ${thumb}
+      <div>
+        <div style="font-weight:600;color:var(--text)">${name}</div>
+        <div style="margin-top:2px">${mat}</div>
+      </div>
     </div>
-    <div class="venta-pay"><span class="venta-pay-badge">${esc(s.forma_pago||'—')}</span></div>
-    <button class="btn btn-secondary btn-sm" onclick="redownloadContrato('${s.id}')">${IC_DL} PDF</button>
+  </td>
+  <td>
+    <div style="color:var(--text)">${dt(s.fecha_venta)}</div>
+    <div style="font-size:11px;color:var(--text-2);margin-top:1px">${esc(s.nombre_comprador||'—')}</div>
+  </td>
+  <td class="td-r"><span style="font-weight:700">${eur(s.precio_venta)}</span></td>
+  <td class="td-r" style="color:var(--text-2)">${eur(s.coste_total)}</td>
+  <td class="td-r"><span style="font-weight:600;color:${margen>=0?'#059669':'#DC2626'}">${margen>=0?'+':''}${eur(margen)}</span></td>
+  <td class="td-c" style="color:var(--text-2)">${dias!==null?dias+'d':'—'}</td>
+  <td class="td-c">${tipoPill}</td>
+  <td class="td-c" onclick="event.stopPropagation()">
+    <button class="btn btn-secondary btn-sm" onclick="redownloadContrato('${s.id}')" title="Descargar PDF">${IC_DL} PDF</button>
+  </td>
+</tr>`;
+}
+
+function renderVentaDetail(saleId) {
+  const s = ventasCache.find(x => x.id === saleId);
+  if (!s) { S.ventasDetail=null; return renderVentas(); }
+  const veh = vehiclesCache.find(x => x.id === s.vehiculo_id);
+
+  const venta  = +s.precio_venta||0;
+  const coste  = +s.coste_total||0;
+  const margen = +s.margen||0;
+  const compra = +s.precio_compra || (veh ? +veh.purchasePrice||0 : 0);
+  const gastos = Math.max(0, coste - compra);
+  const tipo   = s.tipo_iva || 'rebu';
+  const ivaVal = tipo==='iva_21' ? venta*0.21/1.21 : Math.max(0,(venta-compra)*0.21/1.21);
+  const baseImp= tipo==='iva_21' ? venta-ivaVal : Math.max(0,venta-compra)-ivaVal;
+  const dias   = s.dias_en_stock!=null ? +s.dias_en_stock : null;
+  const maskDni= d => d&&d.length>5 ? '*'.repeat(d.length-5)+d.slice(-5) : (d||'—');
+  const name   = `${esc(s.marca||'')} ${esc(s.modelo||'')}`.trim();
+  const mat    = s.matricula ? `<span style="font-size:12px;background:#F1F5F9;color:#475569;border-radius:4px;padding:2px 6px;font-weight:600;margin-left:8px">${esc(s.matricula)}</span>` : '';
+
+  const ecoRow = (l,v,bold,extra='') =>
+    `<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;${extra}">
+      <span style="font-size:13px;color:var(--text-2)">${l}</span>
+      <span style="font-size:13px;font-weight:${bold?'700':'500'};color:${bold?'var(--text)':'inherit'}">${v}</span>
+    </div>`;
+  const opRow = (l,v) =>
+    `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border-light)">
+      <span style="font-size:13px;color:var(--text-2)">${l}</span>
+      <span style="font-size:13px;font-weight:500;color:var(--text)">${v}</span>
+    </div>`;
+
+  return `
+<div>
+  <div style="display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:20px">
+    <button onclick="closeVentasDetail()" style="display:inline-flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;font-size:13px;color:var(--text-2);padding:6px 10px;border-radius:var(--r);font-family:inherit" onmouseenter="this.style.background='var(--border-light)'" onmouseleave="this.style.background=''">
+      ${IC.arrowLeft} Volver a ventas
+    </button>
+    <div style="width:1px;height:20px;background:var(--border)"></div>
+    <div style="font-size:16px;font-weight:700;color:var(--text)">${name}${mat}</div>
+    <span style="display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:var(--success-bg);color:var(--success)">Vendido</span>
+  </div>
+
+  <div class="ventas-detail-grid">
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow)">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-2);margin-bottom:14px">Resumen económico</div>
+      ${ecoRow('Precio de venta final', eur(venta), true)}
+      ${ecoRow('Precio de compra', eur(compra), false)}
+      ${ecoRow('Gastos', eur(gastos), false)}
+      ${ecoRow('Coste total', eur(coste), false, 'border-top:1px solid var(--border-light);margin-top:6px;padding-top:10px')}
+      ${ecoRow('Margen bruto', `<span style="color:${margen>=0?'#059669':'#DC2626'}">${margen>=0?'+':''}${eur(margen)}</span>`, false)}
+      ${ecoRow('Base imponible', eur(Math.max(0,baseImp)), false, 'border-top:1px solid var(--border-light);margin-top:6px;padding-top:10px')}
+      ${ecoRow('IVA ('+( tipo==='rebu'?'REBU':'21%')+')', eur(ivaVal), false)}
+    </div>
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow)">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-2);margin-bottom:14px">Datos de la operación</div>
+      ${veh ? opRow('Fecha entrada', dt(veh.entryDate)) : ''}
+      ${opRow('Fecha venta', dt(s.fecha_venta))}
+      ${dias!==null ? opRow('Días en stock', dias+'d') : ''}
+      ${opRow('Forma de pago', esc(s.forma_pago||'—'))}
+      ${opRow('Tipo de factura', tipo==='rebu'?'REBU':'IVA 21%')}
+      ${opRow('Nº contrato', esc(s.numero_contrato||'—'))}
+    </div>
+  </div>
+
+  <div class="ventas-doc-grid">
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow)">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-2);margin-bottom:14px">Comprador</div>
+      <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:8px">${esc(s.nombre_comprador||'—')}</div>
+      <div style="font-size:13px;color:var(--text-2);margin-bottom:4px">DNI/NIE: ${maskDni(s.dni_comprador||'')}</div>
+      <div style="font-size:13px;color:var(--text-2)">${esc(s.direccion_comprador||'—')}</div>
+    </div>
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow)">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-2);margin-bottom:14px">Documentación</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-light)">
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--text)">Contrato de compraventa</div>
+          <div style="font-size:11px;color:var(--text-2);margin-top:2px">${dt(s.fecha_venta)}</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-shrink:0">
+          <button class="btn btn-secondary btn-sm" onclick="redownloadContrato('${s.id}')">${IC_DL} Descargar</button>
+          <button class="btn btn-secondary btn-sm" onclick="redownloadContrato('${s.id}')" title="Regenerar PDF">↻ Regenerar</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>`;
-  }).join('');
+}
 
-  return cards+`<div class="venta-list">${rows}</div>`;
+function setVentasPeriod(p) {
+  S.ventasPeriod=p; S.ventasDetail=null;
+  const c=document.getElementById('homeContent'); if(c) c.innerHTML=renderHomeContent();
+}
+function openVentasDetail(saleId) {
+  S.ventasDetail=saleId;
+  const c=document.getElementById('homeContent'); if(c) c.innerHTML=renderHomeContent();
+  scrollTo(0,0);
+}
+function closeVentasDetail() {
+  S.ventasDetail=null;
+  const c=document.getElementById('homeContent'); if(c) c.innerHTML=renderHomeContent();
+  scrollTo(0,0);
 }
 
 function redownloadContrato(saleId) {
@@ -3085,6 +3236,35 @@ function _closeWebVehMenu() {
   document.querySelectorAll('.web-veh-menu').forEach(m => m.remove());
   document.removeEventListener('click', _closeWebVehMenu);
 }
+
+function openVehCardMenu(e, id, destacado, archivado) {
+  e.stopPropagation();
+  document.querySelectorAll('.veh-card-menu').forEach(m => m.remove());
+  document.removeEventListener('click', _closeVehCardMenu);
+  const btn = e.currentTarget;
+  const rect = btn.getBoundingClientRect();
+  const menu = document.createElement('div');
+  menu.className = 'veh-card-menu';
+  menu.style.cssText = 'position:fixed;top:' + (rect.bottom + 4) + 'px;right:' + (window.innerWidth - rect.right) + 'px;background:var(--white);border:1px solid var(--border);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.12);z-index:9999;min-width:190px;overflow:hidden';
+  const mi = (label, fn, danger=false) => {
+    const d = document.createElement('div');
+    d.style.cssText = `padding:10px 14px;font-size:13px;cursor:pointer;color:${danger?'var(--danger)':'var(--text)'};transition:background .12s;font-family:inherit`;
+    d.textContent = label;
+    d.onmouseenter = () => d.style.background = danger ? 'var(--danger-bg)' : 'var(--bg)';
+    d.onmouseleave = () => d.style.background = '';
+    d.onclick = () => { document.querySelectorAll('.veh-card-menu').forEach(m=>m.remove()); fn(); };
+    return d;
+  };
+  menu.appendChild(mi(destacado ? '☆ Quitar destacado' : '★ Destacar', () => toggleDestacado(id, null)));
+  menu.appendChild(mi(archivado ? '↩ Desarchivar' : 'Archivar', () => archiveVehicle(id, !archivado)));
+  menu.appendChild(mi('Eliminar', () => openDel(id), true));
+  document.body.appendChild(menu);
+  setTimeout(() => document.addEventListener('click', _closeVehCardMenu), 0);
+}
+function _closeVehCardMenu() {
+  document.querySelectorAll('.veh-card-menu').forEach(m => m.remove());
+  document.removeEventListener('click', _closeVehCardMenu);
+}
 function mkMobileItem(r) {
   const ICcar = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block"><path d="M5 17H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1l2-4h10l2 4h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="16.5" cy="17.5" r="2.5"/></svg>`;
   const thumb = r.photo
@@ -3519,9 +3699,17 @@ async function doChangeStatus(id, oldSt, newSt, salePrice, saleDate, buyerData=n
       const c=calc(vOrig);
       const actualMargin=salePrice?(salePrice-c.totalCost):c.margin;
       const contractNum=`CONTRATO-${new Date().getFullYear()}-${id.slice(0,8).toUpperCase()}`;
+      const _diasStock=(()=>{
+        if(!vOrig.entryDate) return null;
+        const e=new Date(vOrig.entryDate);
+        const s=saleDate?new Date(saleDate+'T12:00:00'):new Date();
+        return Math.max(0,Math.floor((s-e)/86400000));
+      })();
       const {error:sae}=await sb.from('ventas').insert({
         vehiculo_id:id, marca:vOrig.brand, modelo:vOrig.model, matricula:vOrig.matricula||null,
-        precio_venta:salePrice||null, coste_total:c.totalCost||null, margen:actualMargin||null,
+        precio_venta:salePrice||null, precio_compra:+vOrig.purchasePrice||null,
+        coste_total:c.totalCost||null, margen:actualMargin||null,
+        tipo_iva:buyerData.tipoIva||'rebu', dias_en_stock:_diasStock,
         forma_pago:buyerData.payMethod, nombre_comprador:buyerData.name,
         dni_comprador:buyerData.dni, direccion_comprador:buyerData.addr,
         fecha_venta:saleDate?new Date(saleDate+'T12:00:00').toISOString():new Date().toISOString(),
@@ -3540,47 +3728,200 @@ async function doChangeStatus(id, oldSt, newSt, salePrice, saleDate, buyerData=n
   finally { setLoading(false); }
 }
 
-// ─── SOLD MODAL ───────────────────────────────────────────────
+// ─── SOLD MODAL (3 pasos) ─────────────────────────────────────
 function openSoldModal(id) {
-  S.soldTargetId=id;
-  const v=vehiclesCache.find(x=>x.id===id);
-  document.getElementById('buyerName').value='';
-  document.getElementById('buyerDni').value='';
-  document.getElementById('buyerAddr').value='';
-  document.getElementById('buyerPayment').value='Efectivo';
-  document.getElementById('soldPriceInp').value=v&&v.salePrice?v.salePrice:'';
-  document.getElementById('soldDateInp').value=new Date().toISOString().split('T')[0];
+  _saleStep = id ? 2 : 1;
+  _saleVehicleId = id || null;
+  S.soldTargetId = id || null;
+  const v = id ? vehiclesCache.find(x => x.id === id) : null;
+  _saleData = {
+    tipoIva: 'rebu', genPdf: true, _fromVender: !!id,
+    price: v && v.salePrice ? v.salePrice : '',
+    date: new Date().toISOString().split('T')[0],
+  };
   document.getElementById('soldModal').classList.remove('hidden');
-  setTimeout(()=>document.getElementById('buyerName').focus(),100);
+  _renderSaleModal();
+  setTimeout(() => { const f=document.querySelector('#soldModalBody input'); if(f) f.focus(); }, 100);
 }
-function closeSoldModal() { S.soldTargetId=null; document.getElementById('soldModal').classList.add('hidden'); }
-function confirmSold() {
-  const id=S.soldTargetId;
-  const buyerName=document.getElementById('buyerName').value.trim();
-  const buyerDni=document.getElementById('buyerDni').value.trim();
-  const buyerAddr=document.getElementById('buyerAddr').value.trim();
-  const payMethod=document.getElementById('buyerPayment').value;
-  const price=+document.getElementById('soldPriceInp').value||null;
-  const date=document.getElementById('soldDateInp').value||null;
+function closeSoldModal() {
+  S.soldTargetId=null; _saleVehicleId=null;
+  document.getElementById('soldModal').classList.add('hidden');
+}
+function _renderSaleModal() {
+  const title = document.getElementById('soldModalTitle');
+  const body  = document.getElementById('soldModalBody');
+  const foot  = document.getElementById('soldModalFoot');
+  if (!body) return;
 
-  // Validate required buyer fields
+  const stepLabels = ['Vehículo','Datos venta','Confirmar'];
+  const prog = `<div style="display:flex;align-items:center;margin-bottom:20px">
+    ${stepLabels.map((l,i)=>`
+    <div style="display:flex;align-items:center;${i<2?'flex:1':''}">
+      <div style="display:flex;align-items:center;gap:6px;white-space:nowrap">
+        <div style="width:22px;height:22px;border-radius:50%;background:${_saleStep>i+1?'#059669':_saleStep===i+1?'#1E3A5F':'var(--border)'};color:${_saleStep>=i+1?'#fff':'var(--text-2)'};font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${_saleStep>i+1?'✓':i+1}</div>
+        <span style="font-size:12px;font-weight:${_saleStep===i+1?'600':'400'};color:${_saleStep===i+1?'var(--text)':'var(--text-2)'}">${l}</span>
+      </div>
+      ${i<2?`<div style="flex:1;height:1px;background:${_saleStep>i+1?'#059669':'var(--border)'};margin:0 10px"></div>`:''}
+    </div>`).join('')}
+  </div>`;
+
+  if (_saleStep === 1) {
+    title.textContent = 'Registrar venta — Seleccionar vehículo';
+    const avail = vehiclesCache.filter(x => !x.archivado && x.status !== 'vendido');
+    const q = _saleData._q || '';
+    const fil = q ? avail.filter(x=>`${x.brand} ${x.model} ${x.matricula||''}`.toLowerCase().includes(q.toLowerCase())) : avail;
+    const ICc = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3v-5l2.5-5h13L21 12v5h-2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/><line x1="3" y1="12" x2="21" y2="12"/></svg>`;
+    body.innerHTML = prog + `
+<div class="fg" style="margin-bottom:10px">
+  <label>Buscar vehículo</label>
+  <input type="text" placeholder="Marca, modelo, matrícula..." value="${esc(q)}" oninput="_saleData._q=this.value;_renderSaleModal()" style="width:100%">
+</div>
+<div style="border:1px solid var(--border);border-radius:var(--r);overflow:hidden;max-height:260px;overflow-y:auto">
+  ${fil.length===0
+    ? `<div style="padding:24px;text-align:center;font-size:13px;color:var(--text-2)">Sin vehículos disponibles</div>`
+    : fil.map(x=>{
+        const th = x.photos&&x.photos[0]
+          ? `<img src="${x.photos[0]}" style="width:36px;height:36px;border-radius:6px;object-fit:cover;flex-shrink:0">`
+          : `<div style="width:36px;height:36px;border-radius:6px;background:var(--border-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#94A3B8">${ICc}</div>`;
+        return `<div onclick="_selectSaleVehicle('${x.id}')" style="display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;border-bottom:1px solid var(--border-light);transition:background .12s" onmouseenter="this.style.background='#F9FAFB'" onmouseleave="this.style.background=''">
+          ${th}
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:600;color:var(--text)">${esc(x.brand)} ${esc(x.model)}</div>
+            <div style="font-size:11px;color:var(--text-2);margin-top:1px">${x.matricula?esc(x.matricula)+' · ':''}${x.year||''}${x.km?' · '+num(x.km)+' km':''}</div>
+          </div>
+          <span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;background:${x.status==='disponible'?'var(--success-bg)':'var(--warning-bg)'};color:${x.status==='disponible'?'var(--success)':'var(--warning)'};white-space:nowrap">${STATUS_LABEL[x.status]||x.status}</span>
+        </div>`;
+      }).join('')}
+</div>`;
+    foot.innerHTML = `<button class="btn btn-secondary" onclick="closeSoldModal()">Cancelar</button>`;
+
+  } else if (_saleStep === 2) {
+    title.textContent = 'Registrar venta — Datos';
+    const v2 = vehiclesCache.find(x => x.id === _saleVehicleId);
+    const th2 = v2&&v2.photos&&v2.photos[0]
+      ? `<img src="${v2.photos[0]}" style="width:40px;height:40px;border-radius:8px;object-fit:cover;flex-shrink:0">`
+      : '';
+    body.innerHTML = prog + `
+<div style="display:flex;align-items:center;gap:10px;background:var(--bg);border-radius:var(--r);padding:10px 12px;margin-bottom:16px">
+  ${th2}
+  <div>
+    <div style="font-size:14px;font-weight:600;color:var(--text)">${v2?`${esc(v2.brand)} ${esc(v2.model)}`:'—'}</div>
+    ${v2&&v2.matricula?`<div style="font-size:11px;color:var(--text-2);margin-top:1px">${esc(v2.matricula)}</div>`:''}
+  </div>
+</div>
+<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--primary);margin-bottom:10px">Datos del comprador</div>
+<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">
+  <div class="fg"><label>Nombre completo <span style="color:var(--danger)">*</span></label>
+    <input type="text" id="_smName" placeholder="Juan García López" value="${esc(_saleData.name||'')}" autocomplete="off">
+  </div>
+  <div class="fg"><label>DNI / NIE <span style="color:var(--danger)">*</span></label>
+    <input type="text" id="_smDni" placeholder="12345678A" value="${esc(_saleData.dni||'')}" autocomplete="off">
+  </div>
+  <div class="fg"><label>Dirección <span style="color:var(--danger)">*</span></label>
+    <input type="text" id="_smAddr" placeholder="Calle Mayor, 5, 1º, 08001 Barcelona" value="${esc(_saleData.addr||'')}" autocomplete="off">
+  </div>
+  <div class="fg"><label>Forma de pago</label>
+    <select id="_smPay">
+      <option value="Efectivo"${(_saleData.payMethod||'Efectivo')==='Efectivo'?' selected':''}>Efectivo</option>
+      <option value="Transferencia bancaria"${_saleData.payMethod==='Transferencia bancaria'?' selected':''}>Transferencia bancaria</option>
+      <option value="Financiación"${_saleData.payMethod==='Financiación'?' selected':''}>Financiación</option>
+    </select>
+  </div>
+</div>
+<div style="height:1px;background:var(--border);margin-bottom:14px"></div>
+<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--primary);margin-bottom:10px">Datos de la operación</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+  <div class="fg"><label>Precio de venta final (€)</label>
+    <input type="number" id="_smPrice" min="0" step="1" placeholder="11200" value="${_saleData.price||''}">
+  </div>
+  <div class="fg"><label>Fecha de venta</label>
+    <input type="date" id="_smDate" value="${_saleData.date||new Date().toISOString().split('T')[0]}">
+  </div>
+</div>`;
+    foot.innerHTML = `
+<button class="btn btn-secondary" onclick="closeSoldModal()">Cancelar</button>
+<div style="flex:1"></div>
+${!_saleData._fromVender?`<button class="btn btn-secondary" onclick="_saleStep=1;_renderSaleModal()">← Atrás</button>`:''}
+<button class="btn btn-primary" onclick="_saleStep2Next()">Siguiente →</button>`;
+
+  } else if (_saleStep === 3) {
+    title.textContent = 'Registrar venta — Confirmar';
+    const v3 = vehiclesCache.find(x => x.id === _saleVehicleId);
+    const c3 = v3 ? calc(v3) : null;
+    const venta3  = +_saleData.price || (c3 ? c3.pvp : 0) || 0;
+    const coste3  = c3 ? c3.totalCost : 0;
+    const compra3 = v3 ? +v3.purchasePrice||0 : 0;
+    const margen3 = venta3 - coste3;
+    const tipo3   = _saleData.tipoIva || 'rebu';
+    const ivaRebu3= Math.max(0,(venta3-compra3)*0.21/1.21);
+    const ivaIva3 = venta3*0.21/1.21;
+    const ivaVal3 = tipo3==='iva_21' ? ivaIva3 : ivaRebu3;
+    const base3   = tipo3==='iva_21' ? venta3-ivaIva3 : Math.max(0,venta3-compra3)-ivaRebu3;
+    const selBtn  = (k,lbl,sub,ivaV) => `
+<button onclick="_saleData.tipoIva='${k}';_renderSaleModal()" style="flex:1;padding:10px 12px;border-radius:var(--r);border:2px solid ${tipo3===k?'#1E3A5F':'var(--border)'};background:${tipo3===k?'#EEF2FF':'var(--white)'};cursor:pointer;font-family:inherit;text-align:left;transition:all .15s">
+  <div style="font-size:13px;font-weight:700;color:${tipo3===k?'#1E3A5F':'var(--text)'}">${lbl}</div>
+  <div style="font-size:11px;color:var(--text-2);margin-top:2px;line-height:1.4">${sub}</div>
+  <div style="font-size:12px;font-weight:600;color:#059669;margin-top:6px">IVA estimado: ${eur(ivaV)}</div>
+</button>`;
+    body.innerHTML = prog + `
+<div style="display:flex;gap:8px;margin-bottom:16px">
+  ${selBtn('rebu','REBU','Régimen Especial de Bienes Usados',ivaRebu3)}
+  ${selBtn('iva_21','IVA 21%','Tipo impositivo general',ivaIva3)}
+</div>
+<div class="price-box" style="margin-bottom:14px">
+  <div class="prow"><span class="plabel">Precio de venta</span><span class="pval num">${eur(venta3)}</span></div>
+  <div class="prow"><span class="plabel">Coste total</span><span class="pval num">${eur(coste3)}</span></div>
+  <div class="prow big"><span class="plabel">Margen bruto</span><span class="pval num ${margen3>=0?'pos':'neg'}">${margen3>=0?'+':''}${eur(margen3)}</span></div>
+  <div class="prow sep"><span class="plabel">Base imponible</span><span class="pval num">${eur(Math.max(0,base3))}</span></div>
+  <div class="prow"><span class="plabel">IVA (${tipo3==='rebu'?'REBU':'21%'})</span><span class="pval num">${eur(ivaVal3)}</span></div>
+</div>
+<label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text);font-weight:400">
+  <input type="checkbox" id="_smPdf" ${_saleData.genPdf!==false?'checked':''} onchange="_saleData.genPdf=this.checked" style="width:16px;height:16px;cursor:pointer;accent-color:var(--primary)">
+  Generar y descargar contrato PDF
+</label>`;
+    foot.innerHTML = `
+<button class="btn btn-secondary" onclick="closeSoldModal()">Cancelar</button>
+<div style="flex:1"></div>
+<button class="btn btn-secondary" onclick="_saleStep=2;_renderSaleModal()">← Atrás</button>
+<button class="btn btn-primary" onclick="_confirmSale()">${IC.save} Confirmar venta</button>`;
+  }
+}
+function _selectSaleVehicle(id) {
+  _saleVehicleId=id; _saleStep=2;
+  const v=vehiclesCache.find(x=>x.id===id);
+  _saleData.price=v&&v.salePrice?v.salePrice:'';
+  _saleData.date=new Date().toISOString().split('T')[0];
+  _renderSaleModal();
+}
+function _saleStep2Next() {
+  const name=(document.getElementById('_smName')?.value||'').trim();
+  const dni=(document.getElementById('_smDni')?.value||'').trim();
+  const addr=(document.getElementById('_smAddr')?.value||'').trim();
+  const payMethod=document.getElementById('_smPay')?.value||'Efectivo';
+  const price=document.getElementById('_smPrice')?.value||'';
+  const date=document.getElementById('_smDate')?.value||'';
   let ok=true;
-  ['buyerName','buyerDni','buyerAddr'].forEach(fid=>{
+  ['_smName','_smDni','_smAddr'].forEach(fid=>{
     const el=document.getElementById(fid);
-    if(!el.value.trim()){el.style.borderColor='var(--danger)';ok=false;}
-    else el.style.borderColor='';
+    if(el&&!el.value.trim()){el.style.borderColor='var(--danger)';ok=false;}
+    else if(el) el.style.borderColor='';
   });
   if(!ok){toast('Completa los campos obligatorios del comprador',3000,'error');return;}
-
-  const v=vehiclesCache.find(x=>x.id===id);
-  const buyerData={name:buyerName,dni:buyerDni,addr:buyerAddr,payMethod};
+  _saleData={..._saleData,name,dni,addr,payMethod,price,date};
+  _saleStep=3; _renderSaleModal();
+}
+async function _confirmSale() {
+  const id=_saleVehicleId; if(!id) return;
+  const v=vehiclesCache.find(x=>x.id===id); if(!v) return;
+  const price=+_saleData.price||null;
+  const date=_saleData.date||null;
+  const buyerData={name:_saleData.name,dni:_saleData.dni,addr:_saleData.addr,payMethod:_saleData.payMethod,tipoIva:_saleData.tipoIva||'rebu'};
   closeSoldModal();
-
-  // Generate PDF then confirm sale
-  try { generateContractPDF(v,buyerName,buyerDni,buyerAddr,price,payMethod,date); }
-  catch(err) { console.error('PDF error:',err); toast('El PDF no se pudo generar, pero la venta se confirmará igualmente.',4000,'error'); }
-
-  doChangeStatus(id,v.status,'vendido',price,date,buyerData);
+  if(_saleData.genPdf!==false){
+    try{generateContractPDF(v,buyerData.name,buyerData.dni,buyerData.addr,price,buyerData.payMethod,date);}
+    catch(err){console.error('PDF:',err);toast('El PDF no se pudo generar, pero la venta se confirmará igualmente.',4000,'error');}
+  }
+  await doChangeStatus(id,v.status,'vendido',price,date,buyerData);
 }
 document.getElementById('soldModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeSoldModal();});
 
