@@ -631,6 +631,11 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .vcard-actions{display:flex;gap:8px;padding-top:10px;border-top:1px solid var(--border-light)}
 .vcard-actions .btn{flex:1;justify-content:center}
 @media(max-width:480px){.vcard-stats{grid-template-columns:repeat(2,1fr)}}
+.vgallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px}
+.vgallery-card{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:box-shadow .15s}
+.vgallery-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}
+@media(max-width:1024px){.vgallery-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.vgallery-grid{grid-template-columns:1fr}}
 
 /* ── COMING SOON ────────────────────────────────────────────── */
 .comingsoon-wrap{text-align:center;padding:80px 20px}
@@ -1390,6 +1395,7 @@ function renderDash() {
   const sm  = summary();
   const vs  = filtered();
   const featuredCount = vehiclesCache.filter(x => x.destacado).length;
+  const vehicleView = localStorage.getItem('stockdrive_vehicle_view') || 'gallery';
 
   const filterBar = `
 <div class="filter-bar">
@@ -1399,9 +1405,15 @@ function renderDash() {
   </div>
   <span class="featured-counter${featuredCount>=5?' at-limit':featuredCount>0?' has-items':''}" title="Vehículos destacados en el catálogo público">${IC.starOn} ${featuredCount}/5 destacados</span>
   <input class="search-inp" type="text" placeholder="Marca, modelo, matrícula..." value="${esc(S.q)}" id="searchInp" oninput="setQ(this.value)">
+  <div style="display:flex;gap:4px;flex-shrink:0">
+    <button onclick="setVehicleView('gallery')" title="Vista galería" style="padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);background:${vehicleView==='gallery'?'var(--primary)':'transparent'};color:${vehicleView==='gallery'?'#fff':'var(--text-2)'};cursor:pointer;transition:all .15s;display:inline-flex;align-items:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></button>
+    <button onclick="setVehicleView('list')" title="Vista lista" style="padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);background:${vehicleView==='list'?'var(--primary)':'transparent'};color:${vehicleView==='list'?'#fff':'var(--text-2)'};cursor:pointer;transition:all .15s;display:inline-flex;align-items:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+  </div>
 </div>`;
 
   if (!vs.length) return filterBar + renderEmpty();
+
+  if (vehicleView === 'gallery') return filterBar + renderVehicleGallery(vs);
 
   const cards = vs.map(v => {
     const c = calc(v);
@@ -1450,6 +1462,62 @@ function renderDash() {
   }).join('');
 
   return filterBar + `<div class="vcard-list">${cards}</div>`;
+}
+
+function renderVehicleGallery(vehicles) {
+  const carGallery = `<svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="#9CA3AF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3v-5l2.5-5h13L21 12v5h-2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/><line x1="3" y1="12" x2="21" y2="12"/></svg>`;
+  const cards = vehicles.map(v => {
+    const c = calc(v);
+    const photoEl = v.photos && v.photos[0]
+      ? `<img src="${v.photos[0]}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">`
+      : `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">${carGallery}</div>`;
+    const featuredBadge = v.destacado
+      ? `<div style="position:absolute;top:8px;left:8px"><span style="background:#FBBF24;color:#7C2D12;font-size:11px;font-weight:700;padding:2px 7px;border-radius:10px;display:inline-block">★</span></div>`
+      : '';
+    const matTag = v.matricula ? `<span class="matricula-tag">${esc(v.matricula)}</span>` : '';
+    const name = `${esc(v.brand||'')} ${esc(v.model||'')}`.trim();
+    const infoParts = [];
+    if (v.year) infoParts.push(v.year);
+    if (v.km) infoParts.push(num(v.km) + ' km');
+    if (v.combustible) infoParts.push(esc(v.combustible));
+    const infoRow = infoParts.join(' · ');
+    const pvpDisplay = v.status === 'vendido' && c.saleRealPrice ? eur(c.saleRealPrice) : (c.pvp ? eur(c.pvp) : '—');
+    const margenPct = c.totalCost > 0 ? (c.margin / c.totalCost * 100) : 0;
+    const margenColor = c.margin >= 0 ? '#059669' : '#DC2626';
+    const margenStr = `${c.margin >= 0 ? '+' : ''}${eur(c.margin)} · ${margenPct >= 0 ? '+' : ''}${margenPct.toFixed(1)}%`;
+    const pubLine = v.publicado
+      ? `<div style="display:inline-flex;align-items:center;gap:4px;margin-top:6px"><span style="width:6px;height:6px;border-radius:50%;background:#16A34A;display:inline-block"></span><span style="font-size:0.72rem;color:#16A34A">En web</span></div>`
+      : '';
+    const btnVender = (v.status === 'disponible' || v.status === 'reservado')
+      ? `<button class="btn btn-primary" style="flex:1;font-size:12px;height:34px;padding:0 8px" onclick="event.stopPropagation();openSoldModal('${v.id}')">Vender</button>`
+      : '';
+    const btnVer = `<button class="btn btn-secondary" style="font-size:12px;height:34px;padding:0 10px" onclick="event.stopPropagation();showDetail('${v.id}')">${IC.eye} Ver</button>`;
+    const btnEditar = `<button class="btn btn-secondary" style="font-size:12px;height:34px;padding:0 10px" onclick="event.stopPropagation();showEdit('${v.id}')">${IC.edit} Editar</button>`;
+    const btnMenu = `<button onclick="openVehCardMenu(event,'${v.id}',${!!v.destacado},${!!v.archivado},'${v.status}')" style="background:var(--white);border:1px solid var(--border);border-radius:var(--r);cursor:pointer;padding:0 10px;font-size:14px;height:34px;color:var(--text-2);line-height:1;font-family:inherit;transition:background .12s;display:inline-flex;align-items:center" onmouseenter="this.style.background='var(--bg)'" onmouseleave="this.style.background='var(--white)'">⋯</button>`;
+    return `<div class="vgallery-card" onclick="showDetail('${v.id}')">
+  <div style="position:relative;padding-top:56.25%;background:#F3F4F6;overflow:hidden">
+    ${photoEl}
+    <div style="position:absolute;top:8px;right:8px"><span class="badge ${STATUS_BADGE[v.status]}" style="font-size:11px">${STATUS_LABEL[v.status]}</span></div>
+    ${featuredBadge}
+  </div>
+  <div style="padding:14px">
+    ${matTag ? `<div>${matTag}</div>` : ''}
+    <div style="font-size:0.9rem;font-weight:700;${matTag ? 'margin-top:4px;' : ''}line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${name}</div>
+    ${infoRow ? `<div style="font-size:0.78rem;color:var(--text-2);margin-top:4px">${infoRow}</div>` : ''}
+    <div style="height:1px;background:var(--border);margin:10px 0"></div>
+    <div style="font-size:1.15rem;font-weight:700;color:var(--text)">${pvpDisplay}</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+      <div style="font-size:0.75rem;color:var(--text-2)">${eur(c.totalCost)}</div>
+      <div style="font-size:0.75rem;color:${margenColor}">${margenStr}</div>
+    </div>
+    ${pubLine}
+  </div>
+  <div style="padding:0 14px 14px;display:flex;gap:8px">
+    ${btnVender}${btnVer}${btnEditar}${btnMenu}
+  </div>
+</div>`;
+  }).join('');
+  return `<div class="vgallery-grid">${cards}</div>`;
 }
 
 function toggleCard(id) {
@@ -3846,6 +3914,7 @@ function showEdit(id)  {
 }
 function showDetail(id) { S.view='detail';S.detailId=id;render();scrollTo(0,0); }
 function setFilter(f)   { S.alertVehicleIds=null; S.filter=f;render(); }
+function setVehicleView(v) { localStorage.setItem('stockdrive_vehicle_view', v); render(); }
 function setQ(q) {
   S.q=q;render();
   setTimeout(()=>{const i=document.getElementById('searchInp');if(i){i.focus();i.setSelectionRange(q.length,q.length);}},0);
