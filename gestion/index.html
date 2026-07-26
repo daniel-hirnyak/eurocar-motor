@@ -11,6 +11,9 @@
 <meta name="apple-mobile-web-app-title" content="StockDrive">
 <link rel="apple-touch-icon" href="/sd-icon-v2.png">
 <link rel="icon" href="/sd-icon-v2.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --primary: #1E2A5E;
@@ -32,9 +35,16 @@
   --shadow-md: 0 4px 6px -1px rgba(0,0,0,.07),0 2px 4px -1px rgba(0,0,0,.04);
   --r: 8px;
   --r-lg: 12px;
+  --sidebar-width: 220px;
+  --sidebar-bg: #0F172A;
+  --sidebar-text: rgba(255,255,255,0.7);
+  --sidebar-text-active: #ffffff;
+  --sidebar-accent: #3B82F6;
+  --sidebar-hover: rgba(255,255,255,0.06);
+  --sidebar-active-bg: rgba(59,130,246,0.15);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
 
 /* ── LOGIN ─────────────────────────────────────────────────── */
 .login-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
@@ -654,9 +664,9 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .ventas-detail-outer{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .ventas-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
 .ventas-doc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.ventas-table-wrap{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden}
+.ventas-table-wrap{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow-x:auto;overflow-y:visible}
 .ventas-table{width:100%;border-collapse:collapse;font-size:13px;min-width:700px}
-.ventas-table thead th{padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;background:var(--bg);border-bottom:1px solid var(--border)}
+.ventas-table thead th{padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;background:#F9FAFB;border-bottom:1px solid var(--border)}
 .ventas-table thead th.th-r{text-align:right}
 .ventas-table thead th.th-c{text-align:center}
 .ventas-table tbody tr{cursor:pointer;transition:background .12s}
@@ -839,6 +849,65 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   .db-alert-action{width:100%;text-align:center;justify-content:center;margin-top:4px}
   .db-status-cols{grid-template-columns:1fr}
 }
+
+/* ── HIDE OLD TOP NAV ───────────────────────────────────────── */
+.nav{display:none!important}
+
+/* ── SIDEBAR ────────────────────────────────────────────────── */
+#appSidebar{width:var(--sidebar-width);min-width:var(--sidebar-width);background:var(--sidebar-bg);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;overflow:hidden}
+#sidebarLogo{display:flex;align-items:center;gap:10px;padding:20px 16px 16px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:8px}
+#sidebarBrandName{font-size:15px;font-weight:700;color:#fff;line-height:1.2}
+#sidebarClientName{font-size:11px;color:var(--sidebar-text);line-height:1.2;margin-top:1px}
+#sidebarNav{flex:1;display:flex;flex-direction:column;gap:2px;padding:0 10px;overflow-y:auto}
+#sidebarFooter{display:flex;flex-direction:column;gap:2px;padding:8px 10px 16px;border-top:1px solid rgba(255,255,255,0.08)}
+.sidebar-nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;border:none;background:transparent;color:var(--sidebar-text);font-size:13px;font-weight:500;cursor:pointer;width:100%;text-align:left;transition:background .15s,color .15s;font-family:inherit}
+.sidebar-nav-item:hover{background:var(--sidebar-hover);color:var(--sidebar-text-active)}
+.sidebar-nav-item.active{background:var(--sidebar-active-bg);color:var(--sidebar-text-active)}
+.sidebar-nav-item svg{flex-shrink:0;opacity:0.8}
+.sidebar-nav-item.active svg{opacity:1;stroke:var(--sidebar-accent)}
+.sidebar-nav-item.active .snav-icon{color:var(--sidebar-accent)}
+
+/* ── APP BODY: content right of sidebar ─────────────────────── */
+#appBody{margin-left:var(--sidebar-width);min-height:100vh;display:flex;flex-direction:column}
+
+/* ── LOGIN REDESIGN ─────────────────────────────────────────── */
+.login-screen{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:row}
+.login-left{width:40%;background:#0F172A;display:flex;align-items:center;justify-content:center;flex-direction:column;flex-shrink:0}
+.login-left-content{text-align:center;padding:40px}
+.login-brand-img{width:72px;height:72px;border-radius:16px;margin:0 auto 20px;display:block;object-fit:cover}
+.login-brand-name{font-size:28px;font-weight:800;color:#fff;margin-bottom:10px;letter-spacing:-.3px}
+.login-brand-slogan{font-size:14px;color:rgba(255,255,255,0.55);max-width:220px;line-height:1.65;margin:0 auto}
+.login-right{flex:1;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:48px}
+.login-right-inner{width:100%;max-width:380px}
+.login-title{font-size:26px;font-weight:700;color:#0F172A;margin-bottom:8px;letter-spacing:-.3px}
+.login-subtitle{font-size:14px;color:#64748B;margin-bottom:32px;line-height:1.5}
+.login-right .login-form{display:flex;flex-direction:column;gap:16px}
+.login-right input[type=email],.login-right input[type=password]{height:44px;border:1px solid #E2E8F0;border-radius:8px;font-size:14px;padding:0 12px}
+.login-right input[type=email]:focus,.login-right input[type=password]:focus{border-color:#1E3A5F;box-shadow:0 0 0 3px rgba(30,58,95,.1);outline:none}
+.btn-login-submit{width:100%;height:44px;background:#1E3A5F;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s;display:block}
+.btn-login-submit:hover:not(:disabled){background:#16305A}
+.btn-login-submit:disabled{opacity:.6;cursor:not-allowed}
+.login-remember{display:flex;align-items:center;gap:8px;margin-top:4px}
+.login-remember-inp{width:16px;height:16px;flex-shrink:0;cursor:pointer;accent-color:#1E3A5F}
+.login-remember-label{font-size:13px;color:#64748B;cursor:pointer}
+.login-error{background:var(--danger-bg);color:var(--danger);border:1px solid #FECACA;border-radius:8px;padding:10px 12px;font-size:13px}
+
+/* ── MOBILE BOTTOM NAV ─────────────────────────────────────── */
+#bottomNav{display:none;position:fixed;bottom:0;left:0;right:0;height:60px;background:#fff;border-top:1px solid var(--border);z-index:100;align-items:center;justify-content:space-around;padding:0 8px}
+.bnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 14px;border:none;background:none;cursor:pointer;color:#9CA3AF;font-size:10px;font-weight:500;font-family:inherit;transition:color .15s;flex:1;min-width:0}
+.bnav-item.active{color:#1E3A5F}
+.bnav-item svg{display:block}
+
+/* ── RESPONSIVE SIDEBAR ─────────────────────────────────────── */
+@media(max-width:768px){
+  #appSidebar{display:none}
+  #appBody{margin-left:0}
+  #bottomNav{display:flex}
+  .main{padding:16px 16px 80px}
+  .login-left{display:none}
+  .login-right{background:#F8FAFC;padding:40px 24px}
+  .login-screen{flex-direction:column}
+}
 </style>
 </head>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -847,29 +916,34 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 
 <!-- ── LOGIN SCREEN ─────────────────────────────────────────── -->
 <div id="loginScreen" class="login-screen">
-  <div class="login-card">
-    <div class="login-logo-wrap">
-      <div class="login-logo-icon">
-        <img src="/sd-icon-v2.png" alt="StockDrive">
-      </div>
+  <div class="login-left">
+    <div class="login-left-content">
+      <img src="/sd-icon-v2.png" alt="StockDrive" class="login-brand-img">
+      <div class="login-brand-name">StockDrive</div>
+      <div class="login-brand-slogan">El sistema para gestionar tu stock de vehículos</div>
     </div>
-    <div class="login-title">StockDrive</div>
-    <div class="login-eslogan">El sistema para gestionar tu stock de vehículos</div>
-    <div class="login-sub">Inicia sesión para gestionar tu negocio</div>
-    <div id="loginError" class="login-error hidden"></div>
-    <form class="login-form" onsubmit="handleLogin(event)">
-      <div class="fg">
-        <label>Email</label>
-        <input type="email" id="loginEmail" placeholder="correo@empresa.com" required autocomplete="email">
-      </div>
-      <div class="fg">
-        <label>Contraseña</label>
-        <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password">
-      </div>
-      <button type="submit" class="btn btn-primary" id="loginBtn" style="width:100%;justify-content:center;margin-top:8px">
-        Iniciar sesión
-      </button>
-    </form>
+  </div>
+  <div class="login-right">
+    <div class="login-right-inner">
+      <h1 class="login-title">Bienvenido de nuevo</h1>
+      <p class="login-subtitle">Introduce tus credenciales para continuar</p>
+      <div id="loginError" class="login-error hidden"></div>
+      <form class="login-form" onsubmit="handleLogin(event)">
+        <div class="fg">
+          <label>Email</label>
+          <input type="email" id="loginEmail" placeholder="correo@empresa.com" required autocomplete="email">
+        </div>
+        <div class="fg">
+          <label>Contraseña</label>
+          <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn-login-submit" id="loginBtn">Iniciar sesión</button>
+        <div class="login-remember">
+          <input type="checkbox" id="loginRemember" class="login-remember-inp">
+          <label for="loginRemember" class="login-remember-label">Recordar sesión</label>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 
@@ -884,28 +958,102 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 <!-- ── APP CONTAINER ────────────────────────────────────────── -->
 <div id="appContainer" class="hidden">
 
-  <nav class="nav">
-    <div class="nav-brand" onclick="goHome()" style="gap:0">
-      <div style="line-height:1">
-        <div style="font-size:16px;font-weight:800;color:var(--primary);line-height:1.15">StockDrive</div>
-        <div id="navBusinessName" style="font-size:11px;color:#6B7280;font-weight:400;line-height:1.2"></div>
+  <!-- ── SIDEBAR ──────────────────────────────────────────────── -->
+  <aside id="appSidebar">
+    <div id="sidebarLogo">
+      <img src="/sd-icon-v2.png" alt="StockDrive" style="width:32px;height:32px;border-radius:8px;object-fit:cover;flex-shrink:0">
+      <div>
+        <div id="sidebarBrandName">StockDrive</div>
+        <div id="sidebarClientName"></div>
       </div>
     </div>
-    <div class="nav-actions">
-      <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="handleImport(this)">
-      <button class="btn btn-secondary btn-sm" onclick="handleLogout()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        Salir
+    <nav id="sidebarNav">
+      <button class="sidebar-nav-item active" data-tab="metricas" onclick="setHomeTab('metricas');syncSidebarActive('metricas')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <span>Inicio</span>
       </button>
-      <button class="btn btn-primary" onclick="showAddForm()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Añadir vehículo
+      <button class="sidebar-nav-item" data-tab="stock" onclick="setHomeTab('stock');syncSidebarActive('stock')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        <span>Vehículos</span>
+      </button>
+      <button class="sidebar-nav-item" data-tab="ventas" onclick="setHomeTab('ventas');syncSidebarActive('ventas')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <span>Ventas</span>
+      </button>
+      <button class="sidebar-nav-item" data-tab="web" onclick="setHomeTab('web');syncSidebarActive('web')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <span>Rendimiento web</span>
+      </button>
+    </nav>
+    <div id="sidebarQuick">
+      <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.35);padding:16px 16px 6px">Acciones rápidas</div>
+      <div style="padding:0 10px;display:flex;flex-direction:column;gap:2px">
+        <button class="sidebar-nav-item" onclick="window.open(location.origin+'/catalogo/','_blank')">
+          <span style="width:7px;height:7px;border-radius:50%;background:#3B82F6;flex-shrink:0;display:inline-block"></span>
+          <span>Ver catálogo</span>
+        </button>
+        <button class="sidebar-nav-item" onclick="showAddForm()">
+          <span style="width:7px;height:7px;border-radius:50%;background:#10B981;flex-shrink:0;display:inline-block"></span>
+          <span>Añadir vehículo</span>
+        </button>
+      </div>
+    </div>
+    <div id="sidebarFooter">
+      <button class="sidebar-nav-item" data-action="settings" onclick="toast('Ajustes próximamente',2500)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span>Ajustes</span>
+      </button>
+      <button class="sidebar-nav-item" data-action="logout" id="sidebarLogout" onclick="handleLogout()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span>Cerrar sesión</span>
       </button>
     </div>
-  </nav>
+  </aside>
 
-  <div class="toasts" id="toasts"></div>
-  <main class="main" id="app"></main>
+  <!-- ── CONTENT AREA ──────────────────────────────────────────── -->
+  <div id="appBody">
+    <nav class="nav">
+      <div class="nav-brand" onclick="goHome()" style="gap:0">
+        <div style="line-height:1">
+          <div style="font-size:16px;font-weight:800;color:var(--primary);line-height:1.15">StockDrive</div>
+          <div id="navBusinessName" style="font-size:11px;color:#6B7280;font-weight:400;line-height:1.2"></div>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="handleImport(this)">
+        <button class="btn btn-secondary btn-sm" onclick="handleLogout()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Salir
+        </button>
+        <button class="btn btn-primary" onclick="showAddForm()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Añadir vehículo
+        </button>
+      </div>
+    </nav>
+    <div class="toasts" id="toasts"></div>
+    <main class="main" id="app"></main>
+  </div>
+
+  <!-- ── MOBILE BOTTOM NAV ─────────────────────────────────────── -->
+  <nav id="bottomNav">
+    <button class="bnav-item active" data-tab="metricas" onclick="setHomeTab('metricas');syncSidebarActive('metricas')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Inicio
+    </button>
+    <button class="bnav-item" data-tab="stock" onclick="setHomeTab('stock');syncSidebarActive('stock')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3v-5l2.5-5h13L21 12v5h-2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
+      Vehículos
+    </button>
+    <button class="bnav-item" data-tab="ventas" onclick="setHomeTab('ventas');syncSidebarActive('ventas')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      Ventas
+    </button>
+    <button class="bnav-item" data-tab="web" onclick="setHomeTab('web');syncSidebarActive('web')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Web
+    </button>
+  </nav>
 
 </div><!-- /#appContainer -->
 
@@ -1040,10 +1188,12 @@ function setLoading(on, text) {
 async function initApp() {
   const el = document.getElementById('navBusinessName');
   if (el) el.textContent = CLIENT_CONFIG.businessName;
+  const sc = document.getElementById('sidebarClientName');
+  if (sc) sc.textContent = CLIENT_CONFIG.businessName;
   const { data: { session } } = await sb.auth.getSession();
-  if (session) { showApp(); await loadData(); }
+  if (session) { showApp(); syncSidebarActive(S.homeTab); await loadData(); }
   sb.auth.onAuthStateChange((event, _s) => {
-    if (event === 'SIGNED_IN')  { showApp(); loadData(); }
+    if (event === 'SIGNED_IN')  { showApp(); syncSidebarActive(S.homeTab); loadData(); }
     if (event === 'SIGNED_OUT') { vehiclesCache=[]; document.getElementById('appContainer').classList.add('hidden'); document.getElementById('loginScreen').classList.remove('hidden'); }
   });
 }
@@ -1056,9 +1206,10 @@ function showApp() {
 async function handleLogin(e) {
   e.preventDefault();
   const email=document.getElementById('loginEmail').value, password=document.getElementById('loginPassword').value;
+  const remember=document.getElementById('loginRemember')?.checked||false;
   const btn=document.getElementById('loginBtn'), errEl=document.getElementById('loginError');
   btn.disabled=true; btn.textContent='Iniciando sesión...'; errEl.classList.add('hidden');
-  const { error } = await sb.auth.signInWithPassword({ email, password });
+  const { error } = await sb.auth.signInWithPassword({ email, password, options:{ persistSession: remember } });
   btn.disabled=false; btn.textContent='Iniciar sesión';
   if (error) {
     errEl.textContent=(error.message||'').includes('Invalid login credentials')?'Email o contraseña incorrectos':(error.message||'Error al iniciar sesión');
@@ -1067,6 +1218,12 @@ async function handleLogin(e) {
 }
 
 async function handleLogout() { await sb.auth.signOut(); }
+
+function syncSidebarActive(tab) {
+  const t = tab || S.homeTab;
+  document.querySelectorAll('.sidebar-nav-item[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
+  document.querySelectorAll('.bnav-item[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
+}
 
 // ─── DATA LAYER ───────────────────────────────────────────────
 function normalizeV(row, allGastos, allHistorial) {
@@ -2062,13 +2219,13 @@ function renderDetail() {
 function goHome() {
   S.view='home'; S.homeTab='metricas'; S.editId=null; S.detailId=null;
   fData={}; fExp=[]; fPhotos=[]; fStorageToDelete=[];
-  render(); scrollTo(0,0);
+  render(); syncSidebarActive('metricas'); scrollTo(0,0);
 }
 function showStock() { goHome(); }
 function showDash()  {
   S.view='home'; S.homeTab='stock'; S.editId=null; S.detailId=null;
   fData={}; fExp=[]; fPhotos=[]; fStorageToDelete=[];
-  render(); scrollTo(0,0);
+  render(); syncSidebarActive('stock'); scrollTo(0,0);
 }
 function setHomeTab(tab) {
   S.homeTab=tab; S.view='home';
@@ -2084,6 +2241,7 @@ function setHomeTab(tab) {
   } else {
     render();
   }
+  syncSidebarActive(tab);
   scrollTo(0,0);
 }
 function showAddForm() { S.view='form';S.editId=null;initForm(null);render();scrollTo(0,0); }
@@ -2378,18 +2536,27 @@ function renderVentas() {
   const periodPills = [['mes','Este mes'],['mes_anterior','Mes anterior'],['3m','3 meses'],['año','Este año']]
     .map(([k,l])=>`<button onclick="setVentasPeriod('${k}')" style="padding:6px 14px;font-size:12px;font-weight:${p===k?'600':'500'};border-radius:20px;border:1px solid ${p===k?'#1E3A5F':'var(--border)'};background:${p===k?'#1E3A5F':'var(--white)'};color:${p===k?'#fff':'var(--text-2)'};cursor:pointer;font-family:inherit;transition:all .15s">${l}</button>`).join('');
 
-  const kpiCard = (label, val, sub, color='var(--text)') =>
-    `<div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px 20px;box-shadow:var(--shadow)">
-      <div style="font-size:0.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text-2);margin-bottom:10px">${label}</div>
-      <div style="font-size:2.1rem;font-weight:700;color:${color};line-height:1.1;font-variant-numeric:tabular-nums">${val}</div>
-      <div style="font-size:0.78rem;color:var(--text-2);margin-top:6px">${sub}</div>
+  const IC_TRUCK = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>`;
+  const IC_COIN  = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`;
+  const IC_TREND = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>`;
+  const IC_FILE2 = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`;
+
+  const kpiCard = (label, val, sub, color, icon) =>
+    `<div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:20px;position:relative">
+      <div style="position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;color:#3B82F6">${icon}</div>
+      <div style="font-size:0.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text-2);margin-bottom:10px;padding-right:40px">${label}</div>
+      <div style="font-size:1.8rem;font-weight:700;color:${color};line-height:1.1;font-variant-numeric:tabular-nums">${val}</div>
+      <div style="font-size:0.75rem;color:var(--text-2);margin-top:6px">${sub}</div>
     </div>`;
 
   const emptyState = `
-<div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:60px 20px;text-align:center">
-  <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2);opacity:.3;display:block;margin:0 auto 16px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-  <div style="font-size:1rem;font-weight:600;color:var(--text);margin-bottom:8px">Sin ventas registradas en este período</div>
-  <div style="font-size:0.82rem;color:var(--text-2)">Las operaciones cerradas aparecerán aquí.</div>
+<div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:64px 20px;text-align:center">
+  <div style="width:56px;height:56px;border-radius:12px;background:#F1F5F9;display:flex;align-items:center;justify-content:center;margin:0 auto 20px">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+  </div>
+  <div style="font-size:1rem;font-weight:600;color:var(--text);margin-bottom:8px">Sin ventas en este período</div>
+  <div style="font-size:0.82rem;color:var(--text-2);margin-bottom:20px">Las ventas registradas aparecerán aquí.</div>
+  <button class="btn btn-primary" onclick="openSoldModal(null)">${IC.plus} Registrar primera venta</button>
 </div>`;
 
   const tableRows = pv.map(s => mkVentaRow(s)).join('');
@@ -2401,16 +2568,26 @@ function renderVentas() {
       <h2 style="font-size:20px;font-weight:700;color:var(--text);margin:0 0 4px">Ventas</h2>
       <p style="font-size:13px;color:var(--text-2);margin:0">Historial de operaciones y análisis financiero</p>
     </div>
-    <button class="btn btn-primary" onclick="openSoldModal(null)">${IC.plus} Registrar venta</button>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <button class="btn btn-secondary" onclick="exportVentasCSV()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Exportar CSV</button>
+      <button class="btn btn-primary" onclick="openSoldModal(null)">${IC.plus} Registrar venta</button>
+    </div>
   </div>
   <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px">${periodPills}</div>
-  <div class="ventas-kpi-grid">
-    ${kpiCard('Vehículos vendidos', count, periodLabel)}
-    ${kpiCard('Importe vendido', eur(importe), 'Precio de venta acumulado')}
-    ${kpiCard('Margen bruto real', eur(margen), 'Beneficio bruto acumulado', margen>=0?'#059669':'#DC2626')}
-    ${kpiCard('IVA a liquidar', eur(iva), 'Estimado (REBU / IVA 21%)')}
+  <div class="ventas-kpi-grid" style="margin-bottom:24px">
+    ${kpiCard('Vehículos vendidos', count, periodLabel, 'var(--text)', IC_TRUCK)}
+    ${kpiCard('Importe vendido', eur(importe), 'Precio de venta acumulado', 'var(--text)', IC_COIN)}
+    ${kpiCard('Margen bruto real', eur(margen), 'Beneficio bruto acumulado', margen>=0?'#059669':'#DC2626', IC_TREND)}
+    ${kpiCard('IVA a liquidar', eur(iva), 'Estimado (REBU / IVA 21%)', 'var(--text)', IC_FILE2)}
   </div>
   ${pv.length===0 ? emptyState : `
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+  <div>
+    <div style="font-size:16px;font-weight:600;color:var(--text)">Operaciones de venta</div>
+    <div style="font-size:13px;color:var(--text-2);margin-top:2px">Detalle de los vehículos vendidos durante el período</div>
+  </div>
+  <span style="display:inline-flex;align-items:center;padding:4px 10px;border-radius:20px;background:#F1F5F9;color:#475569;font-size:12px;font-weight:600">${count} operaciones</span>
+</div>
 <div class="ventas-table-wrap">
   <div style="overflow-x:auto">
     <table class="ventas-table">
@@ -2422,7 +2599,7 @@ function renderVentas() {
         <th class="th-r">Margen</th>
         <th class="th-c">Días</th>
         <th class="th-c">Tipo</th>
-        <th class="th-c">Contrato</th>
+        <th class="th-c"></th>
       </tr></thead>
       <tbody>${tableRows}</tbody>
     </table>
@@ -2434,11 +2611,13 @@ function renderVentas() {
 function mkVentaRow(s) {
   const veh = vehiclesCache.find(x => x.id === s.vehiculo_id);
   const thumb = veh && veh.photos && veh.photos[0]
-    ? `<img src="${veh.photos[0]}" style="width:36px;height:36px;border-radius:6px;object-fit:cover;flex-shrink:0">`
-    : `<div style="width:36px;height:36px;border-radius:6px;background:var(--border-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#94A3B8">${IC.carGray}</div>`;
+    ? `<img src="${veh.photos[0]}" style="width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0">`
+    : `<div style="width:44px;height:44px;border-radius:8px;background:var(--border-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#94A3B8">${IC.carGray}</div>`;
   const name = `${esc(s.marca||'')} ${esc(s.modelo||'')}`.trim();
-  const mat = s.matricula ? `<span style="font-size:11px;background:#F1F5F9;color:#475569;border-radius:4px;padding:1px 5px;font-weight:600;margin-left:4px">${esc(s.matricula)}</span>` : '';
+  const mat = s.matricula ? `<div style="font-size:11px;color:var(--text-2);margin-top:2px">${esc(s.matricula)}</div>` : '';
   const margen = +s.margen||0;
+  const coste = +s.coste_total||0;
+  const margenPct = coste > 0 ? (margen/coste*100).toFixed(1) : null;
   const dias = s.dias_en_stock!=null ? +s.dias_en_stock : null;
   const tipo = s.tipo_iva || 'rebu';
   const tipoPill = tipo==='iva_21'
@@ -2446,27 +2625,65 @@ function mkVentaRow(s) {
     : `<span style="display:inline-block;padding:3px 8px;border-radius:12px;font-size:11px;font-weight:600;background:#F0FDF4;color:#15803D">REBU</span>`;
   return `<tr onclick="openVentasDetail('${s.id}')">
   <td>
-    <div style="display:flex;align-items:center;gap:10px">
+    <div style="display:flex;align-items:center;gap:12px">
       ${thumb}
       <div>
         <div style="font-weight:600;color:var(--text)">${name}</div>
-        <div style="margin-top:2px">${mat}</div>
+        ${mat}
       </div>
     </div>
   </td>
   <td>
     <div style="color:var(--text)">${dt(s.fecha_venta)}</div>
-    <div style="font-size:11px;color:var(--text-2);margin-top:1px">${esc(s.nombre_comprador||'—')}</div>
+    <div style="font-size:11px;color:var(--text-2);margin-top:2px">${esc(s.nombre_comprador||'—')}</div>
   </td>
   <td class="td-r"><span style="font-weight:700">${eur(s.precio_venta)}</span></td>
   <td class="td-r" style="color:var(--text-2)">${eur(s.coste_total)}</td>
-  <td class="td-r"><span style="font-weight:600;color:${margen>=0?'#059669':'#DC2626'}">${margen>=0?'+':''}${eur(margen)}</span></td>
+  <td class="td-r">
+    <div style="font-weight:600;color:${margen>=0?'#059669':'#DC2626'}">${margen>=0?'+':''}${eur(margen)}</div>
+    <div style="font-size:11px;color:${margen>=0?'#059669':'#DC2626'};margin-top:1px">${margenPct!==null?(margen>=0?'+':'')+margenPct+'%':'—'}</div>
+  </td>
   <td class="td-c" style="color:var(--text-2)">${dias!==null?dias+'d':'—'}</td>
   <td class="td-c">${tipoPill}</td>
   <td class="td-c">
-    <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();redownloadContrato('${s.id}')" title="Descargar PDF">${IC_DL} PDF</button>
+    <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();redownloadContrato('${s.id}')" title="Descargar contrato PDF" style="padding:5px 7px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
   </td>
 </tr>`;
+}
+
+function exportVentasCSV() {
+  const now = new Date();
+  const p = S.ventasPeriod || 'mes';
+  let start, end;
+  if (p === 'mes') {
+    start = new Date(now.getFullYear(), now.getMonth(), 1); end = now;
+  } else if (p === 'mes_anterior') {
+    end = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59);
+    start = new Date(end.getFullYear(), end.getMonth(), 1);
+  } else if (p === '3m') {
+    start = new Date(now.getTime() - 90*86400000); end = now;
+  } else {
+    start = new Date(now.getFullYear(), 0, 1); end = now;
+  }
+  const pv = ventasCache.filter(s => { const d=new Date(s.fecha_venta); return d>=start&&d<=end; });
+  const headers = ['Vehículo','Fecha venta','Comprador','Precio final (€)','Coste total (€)','Margen (€)','Días stock','Tipo IVA'];
+  const rows = pv.map(s => [
+    `${s.marca||''} ${s.modelo||''}`.trim(),
+    s.fecha_venta||'',
+    s.nombre_comprador||'',
+    +s.precio_venta||0,
+    +s.coste_total||0,
+    +s.margen||0,
+    s.dias_en_stock!=null ? +s.dias_en_stock : '',
+    s.tipo_iva||'rebu'
+  ].map(v => `"${String(v).replace(/"/g,'""')}"`).join(','));
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob(['﻿'+csv], {type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `ventas_${p}_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
 }
 
 function renderVentaDetail(saleId) {
@@ -2680,7 +2897,8 @@ function renderHome() {
     <h1 class="home-title">${saludo}, Yuriy</h1>
     <p class="home-subtitle">Principales métricas y evolución de tu negocio · <span style="color:#16a34a;font-weight:600">Actualizado ahora</span></p>
   </div>
-  <div id="dashControls" style="display:${S.homeTab==='metricas'?'flex':'none'};align-items:center;gap:8px;flex-shrink:0">
+  <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+    <div id="dashControls" style="display:${S.homeTab==='metricas'?'flex':'none'};align-items:center;gap:8px">
     <div style="position:relative;display:inline-flex;align-items:center">
       <span style="position:absolute;left:9px;color:var(--text-2);pointer-events:none;display:flex;align-items:center"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
       <select id="dashPeriodSelect" onchange="changeDashPeriod(this.value)" style="-webkit-appearance:none;appearance:none;background:var(--white);border:1px solid var(--border);border-radius:8px;padding:7px 28px 7px 30px;font-size:12px;font-weight:500;color:var(--text);cursor:pointer;font-family:inherit;height:34px">
@@ -2695,8 +2913,13 @@ function renderHome() {
       <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
     </button>
   </div>
+  <button class="btn btn-primary" onclick="showAddForm()">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Añadir vehículo
+  </button>
 </div>
-<div class="dtabs-wrap">
+</div>
+<div class="dtabs-wrap" style="display:none">
   <div class="dtabs">
     <button class="dtab${S.homeTab==='metricas'?' active':''}" data-tab="metricas" onclick="setHomeTab('metricas')">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
@@ -3816,7 +4039,7 @@ async function doChangeStatus(id, oldSt, newSt, salePrice, saleDate, buyerData=n
         toast('⚠️ Venta confirmada pero no guardada en el historial: '+(sae.message||sae.code||'error')+'  →  Ejecuta el SQL de la tabla "ventas" en Supabase.', 8000, 'error');
       }
     }
-    if(newSt==='vendido'&&buyerData){S.view='home';S.homeTab='ventas';}
+    if(newSt==='vendido'&&buyerData){S.view='home';S.homeTab='ventas';syncSidebarActive('ventas');}
     await loadData();
     toast(`Estado actualizado a "${STATUS_LABEL[newSt]}"`,3000,'success');
     render();
