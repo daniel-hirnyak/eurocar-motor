@@ -48,15 +48,24 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 
 /* ── LOGIN ─────────────────────────────────────────────────── */
 .login-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
-.login-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:40px 36px;width:100%;max-width:380px;box-shadow:var(--shadow-md);text-align:center}
-.login-logo-wrap{margin-bottom:16px;display:flex;justify-content:center}
-.login-logo-icon{width:52px;height:52px;border-radius:12px;overflow:hidden}
-.login-logo-icon img{width:100%;height:100%;object-fit:cover;display:block}
-.login-title{font-size:22px;font-weight:700;margin-bottom:6px}
-.login-eslogan{font-size:15px;color:var(--text-2);margin-bottom:10px}
-.login-sub{font-size:13px;color:var(--text-2);margin-bottom:56px}
+.login-card{background:var(--white);border:1px solid var(--border);border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,.06);padding:40px 36px;width:100%;max-width:420px;text-align:center}
+.login-card-logo{width:52px;height:52px;border-radius:12px;overflow:hidden;margin:0 auto 16px}
+.login-card-logo img{width:100%;height:100%;object-fit:cover;display:block}
+.login-card-name{font-size:22px;font-weight:700;color:var(--text);margin-bottom:4px}
+.login-card-welcome{font-size:15px;font-weight:500;color:var(--text);margin-bottom:4px}
+.login-card-desc{font-size:13px;color:var(--text-2);margin-bottom:28px}
 .login-form{text-align:left;display:flex;flex-direction:column;gap:14px}
-.login-error{background:var(--danger-bg);color:var(--danger);border:1px solid #FECACA;border-radius:var(--r);padding:10px 12px;font-size:13px;text-align:left;margin-bottom:4px}
+.login-form label{font-size:13px;font-weight:500;color:var(--text)}
+.login-form input[type=email],.login-form input[type=password]{height:44px;border:1px solid var(--border);border-radius:8px;font-size:14px;padding:0 12px;font-family:inherit;color:var(--text);background:var(--white);width:100%;box-sizing:border-box;outline:none;transition:border-color .15s,box-shadow .15s}
+.login-form input[type=email]:focus,.login-form input[type=password]:focus{border-color:#1E3A5F;box-shadow:0 0 0 3px rgba(30,58,95,.1)}
+.btn-login-submit{width:100%;height:44px;background:#1E3A5F;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s;margin-top:8px}
+.btn-login-submit:hover:not(:disabled){background:#16305A}
+.btn-login-submit:disabled{opacity:.6;cursor:not-allowed}
+.login-remember{display:flex;align-items:center;gap:8px;margin-top:4px}
+.login-remember-inp{width:16px;height:16px;flex-shrink:0;cursor:pointer;accent-color:#1E3A5F}
+.login-remember-label{font-size:13px;color:var(--text-2);cursor:pointer}
+.login-error{background:var(--danger-bg);color:var(--danger);border:1px solid #FECACA;border-radius:8px;padding:10px 12px;font-size:13px;text-align:left}
+@media(max-width:480px){.login-card{width:calc(100% - 32px);padding:28px 20px}}
 
 /* ── LOADING ───────────────────────────────────────────────── */
 .loading-overlay{position:fixed;inset:0;background:rgba(248,250,252,.88);backdrop-filter:blur(2px);z-index:900;display:flex;align-items:center;justify-content:center}
@@ -876,28 +885,6 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 /* ── APP BODY: content right of sidebar ─────────────────────── */
 #appBody{margin-left:var(--sidebar-width);min-height:100vh;display:flex;flex-direction:column}
 
-/* ── LOGIN REDESIGN ─────────────────────────────────────────── */
-.login-screen{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:row}
-.login-left{width:40%;background:#0F172A;display:flex;align-items:center;justify-content:center;flex-direction:column;flex-shrink:0}
-.login-left-content{text-align:center;padding:40px}
-.login-brand-img{width:72px;height:72px;border-radius:16px;margin:0 auto 20px;display:block;object-fit:cover}
-.login-brand-name{font-size:28px;font-weight:800;color:#fff;margin-bottom:10px;letter-spacing:-.3px}
-.login-brand-slogan{font-size:14px;color:rgba(255,255,255,0.55);max-width:220px;line-height:1.65;margin:0 auto}
-.login-right{flex:1;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:48px}
-.login-right-inner{width:100%;max-width:380px}
-.login-title{font-size:26px;font-weight:700;color:#0F172A;margin-bottom:8px;letter-spacing:-.3px}
-.login-subtitle{font-size:14px;color:#64748B;margin-bottom:32px;line-height:1.5}
-.login-right .login-form{display:flex;flex-direction:column;gap:16px}
-.login-right input[type=email],.login-right input[type=password]{height:44px;border:1px solid #E2E8F0;border-radius:8px;font-size:14px;padding:0 12px}
-.login-right input[type=email]:focus,.login-right input[type=password]:focus{border-color:#1E3A5F;box-shadow:0 0 0 3px rgba(30,58,95,.1);outline:none}
-.btn-login-submit{width:100%;height:44px;background:#1E3A5F;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s;display:block}
-.btn-login-submit:hover:not(:disabled){background:#16305A}
-.btn-login-submit:disabled{opacity:.6;cursor:not-allowed}
-.login-remember{display:flex;align-items:center;gap:8px;margin-top:4px}
-.login-remember-inp{width:16px;height:16px;flex-shrink:0;cursor:pointer;accent-color:#1E3A5F}
-.login-remember-label{font-size:13px;color:#64748B;cursor:pointer}
-.login-error{background:var(--danger-bg);color:var(--danger);border:1px solid #FECACA;border-radius:8px;padding:10px 12px;font-size:13px}
-
 /* ── MOBILE BOTTOM NAV ─────────────────────────────────────── */
 #bottomNav{display:none;position:fixed;bottom:0;left:0;right:0;height:60px;background:#fff;border-top:1px solid var(--border);z-index:100;align-items:center;justify-content:space-around;padding:0 8px}
 .bnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 14px;border:none;background:none;cursor:pointer;color:#9CA3AF;font-size:10px;font-weight:500;font-family:inherit;transition:color .15s;flex:1;min-width:0}
@@ -910,9 +897,6 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   #appBody{margin-left:0}
   #bottomNav{display:flex}
   .main{padding:16px 16px 80px}
-  .login-left{display:none}
-  .login-right{background:#F8FAFC;padding:40px 24px}
-  .login-screen{flex-direction:column}
 }
 </style>
 </head>
@@ -922,34 +906,27 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 
 <!-- ── LOGIN SCREEN ─────────────────────────────────────────── -->
 <div id="loginScreen" class="login-screen">
-  <div class="login-left">
-    <div class="login-left-content">
-      <img src="/sd-icon-v2.png" alt="StockDrive" class="login-brand-img">
-      <div class="login-brand-name">StockDrive</div>
-      <div class="login-brand-slogan">El sistema para gestionar tu stock de vehículos</div>
-    </div>
-  </div>
-  <div class="login-right">
-    <div class="login-right-inner">
-      <h1 class="login-title">Bienvenido de nuevo</h1>
-      <p class="login-subtitle">Introduce tus credenciales para continuar</p>
-      <div id="loginError" class="login-error hidden"></div>
-      <form class="login-form" onsubmit="handleLogin(event)">
-        <div class="fg">
-          <label>Email</label>
-          <input type="email" id="loginEmail" placeholder="correo@empresa.com" required autocomplete="email">
-        </div>
-        <div class="fg">
-          <label>Contraseña</label>
-          <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password">
-        </div>
-        <button type="submit" class="btn-login-submit" id="loginBtn">Iniciar sesión</button>
-        <div class="login-remember">
-          <input type="checkbox" id="loginRemember" class="login-remember-inp">
-          <label for="loginRemember" class="login-remember-label">Recordar sesión</label>
-        </div>
-      </form>
-    </div>
+  <div class="login-card">
+    <div class="login-card-logo"><img src="/sd-icon-v2.png" alt="StockDrive"></div>
+    <div class="login-card-name">StockDrive</div>
+    <div class="login-card-welcome">Bienvenido de nuevo</div>
+    <div class="login-card-desc">Introduce tus credenciales para continuar</div>
+    <div id="loginError" class="login-error hidden"></div>
+    <form class="login-form" onsubmit="handleLogin(event)">
+      <div class="fg">
+        <label for="loginEmail">Email</label>
+        <input type="email" id="loginEmail" placeholder="correo@empresa.com" required autocomplete="email">
+      </div>
+      <div class="fg">
+        <label for="loginPassword">Contraseña</label>
+        <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn-login-submit" id="loginBtn">Iniciar sesión</button>
+      <div class="login-remember">
+        <input type="checkbox" id="loginRemember" class="login-remember-inp">
+        <label for="loginRemember" class="login-remember-label">Recordar sesión</label>
+      </div>
+    </form>
   </div>
 </div>
 
