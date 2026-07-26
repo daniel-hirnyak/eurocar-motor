@@ -631,11 +631,12 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .vcard-actions{display:flex;gap:8px;padding-top:10px;border-top:1px solid var(--border-light)}
 .vcard-actions .btn{flex:1;justify-content:center}
 @media(max-width:480px){.vcard-stats{grid-template-columns:repeat(2,1fr)}}
-.vgallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px}
+.vgallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}
 .vgallery-card{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:box-shadow .15s}
 .vgallery-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}
-@media(max-width:1024px){.vgallery-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:640px){.vgallery-grid{grid-template-columns:1fr}}
+@media(max-width:1024px){.vgallery-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:768px){.vgallery-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.vgallery-grid{grid-template-columns:1fr}}
 
 /* ── COMING SOON ────────────────────────────────────────────── */
 .comingsoon-wrap{text-align:center;padding:80px 20px}
@@ -1404,11 +1405,9 @@ function renderDash() {
       .map(([k,l,n])=>`<button class="ftab${S.filter===k?' active':''}" onclick="setFilter('${k}')">${l} <span style="opacity:.6">(${n})</span></button>`).join('')}
   </div>
   <span class="featured-counter${featuredCount>=5?' at-limit':featuredCount>0?' has-items':''}" title="Vehículos destacados en el catálogo público">${IC.starOn} ${featuredCount}/5 destacados</span>
-  <input class="search-inp" type="text" placeholder="Marca, modelo, matrícula..." value="${esc(S.q)}" id="searchInp" oninput="setQ(this.value)">
-  <div style="display:flex;gap:4px;flex-shrink:0">
-    <button onclick="setVehicleView('gallery')" title="Vista galería" style="padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);background:${vehicleView==='gallery'?'var(--primary)':'transparent'};color:${vehicleView==='gallery'?'#fff':'var(--text-2)'};cursor:pointer;transition:all .15s;display:inline-flex;align-items:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></button>
-    <button onclick="setVehicleView('list')" title="Vista lista" style="padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);background:${vehicleView==='list'?'var(--primary)':'transparent'};color:${vehicleView==='list'?'#fff':'var(--text-2)'};cursor:pointer;transition:all .15s;display:inline-flex;align-items:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
-  </div>
+  <input class="search-inp" type="text" placeholder="Marca, modelo, matrícula..." value="${esc(S.q)}" id="searchInp" oninput="setQ(this.value)" style="flex:1">
+  <button onclick="setVehicleView('gallery')" title="Vista galería" style="padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);background:${vehicleView==='gallery'?'var(--primary)':'transparent'};color:${vehicleView==='gallery'?'#fff':'var(--text-2)'};cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></button>
+  <button onclick="setVehicleView('list')" title="Vista lista" style="padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);background:${vehicleView==='list'?'var(--primary)':'transparent'};color:${vehicleView==='list'?'#fff':'var(--text-2)'};cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
 </div>`;
 
   if (!vs.length) return filterBar + renderEmpty();
@@ -1489,7 +1488,7 @@ function renderVehicleGallery(vehicles) {
       ? `<div style="display:inline-flex;align-items:center;gap:4px;margin-top:6px"><span style="width:6px;height:6px;border-radius:50%;background:#16A34A;display:inline-block"></span><span style="font-size:0.72rem;color:#16A34A">En web</span></div>`
       : '';
     const btnVender = (v.status === 'disponible' || v.status === 'reservado')
-      ? `<button class="btn btn-primary" style="flex:1;font-size:12px;height:34px;padding:0 8px" onclick="event.stopPropagation();openSoldModal('${v.id}')">Vender</button>`
+      ? `<button class="btn btn-primary" style="font-size:12px;height:34px;padding:0 10px" onclick="event.stopPropagation();openSoldModal('${v.id}')">Vender</button>`
       : '';
     const btnVer = `<button class="btn btn-secondary" style="font-size:12px;height:34px;padding:0 10px" onclick="event.stopPropagation();showDetail('${v.id}')">${IC.eye} Ver</button>`;
     const btnEditar = `<button class="btn btn-secondary" style="font-size:12px;height:34px;padding:0 10px" onclick="event.stopPropagation();showEdit('${v.id}')">${IC.edit} Editar</button>`;
