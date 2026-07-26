@@ -672,7 +672,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .ventas-table tbody tr{cursor:pointer;transition:background .12s}
 .ventas-table tbody tr:not(:last-child) td{border-bottom:1px solid var(--border-light)}
 .ventas-table tbody tr:hover{background:#F9FAFB}
-.ventas-table td{padding:12px 14px;vertical-align:middle}
+.ventas-table td{padding:14px 16px;vertical-align:middle}
 .ventas-table td.td-r{text-align:right}
 .ventas-table td.td-c{text-align:center}
 @media(max-width:768px){
@@ -1042,7 +1042,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
       Inicio
     </button>
     <button class="bnav-item" data-tab="stock" onclick="setHomeTab('stock');syncSidebarActive('stock')">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3v-5l2.5-5h13L21 12v5h-2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
       Vehículos
     </button>
     <button class="bnav-item" data-tab="ventas" onclick="setHomeTab('ventas');syncSidebarActive('ventas')">
@@ -1050,7 +1050,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
       Ventas
     </button>
     <button class="bnav-item" data-tab="web" onclick="setHomeTab('web');syncSidebarActive('web')">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       Web
     </button>
   </nav>
@@ -2542,9 +2542,11 @@ function renderVentas() {
   const IC_FILE2 = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`;
 
   const kpiCard = (label, val, sub, color, icon) =>
-    `<div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:20px;position:relative">
-      <div style="position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;color:#3B82F6">${icon}</div>
-      <div style="font-size:0.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text-2);margin-bottom:10px;padding-right:40px">${label}</div>
+    `<div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:20px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+        <div style="font-size:0.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text-2)">${label}</div>
+        <div style="width:32px;height:32px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;color:#3B82F6;flex-shrink:0;margin-left:8px">${icon}</div>
+      </div>
       <div style="font-size:1.8rem;font-weight:700;color:${color};line-height:1.1;font-variant-numeric:tabular-nums">${val}</div>
       <div style="font-size:0.75rem;color:var(--text-2);margin-top:6px">${sub}</div>
     </div>`;
@@ -2559,7 +2561,18 @@ function renderVentas() {
   <button class="btn btn-primary" onclick="openSoldModal(null)">${IC.plus} Registrar primera venta</button>
 </div>`;
 
+  const diasArr = pv.filter(s => s.dias_en_stock!=null).map(s => +s.dias_en_stock);
+  const diasMedio = diasArr.length > 0 ? Math.round(diasArr.reduce((a,b)=>a+b,0)/diasArr.length) : null;
   const tableRows = pv.map(s => mkVentaRow(s)).join('');
+  const countLabel = count===1 ? '1 operación' : count+' operaciones';
+
+  const summaryMetric = (label, val) =>
+    `<div>
+      <div style="font-size:0.75rem;color:var(--text-2);margin-bottom:3px">${label}</div>
+      <div style="font-size:1.1rem;font-weight:700;color:var(--text)">${val}</div>
+    </div>`;
+
+  setTimeout(() => initVentasChart(), 0);
 
   return `
 <div>
@@ -2580,13 +2593,35 @@ function renderVentas() {
     ${kpiCard('Margen bruto real', eur(margen), 'Beneficio bruto acumulado', margen>=0?'#059669':'#DC2626', IC_TREND)}
     ${kpiCard('IVA a liquidar', eur(iva), 'Estimado (REBU / IVA 21%)', 'var(--text)', IC_FILE2)}
   </div>
+  ${ventasCache.length > 0 ? `
+<div style="display:grid;grid-template-columns:65% 1fr;gap:16px;margin-bottom:24px">
+  <div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:20px">
+    <div style="margin-bottom:16px">
+      <div style="font-size:15px;font-weight:600;color:var(--text)">Evolución de las ventas</div>
+      <div style="font-size:12px;color:var(--text-2);margin-top:3px">Importe vendido y margen bruto durante los últimos 6 meses</div>
+    </div>
+    <div style="height:220px;position:relative"><canvas id="ventasEvolucionChart"></canvas></div>
+  </div>
+  <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:20px;display:flex;flex-direction:column">
+    <div style="font-size:0.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-2);margin-bottom:16px">Resumen del período</div>
+    <div style="display:flex;flex-direction:column;flex:1;justify-content:space-between">
+      ${summaryMetric('Ticket medio', count>0 ? eur(importe/count) : '—')}
+      <div style="height:1px;background:var(--border-light);margin:10px 0"></div>
+      ${summaryMetric('Margen medio', count>0 ? eur(margen/count) : '—')}
+      <div style="height:1px;background:var(--border-light);margin:10px 0"></div>
+      ${summaryMetric('Días medio en stock', diasMedio!==null ? diasMedio+' días' : '—')}
+      <div style="height:1px;background:var(--border-light);margin:10px 0"></div>
+      ${summaryMetric('Total operaciones', count>0 ? count+(count===1?' venta':' ventas') : '—')}
+    </div>
+  </div>
+</div>` : ''}
   ${pv.length===0 ? emptyState : `
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
   <div>
     <div style="font-size:16px;font-weight:600;color:var(--text)">Operaciones de venta</div>
     <div style="font-size:13px;color:var(--text-2);margin-top:2px">Detalle de los vehículos vendidos durante el período</div>
   </div>
-  <span style="display:inline-flex;align-items:center;padding:4px 10px;border-radius:20px;background:#F1F5F9;color:#475569;font-size:12px;font-weight:600">${count} operaciones</span>
+  <span style="display:inline-flex;align-items:center;padding:4px 10px;border-radius:20px;background:#F1F5F9;color:#475569;font-size:12px;font-weight:600">${countLabel}</span>
 </div>
 <div class="ventas-table-wrap">
   <div style="overflow-x:auto">
@@ -2594,12 +2629,13 @@ function renderVentas() {
       <thead><tr>
         <th>Vehículo</th>
         <th>Fecha venta</th>
+        <th>Comprador</th>
         <th class="th-r">Precio final</th>
         <th class="th-r">Coste total</th>
         <th class="th-r">Margen</th>
         <th class="th-c">Días</th>
         <th class="th-c">Tipo</th>
-        <th class="th-c"></th>
+        <th class="th-c">Contrato</th>
       </tr></thead>
       <tbody>${tableRows}</tbody>
     </table>
@@ -2633,10 +2669,8 @@ function mkVentaRow(s) {
       </div>
     </div>
   </td>
-  <td>
-    <div style="color:var(--text)">${dt(s.fecha_venta)}</div>
-    <div style="font-size:11px;color:var(--text-2);margin-top:2px">${esc(s.nombre_comprador||'—')}</div>
-  </td>
+  <td style="color:var(--text)">${dt(s.fecha_venta)}</td>
+  <td style="color:${s.nombre_comprador?'var(--text)':'var(--text-2)'}">${esc(s.nombre_comprador||'—')}</td>
   <td class="td-r"><span style="font-weight:700">${eur(s.precio_venta)}</span></td>
   <td class="td-r" style="color:var(--text-2)">${eur(s.coste_total)}</td>
   <td class="td-r">
@@ -2646,7 +2680,9 @@ function mkVentaRow(s) {
   <td class="td-c" style="color:var(--text-2)">${dias!==null?dias+'d':'—'}</td>
   <td class="td-c">${tipoPill}</td>
   <td class="td-c">
-    <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();redownloadContrato('${s.id}')" title="Descargar contrato PDF" style="padding:5px 7px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
+    ${s.numero_contrato
+      ? `<button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();redownloadContrato('${s.id}')" title="Descargar contrato PDF" style="padding:5px 7px;color:#1E3A5F"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>`
+      : `<span style="color:var(--text-2)">—</span>`}
   </td>
 </tr>`;
 }
@@ -2684,6 +2720,51 @@ function exportVentasCSV() {
   a.download = `ventas_${p}_${new Date().toISOString().slice(0,10)}.csv`;
   a.click();
   URL.revokeObjectURL(a.href);
+}
+
+function initVentasChart() {
+  const canvas = document.getElementById('ventasEvolucionChart');
+  if (!canvas) return;
+  if (window._ventasChart) { window._ventasChart.destroy(); window._ventasChart = null; }
+  const now = new Date();
+  const months = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push({ year: d.getFullYear(), month: d.getMonth(),
+      label: d.toLocaleDateString('es-ES', {month:'short'}).replace('.','') });
+  }
+  const dataImporte = months.map(m =>
+    ventasCache.filter(s => { const d=new Date(s.fecha_venta); return d.getFullYear()===m.year&&d.getMonth()===m.month; })
+      .reduce((t,s) => t+(+s.precio_venta||0), 0));
+  const dataMargen = months.map(m =>
+    ventasCache.filter(s => { const d=new Date(s.fecha_venta); return d.getFullYear()===m.year&&d.getMonth()===m.month; })
+      .reduce((t,s) => t+(+s.margen||0), 0));
+  const bgImporte = months.map((_, i) => i===5 ? '#3B82F6' : '#BFDBFE');
+  const bgMargen  = months.map((_, i) => i===5 ? '#1E40AF' : '#93C5FD');
+  window._ventasChart = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: months.map(m => m.label),
+      datasets: [
+        { label: 'Importe vendido', data: dataImporte, backgroundColor: bgImporte, borderRadius: 4, borderSkipped: false },
+        { label: 'Margen bruto',    data: dataMargen,  backgroundColor: bgMargen,  borderRadius: 4, borderSkipped: false }
+      ]
+    },
+    options: {
+      animation: { duration: 500 },
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top', align: 'end', labels: { boxWidth: 10, boxHeight: 10, padding: 12, font: { size: 11 } } },
+        tooltip: { callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + eur(ctx.raw) } }
+      },
+      scales: {
+        x: { grid: { display: false }, border: { display: false }, ticks: { font: { size: 11 } } },
+        y: { grid: { color: 'rgba(0,0,0,0.04)' }, border: { display: false },
+             ticks: { font: { size: 11 }, callback: v => v >= 1000 ? Math.round(v/1000)+'k' : v } }
+      }
+    }
+  });
 }
 
 function renderVentaDetail(saleId) {
@@ -2724,9 +2805,7 @@ function renderVentaDetail(saleId) {
   return `
 <div>
   <div style="margin-bottom:24px">
-    <button onclick="closeVentasDetail()" style="display:inline-flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;font-size:13px;color:var(--text-2);padding:4px 0;font-family:inherit;margin-bottom:12px" onmouseenter="this.style.color='var(--text)'" onmouseleave="this.style.color='var(--text-2)'">
-      ${IC.arrowLeft} Volver a ventas
-    </button>
+    <button class="btn btn-secondary btn-sm" onclick="closeVentasDetail()" style="margin-bottom:10px">${IC.arrowLeft} Volver a ventas</button>
     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
       <div>
         <div style="font-size:22px;font-weight:700;color:var(--text);line-height:1.2">${name}</div>
@@ -2838,15 +2917,23 @@ function redownloadContrato(saleId) {
 async function loadVentaAdjuntos(saleId) {
   const el = document.getElementById('ventaAdjuntos-' + saleId);
   if (!el) return;
+  el.innerHTML = `<div class="adj-loading" style="font-size:0.82rem;color:var(--text-2);padding:8px 0">Cargando adjuntos…</div>`;
+  const timer = setTimeout(() => {
+    const e = document.getElementById('ventaAdjuntos-' + saleId);
+    if (e && e.querySelector('.adj-loading')) e.innerHTML = `<div style="font-size:0.82rem;color:var(--text-2);padding:8px 0">Sin documentos adjuntos</div>`;
+  }, 5000);
   try {
     const { data, error } = await sb.storage.from('vehiculos-fotos').list('ventas/' + saleId, { limit: 50, sortBy: { column: 'created_at', order: 'desc' } });
+    clearTimeout(timer);
     if (error) throw error;
     const files = (data || []).filter(f => f.name && !f.name.startsWith('.'));
+    const el2 = document.getElementById('ventaAdjuntos-' + saleId);
+    if (!el2) return;
     if (!files.length) {
-      el.innerHTML = `<div style="font-size:12px;color:var(--text-2);padding:8px 0">Sin archivos adjuntos</div>`;
+      el2.innerHTML = `<div style="font-size:0.82rem;color:var(--text-2);padding:8px 0">Sin documentos adjuntos</div>`;
       return;
     }
-    el.innerHTML = files.map(f => {
+    el2.innerHTML = files.map(f => {
       const { data: ud } = sb.storage.from('vehiculos-fotos').getPublicUrl('ventas/' + saleId + '/' + f.name);
       const url = ud.publicUrl;
       const ext = (f.name.split('.').pop() || '').toLowerCase();
@@ -2860,8 +2947,9 @@ async function loadVentaAdjuntos(saleId) {
       </div>`;
     }).join('');
   } catch(err) {
+    clearTimeout(timer);
     const el2 = document.getElementById('ventaAdjuntos-' + saleId);
-    if (el2) el2.innerHTML = `<div style="font-size:12px;color:var(--text-2)">No se pudieron cargar los adjuntos</div>`;
+    if (el2) el2.innerHTML = `<div style="font-size:0.82rem;color:var(--text-2);padding:4px 0 8px">No se pudieron cargar los adjuntos. <button class="btn btn-secondary btn-sm" onclick="loadVentaAdjuntos('${saleId}')" style="margin-left:8px">Reintentar</button></div>`;
   }
 }
 
@@ -2926,7 +3014,7 @@ function renderHome() {
       Inicio
     </button>
     <button class="dtab${S.homeTab==='stock'?' active':''}" data-tab="stock" onclick="setHomeTab('stock')">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3v-5l2.5-5h13L21 12v5h-2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
       Vehículos
     </button>
     <button class="dtab${S.homeTab==='ventas'?' active':''}" data-tab="ventas" onclick="setHomeTab('ventas')">
@@ -2934,7 +3022,7 @@ function renderHome() {
       Ventas
     </button>
     <button class="dtab${S.homeTab==='web'?' active':''}" data-tab="web" onclick="setHomeTab('web')">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       Rendimiento web
     </button>
   </div>
