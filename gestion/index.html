@@ -1116,6 +1116,11 @@ const sb = createClient(
 // ALTER TABLE ventas ADD COLUMN IF NOT EXISTS precio_compra NUMERIC;
 // ALTER TABLE ventas ADD COLUMN IF NOT EXISTS tipo_iva TEXT DEFAULT 'rebu';
 // ALTER TABLE ventas ADD COLUMN IF NOT EXISTS dias_en_stock INTEGER;
+// -- Columnas añadidas a vehiculos para forma de pago de compra:
+// ALTER TABLE vehiculos ADD COLUMN IF NOT EXISTS forma_pago_compra TEXT DEFAULT 'transferencia';
+// ALTER TABLE vehiculos ADD COLUMN IF NOT EXISTS importe_transferencia_compra NUMERIC;
+// ALTER TABLE vehiculos ADD COLUMN IF NOT EXISTS importe_efectivo_compra NUMERIC;
+// ALTER TABLE vehiculos ADD COLUMN IF NOT EXISTS compra_con_iva BOOLEAN DEFAULT false;
 
 // ─── STATE ───────────────────────────────────────────────────
 let vehiclesCache = [];
@@ -1246,7 +1251,11 @@ function normalizeV(row, allGastos, allHistorial) {
     descripcion:   row.descripcion   || '',
     etiqueta_dgt:  row.etiqueta_dgt  || '',
     ivaChecked:    !!row.precio_mas_iva,
-    archivado:     !!row.archivado,
+    archivado:                    !!row.archivado,
+    forma_pago_compra:            row.forma_pago_compra   || 'transferencia',
+    importe_transferencia_compra: row.importe_transferencia_compra ?? null,
+    importe_efectivo_compra:      row.importe_efectivo_compra      ?? null,
+    compra_con_iva:               !!row.compra_con_iva,
   };
 }
 
@@ -1712,10 +1721,7 @@ function renderForm() {
       <input type="hidden" name="ivaChecked" id="ivaHidden" value="${fData.ivaChecked?'true':'false'}">
     </div>
     <div id="ivaDisplay" class="${fData.ivaChecked?'':'hidden'}">
-      <div class="iva-display">
-        <span class="iva-label">Precio final para el cliente:</span>
-        <strong id="ivaTotal" class="num iva-amount">${fData.ivaChecked&&fData.salePrice?eur(fData.salePrice*1.21):''}</strong>
-      </div>
+      ${fData.ivaChecked&&fData.salePrice?renderVentaIvaBox(+fData.salePrice):''}
     </div>
   </div>
 
@@ -1769,6 +1775,39 @@ function renderForm() {
       <label>Precio de compra (€) *</label>
       <input type="number" name="purchasePrice" id="pp" value="${fData.purchasePrice||''}" placeholder="8500" min="0" step="1" required oninput="refreshPricing()">
       <div class="input-hint">Precio de adquisición</div>
+    </div>
+    <div class="fg" style="margin-top:12px">
+      <label>Forma de pago de la compra</label>
+      <select name="formaPagoCompra" id="formaPagoCompra" onchange="toggleMixtoFields()">
+        <option value="transferencia" ${(fData.forma_pago_compra||'transferencia')==='transferencia'?'selected':''}>Transferencia bancaria</option>
+        <option value="efectivo" ${(fData.forma_pago_compra||'')==='efectivo'?'selected':''}>Efectivo</option>
+        <option value="mixto" ${(fData.forma_pago_compra||'')==='mixto'?'selected':''}>Mixto</option>
+      </select>
+    </div>
+    <div id="mixtoFields" style="margin-top:12px;display:${(fData.forma_pago_compra||'')==='mixto'?'block':'none'};overflow:hidden;transition:all .2s ease">
+      <div class="fgrid-2">
+        <div class="fg">
+          <label>Importe transferencia (€)</label>
+          <input type="number" name="importeTransferenciaCompra" id="importeTransferenciaCompra" value="${fData.importe_transferencia_compra||''}" placeholder="0" min="0" step="1" oninput="checkMixtoSum()">
+        </div>
+        <div class="fg">
+          <label>Importe efectivo (€)</label>
+          <input type="number" name="importeEfectivoCompra" id="importeEfectivoCompra" value="${fData.importe_efectivo_compra||''}" placeholder="0" min="0" step="1" oninput="checkMixtoSum()">
+        </div>
+      </div>
+      <div id="mixtoHint" class="input-hint" style="margin-top:4px"></div>
+    </div>
+    <div class="fg" style="margin-top:12px">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:500;font-size:12px;color:var(--text)">
+        <input type="checkbox" id="compraConIvaCheck" ${fData.compra_con_iva?'checked':''}
+               onchange="refreshCompraIva()"
+               style="width:16px;height:16px;accent-color:var(--primary);cursor:pointer;flex-shrink:0;margin:0">
+        Compra con IVA (factura de empresa o autónomo)
+      </label>
+      <input type="hidden" name="compraConIva" id="compraConIvaHidden" value="${fData.compra_con_iva?'true':'false'}">
+    </div>
+    <div id="compraIvaDisplay" class="${fData.compra_con_iva?'':'hidden'}" style="margin-top:12px">
+      ${fData.compra_con_iva?renderCompraIvaBox(fData.purchasePrice||0,fData.forma_pago_compra||'transferencia',fData.importe_transferencia_compra||0,fData.importe_efectivo_compra||0):''}
     </div>
     <div id="soldPriceFields" class="${isSold?'':'hidden'}">
       <div class="form-subsection-title">Datos de la venta</div>
@@ -1893,6 +1932,33 @@ function updExp(id,field,val) {
 function refreshPricing() {
   document.getElementById('expTotal').textContent=eur(sumExp());
   document.getElementById('priceBox').innerHTML=renderPriceBox();
+  refreshCompraIva();
+}
+function toggleMixtoFields() {
+  const sel = document.getElementById('formaPagoCompra');
+  const box = document.getElementById('mixtoFields');
+  if (!sel || !box) return;
+  box.style.display = sel.value === 'mixto' ? 'block' : 'none';
+  if (sel.value !== 'mixto') { const h = document.getElementById('mixtoHint'); if (h) h.textContent = ''; }
+  refreshCompraIva();
+}
+function checkMixtoSum() {
+  const pp  = +document.getElementById('pp')?.value || 0;
+  const tr  = +document.getElementById('importeTransferenciaCompra')?.value || 0;
+  const ef  = +document.getElementById('importeEfectivoCompra')?.value || 0;
+  const hint = document.getElementById('mixtoHint');
+  if (!hint) return;
+  const sum = tr + ef;
+  if (pp && sum !== pp) {
+    hint.textContent = `Suma: ${eur(sum)} — diferencia de ${eur(Math.abs(pp - sum))} con el precio de compra`;
+    hint.style.color = 'var(--warning)';
+  } else if (pp && sum === pp) {
+    hint.textContent = `Suma correcta: ${eur(sum)}`;
+    hint.style.color = 'var(--success)';
+  } else {
+    hint.textContent = '';
+  }
+  refreshCompraIva();
 }
 function refreshPubDisplay() {
   const cb=document.getElementById('pubCheck');
@@ -1915,13 +1981,58 @@ function refreshIvaDisplay() {
   const cb=document.getElementById('ivaCheck');
   const hidden=document.getElementById('ivaHidden');
   const disp=document.getElementById('ivaDisplay');
-  const tot=document.getElementById('ivaTotal');
   if(!cb||!disp) return;
   if(hidden) hidden.value=cb.checked?'true':'false';
   if(cb.checked){
     const sp=+document.getElementById('sp')?.value||0;
     disp.classList.remove('hidden');
-    if(tot) tot.textContent=eur(sp*1.21);
+    disp.innerHTML=renderVentaIvaBox(sp);
+  } else {
+    disp.classList.add('hidden');
+  }
+}
+function renderCompraIvaBox(pp, fp, tr, ef) {
+  const base = fp === 'mixto' ? tr : pp;
+  const iva  = base / 1.21 * 0.21;
+  const dr = (l, v, bold) =>
+    `<div style="display:flex;justify-content:space-between;align-items:center${bold?';margin-top:6px;padding-top:6px;border-top:1px solid rgba(0,0,0,.07)':''}">
+      <span>${l}</span><span style="font-weight:${bold?700:500};color:${bold?'var(--primary)':'var(--text)'}">${v}</span>
+    </div>`;
+  const rows = fp === 'mixto'
+    ? dr('Base imponible (con factura)', eur(base/1.21))
+      + dr('IVA soportado (21%)', eur(iva))
+      + dr('Sin factura (efectivo)', eur(ef))
+      + dr('Total pagado', eur(pp), true)
+    : dr('Base imponible', eur(base/1.21))
+      + dr('IVA soportado (21%)', eur(iva))
+      + dr('Total pagado', eur(pp), true);
+  return `<div style="background:var(--primary-light);border-radius:var(--r);padding:10px 12px;margin-top:8px;font-size:12px;display:flex;flex-direction:column;gap:4px;color:var(--text-2)">${rows}</div>`;
+}
+function renderVentaIvaBox(sp) {
+  const dr = (l, v, bold) =>
+    `<div style="display:flex;justify-content:space-between;align-items:center${bold?';margin-top:6px;padding-top:6px;border-top:1px solid rgba(0,0,0,.07)':''}">
+      <span>${l}</span><span style="font-weight:${bold?700:500};color:${bold?'var(--primary)':'var(--text)'}">${v}</span>
+    </div>`;
+  return `<div style="background:var(--primary-light);border-radius:var(--r);padding:10px 12px;margin-top:8px;font-size:12px;display:flex;flex-direction:column;gap:4px;color:var(--text-2)">
+    ${dr('Base imponible', eur(sp))}
+    ${dr('IVA repercutido (21%)', eur(sp*0.21))}
+    ${dr('Precio final para el cliente', eur(sp*1.21), true)}
+  </div>`;
+}
+function refreshCompraIva() {
+  const cb     = document.getElementById('compraConIvaCheck');
+  const hidden = document.getElementById('compraConIvaHidden');
+  const disp   = document.getElementById('compraIvaDisplay');
+  if (!cb || !disp) return;
+  if (hidden) hidden.value = cb.checked ? 'true' : 'false';
+  if (cb.checked) {
+    const pp  = +document.getElementById('pp')?.value || 0;
+    const sel = document.getElementById('formaPagoCompra');
+    const fp  = sel?.value || 'transferencia';
+    const tr  = +document.getElementById('importeTransferenciaCompra')?.value || 0;
+    const ef  = +document.getElementById('importeEfectivoCompra')?.value || 0;
+    disp.classList.remove('hidden');
+    disp.innerHTML = renderCompraIvaBox(pp, fp, tr, ef);
   } else {
     disp.classList.add('hidden');
   }
@@ -2213,6 +2324,16 @@ function renderDetail() {
       <div class="dcard-head">Desglose económico</div>
       <div class="dcard-body">
         <div class="info-row"><span class="info-l">Precio de compra</span><span class="info-v num">${eur(v.purchasePrice)}</span></div>
+        <div class="info-row"><span class="info-l">Forma de pago</span><span class="info-v">${
+          v.forma_pago_compra === 'mixto'
+            ? `Mixto — ${eur(v.importe_transferencia_compra||0)} transf. + ${eur(v.importe_efectivo_compra||0)} efectivo`
+            : v.forma_pago_compra === 'efectivo' ? 'Efectivo' : 'Transferencia bancaria'
+        }</span></div>
+        ${v.compra_con_iva ? `<div style="margin-top:4px;padding:6px 8px;background:var(--bg);border-radius:6px;font-size:11px;color:var(--text-2)">
+          <div style="display:flex;justify-content:space-between;margin-bottom:2px"><span>${v.forma_pago_compra==='mixto'?'Base imponible (con factura)':'Base imponible compra'}</span><span class="num">${eur((v.forma_pago_compra==='mixto'?(v.importe_transferencia_compra||0):(v.purchasePrice||0))/1.21)}</span></div>
+          <div style="display:flex;justify-content:space-between${v.forma_pago_compra==='mixto'?';margin-bottom:2px':''}"><span>IVA soportado</span><span class="num" style="color:var(--success)">${eur((v.forma_pago_compra==='mixto'?(v.importe_transferencia_compra||0):(v.purchasePrice||0))/1.21*0.21)}</span></div>
+          ${v.forma_pago_compra==='mixto'?`<div style="display:flex;justify-content:space-between"><span>Sin factura (efectivo)</span><span class="num">${eur(v.importe_efectivo_compra||0)}</span></div>`:''}
+        </div>` : ''}
         ${v.expenses&&v.expenses.length?`
         <div style="margin:12px 0 6px;font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em">Gastos</div>
         ${renderExpensesGrouped(v.expenses, c.totalExp)}
@@ -2223,6 +2344,11 @@ function renderDetail() {
           <div class="prow" style="margin-top:6px"><span class="plabel">PVP objetivo</span><span class="pval num" style="color:var(--text-2)">${eur(c.pvp)}</span></div>
           <div class="prow"><span class="plabel" style="font-weight:600;color:var(--text)">Precio venta real</span><span class="pval num">${eur(c.saleRealPrice)}</span></div>
           `:`<div class="prow" style="margin-top:6px"><span class="plabel">Precio de venta</span><span class="pval num">${eur(c.pvp)}</span></div>`}
+          ${v.ivaChecked?`<div style="margin-top:4px;padding:6px 8px;background:var(--bg);border-radius:6px;font-size:11px;color:var(--text-2)">
+            <div style="display:flex;justify-content:space-between;margin-bottom:2px"><span>Base imponible venta</span><span class="num">${eur(c.effectivePvp)}</span></div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:2px"><span>IVA repercutido</span><span class="num">${eur(c.effectivePvp*0.21)}</span></div>
+            <div style="display:flex;justify-content:space-between"><span>Precio al cliente</span><span class="num">${eur(c.effectivePvp*1.21)}</span></div>
+          </div>`:''}
           <div class="prow big">
             <span class="plabel">Margen bruto</span>
             <span class="pval num" style="color:${c.margin>=0?'var(--success)':'var(--danger)'}">${eur(c.margin)}</span>
@@ -2861,6 +2987,11 @@ function renderVentaDetail(saleId) {
       <span style="font-size:13px;color:var(--text-2)">${l}</span>
       <span style="font-size:13px;font-weight:${bold?'700':'500'};color:var(--text)">${v}</span>
     </div>`;
+  const smallRow = (l, v) =>
+    `<div style="display:flex;justify-content:space-between;align-items:center;padding:2px 0 2px 10px">
+      <span style="font-size:11px;color:var(--text-2)">${l}</span>
+      <span style="font-size:11px;color:var(--text-2)">${v}</span>
+    </div>`;
   const opRow = (l, v) =>
     `<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border-light)">
       <span style="font-size:13px;color:var(--text-2)">${l}</span>
@@ -2891,6 +3022,9 @@ function renderVentaDetail(saleId) {
       <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow)">
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-2);margin-bottom:12px">Resumen económico</div>
         ${ecoRow('Precio final de venta', `<strong>${eur(venta)}</strong>`)}
+        ${tipo === 'iva_21'
+          ? smallRow('Base imponible', eur(venta/1.21)) + smallRow('IVA repercutido (21%)', eur(venta/1.21*0.21))
+          : smallRow('Base imponible (margen)', eur(margenCalc/1.21))}
         ${ecoRow('Precio de compra', eur(compra))}
         ${ecoRow('Gastos confirmados', eur(gastosConf))}
         ${ecoRow('Coste total', eur(costeCalc), false, true)}
@@ -3980,8 +4114,12 @@ function buildVehicleRow(d, isSold, fotos) {
     descripcion:        d.descripcion?.trim() || null,
     etiqueta_dgt:       d.etiqueta_dgt || null,
     fotos,
-    precio_mas_iva:     d.ivaChecked === 'true',
-    updated_at:         new Date().toISOString(),
+    precio_mas_iva:               d.ivaChecked === 'true',
+    forma_pago_compra:            d.formaPagoCompra || 'transferencia',
+    importe_transferencia_compra: d.formaPagoCompra === 'mixto' ? (+d.importeTransferenciaCompra || null) : null,
+    importe_efectivo_compra:      d.formaPagoCompra === 'mixto' ? (+d.importeEfectivoCompra || null) : null,
+    compra_con_iva:               d.compraConIva === 'true',
+    updated_at:                   new Date().toISOString(),
   };
 }
 
