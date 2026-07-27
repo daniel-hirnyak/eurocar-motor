@@ -898,6 +898,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .settings-logo-preview{width:52px;height:52px;border-radius:10px;object-fit:cover;border:1px solid var(--border);flex-shrink:0}
 .settings-logo-placeholder{width:52px;height:52px;border-radius:10px;background:var(--bg);border:1px dashed var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text-2)}
 .settings-modal-body{padding:20px 22px;max-height:calc(80vh - 60px);overflow-y:auto}
+#settingsModal .modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);max-height:90vh;overflow-y:auto;border-radius:16px;max-width:520px;width:calc(100% - 32px)}
 .sidebar-action-btn{display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.7);font-size:12px;font-weight:500;width:100%;text-align:left;cursor:pointer;transition:background .15s,color .15s;font-family:inherit}
 .sidebar-action-btn:hover{background:rgba(255,255,255,.08);color:#fff}
 
@@ -905,7 +906,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 #mobileHeader{display:none;position:fixed;top:0;left:0;right:0;height:56px;background:#FFFFFF;border-bottom:1px solid #E2E8F0;box-shadow:0 1px 4px rgba(0,0,0,.06);z-index:200;align-items:center;justify-content:space-between;padding:0 8px}
 .mhdr-btn{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border:none;background:none;cursor:pointer;border-radius:8px;color:#0F172A;transition:background .15s;flex-shrink:0}
 .mhdr-btn:hover{background:rgba(15,23,42,.06)}
-.mhdr-title{font-size:17px;font-weight:800;color:#0F172A;letter-spacing:-.02em;pointer-events:none}
+.mhdr-title{font-size:20px;font-weight:700;color:#0F172A;letter-spacing:-.02em;pointer-events:none}
 #mobileOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:250;opacity:0;transition:opacity .2s}
 #mobileOverlay.open{opacity:1}
 #mobileHamburgerMenu{display:none;position:fixed;top:64px;left:16px;background:var(--white);border:1px solid var(--border);border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.15);z-index:300;min-width:200px;overflow:hidden;opacity:0;transform:scale(.9) translateY(-8px);transform-origin:top left;transition:opacity .15s,transform .15s}
@@ -916,7 +917,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 #mobileHamburgerMenu.open .mhmenu-item{opacity:1;transform:none}
 #mobileHamburgerMenu.open .mhmenu-item:nth-child(1){transition-delay:0ms}
 #mobileHamburgerMenu.open .mhmenu-item:nth-child(2){transition-delay:60ms}
-#mobileActionsMenu{display:none;position:fixed;bottom:80px;right:16px;background:var(--white);border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.15);z-index:300;min-width:200px;overflow:hidden;opacity:0;transform:scale(.9) translateY(8px);transform-origin:bottom right;transition:opacity .15s,transform .15s}
+#mobileActionsMenu{display:none;position:fixed;top:64px;right:16px;background:var(--white);border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.15);z-index:300;min-width:200px;overflow:hidden;opacity:0;transform:scale(.9) translateY(-8px);transform-origin:top right;transition:opacity .15s,transform .15s}
 #mobileActionsMenu.open{opacity:1;transform:scale(1) translateY(0)}
 .maction-item{display:flex;align-items:center;gap:12px;padding:13px 16px;color:var(--text);font-size:14px;font-weight:500;cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:inherit;opacity:0;transform:translateY(8px);transition:opacity 200ms ease,transform 200ms ease,background .15s}
 .maction-item:hover{background:var(--bg)}
@@ -1156,7 +1157,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 
 <!-- ── SETTINGS MODAL ────────────────────────────────────────── -->
 <div class="overlay hidden" id="settingsModal" onclick="if(event.target===this)closeSettingsModal()">
-  <div class="modal" style="max-width:520px;width:100%">
+  <div class="modal" style="max-width:520px">
     <div class="modal-head" style="display:flex;align-items:center;justify-content:space-between">
       <span>Ajustes</span>
       <button onclick="closeSettingsModal()" style="border:none;background:none;cursor:pointer;padding:4px;color:var(--text-2);display:flex;align-items:center;border-radius:6px;transition:background .15s" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background='none'">
@@ -5166,6 +5167,8 @@ function toggleMobileActionsMenu() {
   if (m.classList.contains('open')) { closeMobileActionsMenu(); return; }
   var hm = document.getElementById('mobileHamburgerMenu');
   if (hm) { hm.classList.remove('open'); hm.style.display = 'none'; }
+  m.style.top = '64px';
+  m.style.right = '16px';
   m.style.display = 'block';
   ov.style.display = 'block';
   requestAnimationFrame(function(){ m.classList.add('open'); ov.classList.add('open'); });
