@@ -873,7 +873,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 #sidebarLogo{display:flex;align-items:center;gap:10px;padding:20px 16px 16px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:8px}
 #sidebarBrandName{font-size:15px;font-weight:700;color:#fff;line-height:1.2}
 #sidebarClientName{font-size:11px;color:var(--sidebar-text);line-height:1.2;margin-top:1px}
-#sidebarNav{flex:1;display:flex;flex-direction:column;gap:2px;padding:0 10px;overflow-y:auto}
+#sidebarNav{flex:1;display:flex;flex-direction:column;gap:2px;padding:0 10px;overflow-y:auto;padding-bottom:4px}
 #sidebarFooter{display:flex;flex-direction:column;gap:2px;padding:8px 10px 16px;border-top:1px solid rgba(255,255,255,0.08)}
 .sidebar-nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;border:none;background:transparent;color:var(--sidebar-text);font-size:13px;font-weight:500;cursor:pointer;width:100%;text-align:left;transition:background .15s,color .15s;font-family:inherit}
 .sidebar-nav-item:hover{background:var(--sidebar-hover);color:var(--sidebar-text-active)}
@@ -881,6 +881,21 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .sidebar-nav-item svg{flex-shrink:0;opacity:0.8}
 .sidebar-nav-item.active svg{opacity:1;stroke:var(--sidebar-accent)}
 .sidebar-nav-item.active .snav-icon{color:var(--sidebar-accent)}
+.snav-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.35);padding:14px 16px 4px}
+#sidebarNav button~.snav-label{margin-top:20px;border-top:1px solid rgba(255,255,255,.08)}
+.settings-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:20px}
+.settings-tab{padding:10px 16px;font-size:13px;font-weight:500;color:var(--text-2);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;font-family:inherit;transition:color .15s}
+.settings-tab:hover{color:var(--text)}
+.settings-tab.active{color:var(--primary);font-weight:600;border-bottom-color:var(--primary)}
+.settings-tab-panel{display:none}
+.settings-tab-panel.active{display:block}
+.settings-logo-wrap{display:flex;align-items:center;gap:14px;margin-bottom:4px}
+.settings-logo-preview{width:52px;height:52px;border-radius:10px;object-fit:cover;border:1px solid var(--border);flex-shrink:0}
+.settings-logo-placeholder{width:52px;height:52px;border-radius:10px;background:var(--bg);border:1px dashed var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text-2)}
+.settings-modal-body{padding:20px 22px;max-height:calc(80vh - 60px);overflow-y:auto}
+.sidebar-action-btn{display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.7);font-size:12px;font-weight:500;width:100%;text-align:left;cursor:pointer;transition:background .15s,color .15s;font-family:inherit}
+.sidebar-action-btn:hover{background:rgba(255,255,255,.08);color:#fff}
+.sidebar-action-btn svg{flex-shrink:0}
 
 /* ── APP BODY: content right of sidebar ─────────────────────── */
 #appBody{margin-left:var(--sidebar-width);min-height:100vh;display:flex;flex-direction:column}
@@ -919,7 +934,12 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
       </div>
       <div class="fg">
         <label for="loginPassword">Contraseña</label>
-        <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password">
+        <div style="position:relative">
+          <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password" style="padding-right:36px">
+          <button type="button" onclick="togglePassVis('loginPassword',this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-2);display:flex;align-items:center;padding:0;transition:color .15s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text-2)'" aria-label="Mostrar contraseña">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
       </div>
       <button type="submit" class="btn-login-submit" id="loginBtn">Iniciar sesión</button>
       <div class="login-remember">
@@ -944,13 +964,17 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   <!-- ── SIDEBAR ──────────────────────────────────────────────── -->
   <aside id="appSidebar">
     <div id="sidebarLogo">
+      <!-- Logo del PRODUCTO StockDrive — nunca se modifica desde Settings -->
       <img src="/sd-icon-v2.png" alt="StockDrive" style="width:32px;height:32px;border-radius:8px;object-fit:cover;flex-shrink:0">
       <div>
+        <!-- Nombre del PRODUCTO — nunca se modifica desde Settings -->
         <div id="sidebarBrandName">StockDrive</div>
+        <!-- Nombre del NEGOCIO CLIENTE — sí se actualiza desde Settings -->
         <div id="sidebarClientName"></div>
       </div>
     </div>
-    <nav id="sidebarNav">
+    <div id="sidebarNav">
+      <div class="snav-label">Gestión</div>
       <button class="sidebar-nav-item active" data-tab="metricas" onclick="setHomeTab('metricas');syncSidebarActive('metricas')">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
         <span>Inicio</span>
@@ -963,26 +987,31 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
         <span>Ventas</span>
       </button>
+
+      <div class="snav-label">Presencia online</div>
+      <button class="sidebar-nav-item" onclick="window.open(location.origin+'/catalogo/','_blank')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <span>Catálogo online</span>
+      </button>
       <button class="sidebar-nav-item" data-tab="web" onclick="setHomeTab('web');syncSidebarActive('web')">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
         <span>Rendimiento web</span>
       </button>
-    </nav>
-    <div id="sidebarQuick">
-      <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.35);padding:16px 16px 6px">Acciones rápidas</div>
-      <div style="padding:0 10px;display:flex;flex-direction:column;gap:2px">
-        <button class="sidebar-nav-item" onclick="window.open(location.origin+'/catalogo/','_blank')">
-          <span style="width:7px;height:7px;border-radius:50%;background:#3B82F6;flex-shrink:0;display:inline-block"></span>
-          <span>Ver catálogo</span>
+
+      <div class="snav-label">Acciones rápidas</div>
+      <div style="padding:0 6px;display:flex;flex-direction:column;gap:6px;padding-bottom:8px">
+        <button class="sidebar-action-btn" onclick="showAddForm()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Añadir vehículo
         </button>
-        <button class="sidebar-nav-item" onclick="showAddForm()">
-          <span style="width:7px;height:7px;border-radius:50%;background:#10B981;flex-shrink:0;display:inline-block"></span>
-          <span>Añadir vehículo</span>
+        <button class="sidebar-action-btn" onclick="openSoldModal(null)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          Registrar venta
         </button>
       </div>
     </div>
     <div id="sidebarFooter">
-      <button class="sidebar-nav-item" data-action="settings" onclick="toast('Ajustes próximamente',2500)">
+      <button class="sidebar-nav-item" data-action="settings" onclick="openSettingsModal()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         <span>Ajustes</span>
       </button>
@@ -1061,6 +1090,89 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   </div>
 </div>
 
+<!-- ── SETTINGS MODAL ────────────────────────────────────────── -->
+<div class="overlay hidden" id="settingsModal" onclick="if(event.target===this)closeSettingsModal()">
+  <div class="modal" style="max-width:520px;width:100%">
+    <div class="modal-head" style="display:flex;align-items:center;justify-content:space-between">
+      <span>Ajustes</span>
+      <button onclick="closeSettingsModal()" style="border:none;background:none;cursor:pointer;padding:4px;color:var(--text-2);display:flex;align-items:center;border-radius:6px;transition:background .15s" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background='none'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="settings-modal-body">
+      <div class="settings-tabs">
+        <button class="settings-tab active" id="stab-perfil" onclick="switchSettingsTab('perfil')">Perfil del negocio</button>
+        <button class="settings-tab" id="stab-cuenta" onclick="switchSettingsTab('cuenta')">Cuenta</button>
+      </div>
+
+      <!-- TAB: Perfil del negocio -->
+      <div class="settings-tab-panel active" id="spanel-perfil">
+        <div class="fg" style="margin-bottom:16px">
+          <label>Logo del negocio</label>
+          <div class="settings-logo-wrap" style="margin-top:8px">
+            <div id="settingsLogoPreviewWrap">
+              <div class="settings-logo-placeholder" id="settingsLogoPlaceholder">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              </div>
+            </div>
+            <div>
+              <label class="btn btn-secondary btn-sm" for="settingsLogoInput" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Subir logo
+              </label>
+              <input type="file" id="settingsLogoInput" accept="image/*" style="display:none" onchange="handleSettingsLogoUpload(this)">
+              <div class="input-hint" style="margin-top:4px">JPG, PNG o SVG. Se muestra en el sidebar.</div>
+            </div>
+          </div>
+        </div>
+        <div class="fgrid-2">
+          <div class="fg"><label>Nombre del negocio</label>
+            <input type="text" id="sName" value="" placeholder="${CLIENT_CONFIG.businessName||'Nombre del negocio'}"></div>
+          <div class="fg"><label>Teléfono de contacto</label>
+            <input type="text" id="sPhone" value="" placeholder="${CLIENT_CONFIG.phone||''}"></div>
+        </div>
+        <div class="fgrid-2" style="margin-top:12px">
+          <div class="fg"><label>WhatsApp de contacto</label>
+            <input type="text" id="sWhatsapp" value="" placeholder="${CLIENT_CONFIG.phone||''}"></div>
+          <div class="fg"><label>Dirección</label>
+            <input type="text" id="sAddress" value="" placeholder="${CLIENT_CONFIG.address||''}"></div>
+        </div>
+        <div class="fg" style="margin-top:12px">
+          <label>Horario</label>
+          <textarea id="sHorario" rows="2" placeholder="Lunes a viernes: 9h-18h / Sábados: 9h-14h"></textarea>
+        </div>
+        <button class="btn btn-primary" style="width:100%;margin-top:16px" onclick="saveSettingsProfile()">Guardar cambios</button>
+      </div>
+
+      <!-- TAB: Cuenta -->
+      <div class="settings-tab-panel" id="spanel-cuenta">
+        <div class="fg" style="margin-bottom:16px">
+          <label>Email</label>
+          <div id="settingsEmail" style="font-size:14px;color:var(--text-2);padding:9px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r)">—</div>
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:16px">
+          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:12px">Cambiar contraseña</div>
+          <div class="fg"><label>Nueva contraseña</label>
+            <div style="position:relative">
+              <input type="password" id="sNewPass" placeholder="Mínimo 8 caracteres" minlength="8" style="padding-right:36px">
+              <button type="button" onclick="togglePassVis('sNewPass',this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-2);display:flex;align-items:center;padding:0;transition:color .15s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text-2)'" aria-label="Mostrar contraseña">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div></div>
+          <div class="fg" style="margin-top:12px"><label>Confirmar nueva contraseña</label>
+            <div style="position:relative">
+              <input type="password" id="sConfPass" placeholder="Repite la contraseña" style="padding-right:36px">
+              <button type="button" onclick="togglePassVis('sConfPass',this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-2);display:flex;align-items:center;padding:0;transition:color .15s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text-2)'" aria-label="Mostrar contraseña">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div></div>
+          <button class="btn btn-primary" style="width:100%;margin-top:16px" onclick="changePassword()">Cambiar contraseña</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ── IMPORT CONFIRM MODAL ─────────────────────────────────── -->
 <div class="overlay hidden" id="importModal">
   <div class="modal">
@@ -1089,6 +1201,7 @@ const sb = createClient(
   CLIENT_CONFIG.supabaseUrl,
   CLIENT_CONFIG.supabaseKey
 );
+(function(){try{const s=localStorage.getItem('stockdrive_config');if(s)Object.assign(CLIENT_CONFIG,JSON.parse(s));}catch(e){}})();
 
 // ─── SQL: tabla ventas (ejecutar en Supabase si no existe) ────
 // CREATE TABLE IF NOT EXISTS ventas (
@@ -1206,6 +1319,114 @@ async function handleLogin(e) {
 }
 
 async function handleLogout() { await sb.auth.signOut(); }
+
+// ─── SETTINGS MODAL ──────────────────────────────────────────
+function openSettingsModal() {
+  const modal = document.getElementById('settingsModal');
+  if (!modal) return;
+  // Populate fields from CLIENT_CONFIG + saved localStorage
+  const saved = (() => { try { return JSON.parse(localStorage.getItem('stockdrive_config')||'{}'); } catch(e) { return {}; } })();
+  document.getElementById('sName').value    = saved.businessName    || CLIENT_CONFIG.businessName    || '';
+  document.getElementById('sPhone').value   = saved.phone           || CLIENT_CONFIG.phone           || '';
+  document.getElementById('sWhatsapp').value= saved.whatsapp        || CLIENT_CONFIG.phone           || '';
+  document.getElementById('sAddress').value = saved.address         || CLIENT_CONFIG.address         || '';
+  document.getElementById('sHorario').value = saved.horario         || '';
+  // Logo preview
+  const logoUrl = saved.logoUrl || CLIENT_CONFIG.logoUrl || null;
+  _renderSettingsLogo(logoUrl);
+  // Account tab email
+  sb.auth.getUser().then(({data}) => {
+    const el = document.getElementById('settingsEmail');
+    if (el) el.textContent = data?.user?.email || '—';
+  });
+  // Reset password fields and switch to perfil tab
+  document.getElementById('sNewPass').value  = '';
+  document.getElementById('sConfPass').value = '';
+  switchSettingsTab('perfil');
+  modal.classList.remove('hidden');
+}
+function closeSettingsModal() {
+  document.getElementById('settingsModal')?.classList.add('hidden');
+}
+function switchSettingsTab(tab) {
+  document.querySelectorAll('.settings-tab').forEach(b => b.classList.toggle('active', b.id === 'stab-'+tab));
+  document.querySelectorAll('.settings-tab-panel').forEach(p => p.classList.toggle('active', p.id === 'spanel-'+tab));
+}
+function _renderSettingsLogo(url) {
+  const wrap = document.getElementById('settingsLogoPreviewWrap');
+  if (!wrap) return;
+  if (url) {
+    wrap.innerHTML = `<img src="${url}" class="settings-logo-preview" alt="Logo">`;
+  } else {
+    wrap.innerHTML = `<div class="settings-logo-placeholder" id="settingsLogoPlaceholder"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>`;
+  }
+}
+async function handleSettingsLogoUpload(input) {
+  const file = input.files?.[0];
+  if (!file) return;
+  const ext = file.name.split('.').pop();
+  const path = `negocio/logo.${ext}`;
+  toast('Subiendo logo...', 2000);
+  try {
+    const { error } = await sb.storage.from('vehiculos-fotos').upload(path, file, { upsert: true });
+    if (error) throw error;
+    const { data: urlData } = sb.storage.from('vehiculos-fotos').getPublicUrl(path);
+    const url = urlData.publicUrl;
+    _renderSettingsLogo(url);
+    // Logo del negocio: solo se muestra en el modal, nunca en el sidebar (que usa el icono de StockDrive)
+    // Persist in saved config
+    const saved = (() => { try { return JSON.parse(localStorage.getItem('stockdrive_config')||'{}'); } catch(e) { return {}; } })();
+    saved.logoUrl = url;
+    localStorage.setItem('stockdrive_config', JSON.stringify(saved));
+    toast('Logo actualizado', 2500, 'success');
+  } catch(err) {
+    toast('Error al subir el logo: ' + (err.message||err), 4000, 'error');
+  }
+}
+function saveSettingsProfile() {
+  const data = {
+    businessName: document.getElementById('sName').value.trim()    || CLIENT_CONFIG.businessName,
+    phone:        document.getElementById('sPhone').value.trim()   || CLIENT_CONFIG.phone,
+    whatsapp:     document.getElementById('sWhatsapp').value.trim()|| CLIENT_CONFIG.phone,
+    address:      document.getElementById('sAddress').value.trim() || CLIENT_CONFIG.address,
+    horario:      document.getElementById('sHorario').value.trim(),
+  };
+  // Preserve logoUrl if already saved
+  try { const s = JSON.parse(localStorage.getItem('stockdrive_config')||'{}'); if (s.logoUrl) data.logoUrl = s.logoUrl; } catch(e) {}
+  Object.assign(CLIENT_CONFIG, data);
+  localStorage.setItem('stockdrive_config', JSON.stringify(data));
+  // Actualiza SOLO el nombre del negocio cliente — nunca sidebarBrandName ("StockDrive")
+  const sc = document.getElementById('sidebarClientName'); // subtítulo negocio
+  if (sc) sc.textContent = data.businessName;
+  const nb = document.getElementById('navBusinessName');   // nav superior
+  if (nb) nb.textContent = data.businessName;
+  closeSettingsModal();
+  toast('Cambios guardados', 2500, 'success');
+}
+function togglePassVis(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  if (!inp) return;
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  btn.innerHTML = show
+    ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`
+    : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+}
+async function changePassword() {
+  const np = document.getElementById('sNewPass').value;
+  const cp = document.getElementById('sConfPass').value;
+  if (!np || np.length < 8) { toast('La contraseña debe tener al menos 8 caracteres', 3500, 'error'); return; }
+  if (np !== cp) { toast('Las contraseñas no coinciden', 3000, 'error'); return; }
+  try {
+    const { error } = await sb.auth.updateUser({ password: np });
+    if (error) throw error;
+    document.getElementById('sNewPass').value  = '';
+    document.getElementById('sConfPass').value = '';
+    toast('Contraseña actualizada correctamente', 3000, 'success');
+  } catch(err) {
+    toast('Error: ' + (err.message||err), 4000, 'error');
+  }
+}
 
 function syncSidebarActive(tab) {
   const t = tab || S.homeTab;
@@ -4788,6 +5009,7 @@ function toast(msg, ms=3500, type='') {
 
 // ─── INIT ─────────────────────────────────────────────────────
 document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeSettingsModal(); }
   if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
     e.preventDefault();
     if (S.view !== 'home' || S.homeTab !== 'stock') { S.view='home'; S.homeTab='stock'; render(); scrollTo(0,0); }
