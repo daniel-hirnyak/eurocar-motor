@@ -656,11 +656,16 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .vcard-margin-mob{display:none;font-size:11px;font-weight:600;white-space:nowrap}
 /* ── VEHICLE TAB MOBILE ──────────────────────────────────────────── */
 @media(max-width:767px){
+  .filter-tabs{flex-wrap:nowrap!important;overflow-x:auto;gap:6px;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .filter-tabs::-webkit-scrollbar{display:none}
+  .ftab{flex-shrink:0}
   .vcard-price{color:#1E3A5F}
   .ftab.active{color:#1E3A5F;background:rgba(30,58,95,.1)}
   .featured-counter.at-limit,.featured-counter.has-items{color:#D97706;background:#FEF3C7;border-radius:8px;padding:3px 8px}
-  .view-toggle{gap:0;border:1px solid #E2E8F0;border-radius:8px;overflow:hidden}
-  .vtog-btn{padding:8px 10px;border:none;border-radius:0}
+  .search-toggle-row{width:100%;overflow:hidden}
+  .search-toggle-row .search-inp{min-width:0}
+  .view-toggle{flex-shrink:0;gap:0;border:1px solid #E2E8F0;border-radius:8px;overflow:hidden}
+  .vtog-btn{flex-shrink:0;padding:8px 10px;border:none;border-radius:0}
   .vtog-btn.active{background:#1E3A5F;color:#fff}
   .vtog-btn:not(.active){background:#fff;color:#94A3B8}
   .vgallery-grid{grid-template-columns:1fr!important;gap:12px}
