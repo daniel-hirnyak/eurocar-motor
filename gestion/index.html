@@ -707,6 +707,19 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   .ventas-period-pills{flex-wrap:nowrap!important;overflow-x:auto;gap:8px;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .ventas-period-pills::-webkit-scrollbar{display:none}
   .ventas-period-pills button{flex-shrink:0}
+  .ventas-header-btns{width:100%;flex-wrap:nowrap!important}
+  .ventas-csv-btn{flex:0 0 auto!important;background:transparent!important;border:1px solid #E2E8F0!important;color:#64748B!important;font-size:13px!important;padding:8px 12px!important;border-radius:8px!important;display:flex!important;align-items:center!important;gap:6px!important}
+  .ventas-csv-full{display:none}
+  .ventas-csv-short{display:inline}
+  .ventas-reg-btn{flex:1!important;background:#0F172A!important;color:white!important;font-size:14px!important;padding:10px 16px!important;border-radius:8px!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:6px!important}
+  .ventas-resumen-card{padding:0!important;overflow:hidden}
+  .ventas-resumen-title{display:none}
+  .ventas-resumen-grid{display:grid!important;grid-template-columns:1fr 1fr;gap:1px;background:#F1F5F9;flex:unset!important;flex-direction:unset!important;justify-content:unset!important}
+  .ventas-resumen-grid > div:not(.ventas-summary-cell){display:none}
+  .ventas-summary-cell{background:white;padding:14px 16px}
+  .ventas-summary-cell > div:first-child{font-size:11px!important;font-weight:600!important;color:#94A3B8!important;text-transform:uppercase;letter-spacing:.05em;margin-bottom:0!important}
+  .ventas-summary-cell > div:last-child{font-size:16px!important;font-weight:700!important;color:#0F172A!important;margin-top:4px!important}
+  .venta-mobile-card{border-radius:var(--r-lg);overflow:visible}
 }
 
 /* ── WEB ANALYTICS DASHBOARD ─────────────────────── */
@@ -3059,7 +3072,7 @@ function renderVentas() {
   const countLabel = count===1 ? '1 operación' : count+' operaciones';
 
   const summaryMetric = (label, val) =>
-    `<div>
+    `<div class="ventas-summary-cell">
       <div style="font-size:0.75rem;color:var(--text-2);margin-bottom:3px">${label}</div>
       <div style="font-size:1.1rem;font-weight:700;color:var(--text)">${val}</div>
     </div>`;
@@ -3073,9 +3086,9 @@ function renderVentas() {
       <h2 style="font-size:22px;font-weight:700;color:var(--text);margin:0 0 4px">Ventas</h2>
       <p style="font-size:13px;color:var(--text-2);margin:0">Historial de operaciones y análisis financiero</p>
     </div>
-    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-      <button class="btn btn-secondary" onclick="exportVentasCSV()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Exportar CSV</button>
-      <button class="btn btn-primary" onclick="openSoldModal(null)">${IC.plus} Registrar venta</button>
+    <div class="ventas-header-btns" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <button class="btn btn-secondary ventas-csv-btn" onclick="exportVentasCSV()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span class="ventas-csv-full">Exportar CSV</span><span class="ventas-csv-short" style="display:none">CSV</span></button>
+      <button class="btn btn-primary ventas-reg-btn" onclick="openSoldModal(null)">${IC.plus} Registrar venta</button>
     </div>
   </div>
   <div class="ventas-period-pills" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px">${periodPills}</div>
@@ -3094,9 +3107,9 @@ function renderVentas() {
     </div>
     <div style="height:220px;position:relative"><canvas id="ventasEvolucionChart"></canvas></div>
   </div>
-  <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:20px;display:flex;flex-direction:column">
-    <div style="font-size:0.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-2);margin-bottom:16px">Resumen del período</div>
-    <div style="display:flex;flex-direction:column;flex:1;justify-content:space-between">
+  <div class="ventas-resumen-card" style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:20px;display:flex;flex-direction:column">
+    <div class="ventas-resumen-title" style="font-size:0.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-2);margin-bottom:16px">Resumen del período</div>
+    <div class="ventas-resumen-grid" style="display:flex;flex-direction:column;flex:1;justify-content:space-between">
       ${summaryMetric('Ticket medio', count>0 ? eur(importe/count) : '—')}
       <div style="height:1px;background:var(--border-light);margin:10px 0"></div>
       ${summaryMetric('Margen medio', count>0 ? eur(margen/count) : '—')}
@@ -3183,47 +3196,23 @@ function mkVentaRow(s) {
 function mkVentaMobileCard(s) {
   const veh = vehiclesCache.find(x => x.id === s.vehiculo_id);
   const thumb = veh && veh.photos && veh.photos[0]
-    ? `<img src="${veh.photos[0]}" style="width:52px;height:52px;border-radius:10px;object-fit:cover;flex-shrink:0">`
-    : `<div style="width:52px;height:52px;border-radius:10px;background:#F1F5F9;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#94A3B8">${IC.carGray}</div>`;
+    ? `<img src="${veh.photos[0]}" style="width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0">`
+    : `<div style="width:44px;height:44px;border-radius:8px;background:#F1F5F9;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#94A3B8">${IC.carGray}</div>`;
   const name = `${esc(s.marca||'')} ${esc(s.modelo||'')}`.trim();
   const margen = +s.margen||0;
-  const coste = +s.coste_total||0;
-  const margenPct = coste > 0 ? (margen/coste*100).toFixed(1) : null;
-  const dias = s.dias_en_stock!=null ? +s.dias_en_stock : null;
-  const tipo = s.tipo_iva || 'rebu';
-  const tipoBadge = tipo==='iva_21'
-    ? `<span style="display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;background:#EFF6FF;color:#1D4ED8">IVA 21%</span>`
-    : `<span style="display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;background:#EFF6FF;color:#1D4ED8">REBU</span>`;
-  const pdfBtn = s.numero_contrato
-    ? `<button onclick="event.stopPropagation();redownloadContrato('${s.id}')" style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:#0F172A;border:1px solid #E2E8F0;padding:6px 12px;border-radius:8px;background:white;cursor:pointer;font-family:inherit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Descargar PDF</button>`
-    : `<span style="color:#94A3B8;font-size:13px">—</span>`;
   const mc = margen >= 0 ? '#16A34A' : '#DC2626';
-  const margenVal = `${margen>=0?'+':''}${eur(margen)}${margenPct!==null?` (${margen>=0?'+':''}${margenPct}%)`:''}`;
-  const cell = (lbl, val, color) =>
-    `<div style="background:white;padding:12px 16px">` +
-    `<div style="font-size:11px;font-weight:600;color:#94A3B8;letter-spacing:.05em;text-transform:uppercase">${lbl}</div>` +
-    `<div style="font-size:15px;font-weight:700;color:${color||'#0F172A'};margin-top:2px">${val}</div>` +
-    `</div>`;
-  return `<div class="venta-mobile-card" onclick="openVentasDetail('${s.id}')">
-  <div style="display:flex;align-items:center;gap:12px;padding:16px 16px 12px">
+  const margenStr = `${margen>=0?'+':''}${eur(margen)}`;
+  return `<div class="venta-mobile-card" onclick="openVentasDetail('${s.id}')" style="display:flex;align-items:center;gap:12px;padding:14px 16px">
+  <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">
     ${thumb}
-    <div style="min-width:0;flex:1">
-      <div style="font-size:15px;font-weight:700;color:#0F172A;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${name}</div>
-      ${s.nombre_comprador?`<div style="display:flex;align-items:center;gap:4px;font-size:13px;color:#64748B;margin-top:3px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>${esc(s.nombre_comprador)}</div>`:''}
+    <div style="min-width:0">
+      <div style="font-size:14px;font-weight:700;color:#0F172A;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${name}</div>
+      ${s.nombre_comprador?`<div style="display:flex;align-items:center;gap:4px;font-size:12px;color:#64748B;margin-top:2px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>${esc(s.nombre_comprador)}</div>`:''}
       <div style="font-size:12px;color:#94A3B8;margin-top:2px">${dt(s.fecha_venta)}</div>
     </div>
   </div>
-  <div style="border-top:1px solid #F1F5F9;margin:0 16px"></div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#F1F5F9">
-    ${cell('Coste total', eur(coste))}
-    ${cell('Precio venta', eur(+s.precio_venta||0))}
-    ${cell('Margen', margenVal, mc)}
-    ${cell('Días stock', dias!==null?dias+' días':'—')}
-  </div>
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid #F1F5F9">
-    ${tipoBadge}
-    ${pdfBtn}
-  </div>
+  <div style="font-size:14px;font-weight:700;color:${mc};flex-shrink:0;white-space:nowrap">${margenStr}</div>
+  <button onclick="event.stopPropagation();openVentasDetail('${s.id}')" style="flex-shrink:0;font-size:13px;color:#0F172A;font-weight:500;background:#F8FAFC;border:1px solid #E2E8F0;padding:6px 12px;border-radius:8px;white-space:nowrap;cursor:pointer;font-family:inherit">Ver más</button>
 </div>`;
 }
 
