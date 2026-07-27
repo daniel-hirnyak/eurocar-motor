@@ -1021,6 +1021,12 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   .main{padding:72px 16px 80px}
   #mobileHeader{display:flex}
 }
+/* ── DEBUG MOBILE OVERFLOW ───────────────────────────────────── */
+@media(max-width:767px){
+  * { outline: 1px solid red !important; }
+  html, body { overflow-x: hidden !important; max-width: 100vw !important; }
+  #appBody, .main { overflow-x: hidden !important; max-width: 100vw !important; box-sizing: border-box !important; }
+}
 </style>
 </head>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
