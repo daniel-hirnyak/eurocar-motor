@@ -938,7 +938,8 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .bnav-item{display:flex;align-items:center;justify-content:center;gap:0;flex:0 0 52px;border-radius:9999px;border:none;background:transparent;cursor:pointer;height:48px;transition:background .2s ease;color:#94A3B8;font-family:inherit;padding:0}
 .bnav-item.active{flex:0 0 auto;background:#0F172A;color:#FFFFFF;padding:10px 20px;gap:8px}
 .bnav-item svg{width:22px;height:22px;stroke:currentColor;stroke-width:2;fill:none;flex-shrink:0;display:block}
-.bnav-label{font-size:13px;font-weight:600;white-space:nowrap;overflow:visible;opacity:1;pointer-events:none}
+.bnav-label{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;max-width:0;width:0;opacity:0;margin:0;padding:0;pointer-events:none}
+.bnav-item.active .bnav-label{opacity:1;width:auto;max-width:120px;overflow:visible}
 
 /* ── RESPONSIVE SIDEBAR ─────────────────────────────────────── */
 @media(max-width:768px){
