@@ -3260,13 +3260,16 @@ function applyWebPeriod(p) {
   };
   let start, prevStart, prevEnd;
   if (p === 'week') {
-    start    = getMonday(now);
-    prevEnd  = new Date(start.getTime() - 1);
-    prevStart = getMonday(prevEnd);
+    start     = getMonday(now);
+    prevStart = getMonday(new Date(start.getTime() - 7*86400000));
+    prevEnd   = new Date(prevStart.getTime() + (now.getTime() - start.getTime()));
   } else if (p === 'mes') {
-    start    = new Date(now.getFullYear(), now.getMonth(), 1);
-    prevEnd  = new Date(start.getTime() - 1);
-    prevStart = new Date(prevEnd.getFullYear(), prevEnd.getMonth(), 1);
+    start     = new Date(now.getFullYear(), now.getMonth(), 1);
+    prevStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const daysInLastMonth = new Date(now.getFullYear(), now.getMonth(), 0).getDate();
+    prevEnd   = new Date(now.getFullYear(), now.getMonth() - 1,
+      Math.min(now.getDate(), daysInLastMonth),
+      now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
   } else if (p === '3m') {
     start    = new Date(now.getTime() - 90*86400000);
     prevEnd  = new Date(start.getTime() - 1);
