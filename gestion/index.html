@@ -133,6 +133,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .ftab{padding:5px 12px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--text-2);transition:all .15s;font-family:inherit}
 .ftab.active{background:var(--primary-light);color:var(--primary)}
 .ftab:hover:not(.active){background:var(--bg);color:var(--text)}
+.filter-select-mobile{display:none}
 .search-inp{padding:7px 12px;border:1px solid var(--border);border-radius:var(--r);font-size:13px;color:var(--text);background:var(--bg);width:240px;outline:none;transition:border-color .15s,box-shadow .15s;font-family:inherit}
 .search-inp:focus{border-color:var(--primary);background:var(--white);box-shadow:0 0 0 3px rgba(30,42,94,.08)}
 
@@ -662,9 +663,8 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   .page-header-vehicles button{width:100%;justify-content:center}
   .vgc-name,.vcard-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%;max-width:100%}
   .filter-bar{flex-direction:column;align-items:stretch;gap:10px;padding:12px;overflow:hidden;width:100%;box-sizing:border-box}
-  .filter-tabs{display:flex;flex-wrap:nowrap!important;overflow-x:auto;gap:6px;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none;width:100%}
-  .filter-tabs::-webkit-scrollbar{display:none}
-  .ftab{flex-shrink:0}
+  .filter-select-mobile{display:block;width:100%;padding:10px 14px;font-size:14px;font-weight:600;color:#1E3A5F;background:#fff;border:1px solid #E2E8F0;border-radius:10px;font-family:inherit;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%231E3A5F' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:16px;cursor:pointer;box-sizing:border-box}
+  .filter-tabs{display:none}
   .vcard-price{color:#1E3A5F}
   .ftab.active{color:#1E3A5F;background:rgba(30,58,95,.1)}
   .featured-counter{width:100%;box-sizing:border-box}
@@ -1753,6 +1753,14 @@ function renderDash() {
 
   const filterBar = `
 <div class="filter-bar">
+  <select id="filterSelect" class="filter-select-mobile" onchange="setFilter(this.value)">
+    <option value="all"${S.filter==='all'?' selected':''}>Todos (${vehiclesCache.filter(v=>!v.archivado).length})</option>
+    <option value="en_preparacion"${S.filter==='en_preparacion'?' selected':''}>En preparación (${sm.prepCount})</option>
+    <option value="disponible"${S.filter==='disponible'?' selected':''}>Disponibles (${sm.availCount})</option>
+    <option value="reservado"${S.filter==='reservado'?' selected':''}>Reservados (${sm.reservedCount})</option>
+    <option value="vendido"${S.filter==='vendido'?' selected':''}>Vendidos (${sm.soldCount})</option>
+    <option value="archivado"${S.filter==='archivado'?' selected':''}>Archivados (${vehiclesCache.filter(v=>v.archivado).length})</option>
+  </select>
   <div class="filter-tabs">
     ${[['all','Todos',vehiclesCache.filter(v=>!v.archivado).length],['en_preparacion','En preparación',sm.prepCount],['disponible','Disponibles',sm.availCount],['reservado','Reservados',sm.reservedCount],['vendido','Vendidos',sm.soldCount],['archivado','Archivados',vehiclesCache.filter(v=>v.archivado).length]]
       .map(([k,l,n])=>`<button class="ftab${S.filter===k?' active':''}" onclick="setFilter('${k}')">${l} <span style="opacity:.6">(${n})</span></button>`).join('')}
