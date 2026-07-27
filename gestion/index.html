@@ -675,7 +675,10 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 @media(max-width:560px){.venta-pay{display:none}}
 
 /* ── VENTAS TAB REDESIGN ─────────────────────────────────────── */
-.ventas-kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:24px}
+.ventas-kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+.ventas-mobile-cards{display:none;flex-direction:column;gap:10px}
+.venta-mobile-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);cursor:pointer;transition:box-shadow .12s;overflow:hidden}
+.venta-mobile-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}
 .ventas-detail-outer{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .ventas-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
 .ventas-doc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
@@ -695,6 +698,8 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   .ventas-detail-outer{grid-template-columns:1fr}
   .ventas-detail-grid{grid-template-columns:1fr}
   .ventas-doc-grid{grid-template-columns:1fr}
+  .ventas-table-wrap{display:none}
+  .ventas-mobile-cards{display:flex}
 }
 
 /* ── WEB ANALYTICS DASHBOARD ─────────────────────── */
@@ -2980,7 +2985,8 @@ function renderVentas() {
 
   const diasArr = pv.filter(s => s.dias_en_stock!=null).map(s => +s.dias_en_stock);
   const diasMedio = diasArr.length > 0 ? Math.round(diasArr.reduce((a,b)=>a+b,0)/diasArr.length) : null;
-  const tableRows = pv.map(s => mkVentaRow(s)).join('');
+  const tableRows   = pv.map(s => mkVentaRow(s)).join('');
+  const mobileCards = pv.map(s => mkVentaMobileCard(s)).join('');
   const countLabel = count===1 ? '1 operación' : count+' operaciones';
 
   const summaryMetric = (label, val) =>
@@ -3040,6 +3046,7 @@ function renderVentas() {
   </div>
   <span style="display:inline-flex;align-items:center;padding:4px 10px;border-radius:20px;background:#F1F5F9;color:#475569;font-size:12px;font-weight:600">${countLabel}</span>
 </div>
+<div class="ventas-mobile-cards">${mobileCards}</div>
 <div class="ventas-table-wrap">
   <div style="overflow-x:auto">
     <table class="ventas-table">
@@ -3102,6 +3109,61 @@ function mkVentaRow(s) {
       : `<span style="color:var(--text-2)">—</span>`}
   </td>
 </tr>`;
+}
+
+function mkVentaMobileCard(s) {
+  const veh    = vehiclesCache.find(x => x.id === s.vehiculo_id);
+  const thumb  = veh && veh.photos && veh.photos[0]
+    ? `<img src="${veh.photos[0]}" style="width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0">`
+    : `<div style="width:44px;height:44px;border-radius:8px;background:var(--border-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#94A3B8">${IC.carGray}</div>`;
+  const name   = `${esc(s.marca||'')} ${esc(s.modelo||'')}`.trim();
+  const margen = +s.margen||0;
+  const coste  = +s.coste_total||0;
+  const margenPct = coste > 0 ? (margen/coste*100).toFixed(1) : null;
+  const dias   = s.dias_en_stock!=null ? +s.dias_en_stock : null;
+  const tipo   = s.tipo_iva || 'rebu';
+  const tipoPill = tipo==='iva_21'
+    ? `<span style="display:inline-block;padding:3px 8px;border-radius:12px;font-size:11px;font-weight:600;background:#EFF6FF;color:#1E40AF">IVA 21%</span>`
+    : `<span style="display:inline-block;padding:3px 8px;border-radius:12px;font-size:11px;font-weight:600;background:#F0FDF4;color:#15803D">REBU</span>`;
+  const meta   = [dt(s.fecha_venta), veh?.km?`${(+veh.km).toLocaleString('es-ES')} km`:null, veh?.combustible||null].filter(Boolean).join(' · ');
+  const lbl    = l => `<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-2);margin-bottom:3px">${l}</div>`;
+  const mc     = '#15803D', mr = '#DC2626', mc2 = margen>=0?mc:mr;
+  return `<div class="venta-mobile-card" onclick="openVentasDetail('${s.id}')">
+  <div style="display:flex;align-items:center;gap:10px;padding:14px 14px 10px">
+    ${thumb}
+    <div style="min-width:0">
+      <div style="font-weight:600;font-size:14px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${name}</div>
+      ${s.nombre_comprador?`<div style="font-size:12px;color:var(--text-2);margin-top:2px">${esc(s.nombre_comprador)}</div>`:''}
+    </div>
+  </div>
+  <div style="padding:0 14px 10px;font-size:12px;color:var(--text-2)">${meta}</div>
+  <div style="border-top:1px solid var(--border-light)"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr">
+    <div style="padding:10px 12px;border-right:1px solid var(--border-light)">
+      ${lbl('Coste total')}
+      <div style="font-size:14px;font-weight:600;color:var(--text)">${eur(coste)}</div>
+    </div>
+    <div style="padding:10px 12px">
+      ${lbl('Precio venta')}
+      <div style="font-size:14px;font-weight:600;color:var(--text)">${eur(+s.precio_venta||0)}</div>
+    </div>
+    <div style="padding:10px 12px;border-right:1px solid var(--border-light);border-top:1px solid var(--border-light)">
+      ${lbl('Margen')}
+      <div style="font-size:14px;font-weight:600;color:${mc2}">${margen>=0?'+':''}${eur(margen)}</div>
+      ${margenPct!==null?`<div style="font-size:11px;color:${mc2}">${margen>=0?'+':''}${margenPct}%</div>`:''}
+    </div>
+    <div style="padding:10px 12px;border-top:1px solid var(--border-light)">
+      ${lbl('Días stock')}
+      <div style="font-size:14px;font-weight:600;color:var(--text)">${dias!==null?dias+'d':'—'}</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-top:1px solid var(--border-light)">
+    ${tipoPill}
+    ${s.numero_contrato
+      ? `<button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();redownloadContrato('${s.id}')" title="Descargar contrato PDF" style="padding:5px 7px;color:#1E3A5F"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>`
+      : `<span style="color:var(--text-2);font-size:13px">—</span>`}
+  </div>
+</div>`;
 }
 
 function exportVentasCSV() {
