@@ -882,11 +882,16 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   .db-kpi-grid > *:nth-child(5){grid-column:span 2}
   .db-kpi-grid .db-kpi{padding:14px}
   .db-kpi-grid .db-kpi-val{font-size:24px}
+  .db-kpi-icon{display:none}
   .db-sec-hrow{flex-direction:column}
   .db-period-sel{width:100%}
   .db-period-sel select{flex:1}
-  .db-alert{flex-wrap:wrap}
-  .db-alert-action{width:100%;text-align:center;justify-content:center;margin-top:4px}
+  .db-alert{flex-wrap:nowrap}
+  .db-alert-action{display:none!important}
+  .db-alert-chevron{display:flex!important;flex-shrink:0;color:#94A3B8;align-self:center}
+  .db-alert[data-level="crit"]{border-left:4px solid #EF4444}
+  .db-alert[data-level="warn"]{border-left:4px solid #F59E0B}
+  .db-empty-ok{background:#F0FDF4;border:1px solid #BBF7D0;color:#15803D;font-weight:600;border-radius:10px;padding:10px 14px;font-size:13px}
   .db-status-cols{grid-template-columns:1fr}
 }
 
@@ -2828,7 +2833,7 @@ function renderHomeContent() {
     const lvlLabel={crit:'CRÍTICO',warn:'AVISO',info:'INFORMACIÓN'};
     const lvlColor={crit:'#dc2626',warn:'#d97706',info:'#2563eb'};
     if(!count)return`<div class="db-empty-ok"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>${label}: sin incidencias</div>`;
-    return`<div class="db-alert"><div style="flex-shrink:0;display:flex;align-items:flex-start;padding-top:1px">${icoSvg[level]||''}</div><div style="flex:1;min-width:0"><div style="font-size:10px;font-weight:700;color:${lvlColor[level]||'var(--text-2)'};text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px">${lvlLabel[level]||''}</div><div style="font-size:13px;font-weight:600;color:var(--text)">${label}</div><div style="font-size:12px;color:var(--text-2);margin-top:2px">${count} vehículo${count!==1?'s':''}</div></div><button class="btn btn-secondary btn-sm db-alert-action" onclick="goAlertGroup('${key}')">Ver ›</button></div>`;
+    return`<div class="db-alert" data-level="${level}" onclick="goAlertGroup('${key}')" style="cursor:pointer"><div style="flex-shrink:0;display:flex;align-items:flex-start;padding-top:1px">${icoSvg[level]||''}</div><div style="flex:1;min-width:0"><div style="font-size:10px;font-weight:700;color:${lvlColor[level]||'var(--text-2)'};text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px">${lvlLabel[level]||''}</div><div style="font-size:13px;font-weight:600;color:var(--text)">${label}</div><div style="font-size:12px;color:var(--text-2);margin-top:2px">${count} vehículo${count!==1?'s':''}</div></div><button class="btn btn-secondary btn-sm db-alert-action" onclick="event.stopPropagation();goAlertGroup('${key}')">Ver ›</button><span class="db-alert-chevron" style="display:none"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span></div>`;
   };
 
   // Feather icons for KPI cards (16px, color var(--text-2))
@@ -2875,22 +2880,22 @@ function renderHomeContent() {
     ${secH('Situación actual')}
     <div class="db-kpi-grid">
       <div class="db-kpi" style="min-height:130px;display:flex;flex-direction:column">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between"><span style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em">Vehículos activos</span><span style="color:var(--text-2);flex-shrink:0">${icoTruck}</span></div>
+        <div style="display:flex;align-items:flex-start;justify-content:space-between"><span style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em">Vehículos activos</span><span class="db-kpi-icon">${icoTruck}</span></div>
         <div class="db-kpi-val" style="margin-top:8px">${sm.total}</div>
         <div style="font-size:13px;color:var(--text-2);margin-top:auto;padding-top:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${sm.availCount} disp. · ${sm.reservedCount} res. · ${sm.prepCount} en prep.</div>
       </div>
       <div class="db-kpi" style="min-height:130px;display:flex;flex-direction:column">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between"><span style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em">Capital invertido</span><span style="color:var(--text-2);flex-shrink:0">${icoCard}</span></div>
+        <div style="display:flex;align-items:flex-start;justify-content:space-between"><span style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em">Capital invertido</span><span class="db-kpi-icon">${icoCard}</span></div>
         <div class="db-kpi-val" style="margin-top:8px;font-size:26px">${eur(sm.invested)}</div>
         <div style="font-size:13px;color:var(--text-2);margin-top:auto;padding-top:8px">Compra + gastos confirmados del stock activo</div>
       </div>
       <div class="db-kpi" style="min-height:130px;display:flex;flex-direction:column">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between"><span style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em">Valor anunciado</span><span style="color:var(--text-2);flex-shrink:0">${icoTag}</span></div>
+        <div style="display:flex;align-items:flex-start;justify-content:space-between"><span style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em">Valor anunciado</span><span class="db-kpi-icon">${icoTag}</span></div>
         <div class="db-kpi-val" style="margin-top:8px;font-size:26px">${pvpAnunciado>0?eur(pvpAnunciado):'—'}</div>
         <div style="font-size:13px;color:var(--text-2);margin-top:auto;padding-top:8px">PVP total del stock publicado en web</div>
       </div>
       <div class="db-kpi" style="min-height:130px;display:flex;flex-direction:column">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between"><span style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em">Margen potencial</span><span style="color:var(--text-2);flex-shrink:0">${icoTrend}</span></div>
+        <div style="display:flex;align-items:flex-start;justify-content:space-between"><span style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em">Margen potencial</span><span class="db-kpi-icon">${icoTrend}</span></div>
         <div style="display:flex;align-items:center;flex-wrap:wrap;margin-top:8px">
           <div class="db-kpi-val" style="font-size:26px">${pvpAnunciado>0?eur(margenPotencial):'—'}</div>
           ${pvpAnunciado>0?pctBadge(margenPotencial,sm.invested):''}
@@ -2898,7 +2903,7 @@ function renderHomeContent() {
         <div style="font-size:13px;color:var(--text-2);margin-top:auto;padding-top:8px">Antes de gastos generales e impuestos</div>
       </div>
       <div class="db-kpi" style="min-height:130px;display:flex;flex-direction:column">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between"><span style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em">Permanencia media</span><span style="color:var(--text-2);flex-shrink:0">${icoClock}</span></div>
+        <div style="display:flex;align-items:flex-start;justify-content:space-between"><span style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em">Permanencia media</span><span class="db-kpi-icon">${icoClock}</span></div>
         <div class="db-kpi-val" style="margin-top:8px">${avgPerm!==null?Math.round(avgPerm)+' días':'—'}</div>
         <div style="font-size:12px;margin-top:auto;padding-top:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:4px;${age3>0?'color:#d97706':'color:var(--text-2)'}">${age3>0?icoWarnSm+` ${age3} vehículo${age3!==1?'s':''} supera${age3===1?'':'n'} los 90 días`:'Tiempo medio en stock activo'}</div>
       </div>
