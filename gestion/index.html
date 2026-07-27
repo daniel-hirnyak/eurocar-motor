@@ -711,14 +711,14 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   .ventas-csv-btn{flex:0 0 auto!important;background:transparent!important;border:1px solid #E2E8F0!important;color:#64748B!important;font-size:13px!important;padding:8px 12px!important;border-radius:8px!important;display:flex!important;align-items:center!important;gap:6px!important}
   .ventas-csv-full{display:none}
   .ventas-csv-short{display:inline}
-  .ventas-reg-btn{flex:1!important;background:#0F172A!important;color:white!important;font-size:14px!important;padding:10px 16px!important;border-radius:8px!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:6px!important}
+  .ventas-reg-btn{flex:1!important;background:#1E3A5F!important;color:white!important;font-size:14px!important;padding:10px 16px!important;border-radius:8px!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:6px!important}
   .ventas-resumen-card{padding:0!important;overflow:hidden}
   .ventas-resumen-title{display:none}
   .ventas-resumen-grid{display:grid!important;grid-template-columns:1fr 1fr;gap:1px;background:#F1F5F9;flex:unset!important;flex-direction:unset!important;justify-content:unset!important}
   .ventas-resumen-grid > div:not(.ventas-summary-cell){display:none}
   .ventas-summary-cell{background:white;padding:14px 16px}
   .ventas-summary-cell > div:first-child{font-size:11px!important;font-weight:600!important;color:#94A3B8!important;text-transform:uppercase;letter-spacing:.05em;margin-bottom:0!important}
-  .ventas-summary-cell > div:last-child{font-size:16px!important;font-weight:700!important;color:#0F172A!important;margin-top:4px!important}
+  .ventas-summary-cell > div:last-child{font-size:16px!important;font-weight:700!important;color:#1E3A5F!important;margin-top:4px!important}
   .venta-mobile-card{border-radius:var(--r-lg);overflow:visible}
 }
 
@@ -924,9 +924,9 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 
 /* ── MOBILE HEADER ─────────────────────────────────────────── */
 #mobileHeader{display:none;position:fixed;top:0;left:0;right:0;height:56px;background:#FFFFFF;border-bottom:1px solid #E2E8F0;box-shadow:0 1px 4px rgba(0,0,0,.06);z-index:200;align-items:center;justify-content:space-between;padding:0 8px}
-.mhdr-btn{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border:none;background:none;cursor:pointer;border-radius:8px;color:#0F172A;transition:background .15s;flex-shrink:0}
+.mhdr-btn{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border:none;background:none;cursor:pointer;border-radius:8px;color:#1E3A5F;transition:background .15s;flex-shrink:0}
 .mhdr-btn:hover{background:rgba(15,23,42,.06)}
-.mhdr-title{font-size:20px;font-weight:700;color:#0F172A;letter-spacing:-.02em;pointer-events:none}
+.mhdr-title{font-size:20px;font-weight:700;color:#1E3A5F;letter-spacing:-.02em;pointer-events:none}
 #mobileOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:250;opacity:0;transition:opacity .2s}
 #mobileOverlay.open{opacity:1}
 #mobileHamburgerMenu{display:none;position:fixed;top:64px;left:16px;background:var(--white);border:1px solid var(--border);border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.15);z-index:300;min-width:200px;overflow:hidden;opacity:0;transform:scale(.9) translateY(-8px);transform-origin:top left;transition:opacity .15s,transform .15s}
@@ -956,7 +956,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 /* ── MOBILE BOTTOM NAV ─────────────────────────────────────── */
 #bottomNav{display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);width:calc(100vw - 48px);max-width:calc(100vw - 32px);background:#FFFFFF;border-radius:9999px;padding:8px;box-shadow:0 4px 24px rgba(0,0,0,.12),0 1px 4px rgba(0,0,0,.06);align-items:center;justify-content:center;gap:4px;z-index:150}
 .bnav-item{display:flex;align-items:center;justify-content:center;gap:0;flex:1;border-radius:9999px;border:none;background:transparent;cursor:pointer;height:48px;transition:background .2s ease;color:#94A3B8;font-family:inherit;padding:10px 0}
-.bnav-item.active{background:#0F172A;color:#FFFFFF;padding:10px 16px;gap:8px}
+.bnav-item.active{background:#1E3A5F;color:#FFFFFF;padding:10px 16px;gap:8px}
 .bnav-item svg{width:22px;height:22px;stroke:currentColor;stroke-width:2;fill:none;flex-shrink:0;display:block}
 .bnav-label{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;max-width:0;width:0;opacity:0;margin:0;padding:0;pointer-events:none}
 .bnav-item.active .bnav-label{opacity:1;width:auto;max-width:120px;overflow:visible}
@@ -3206,13 +3206,13 @@ function mkVentaMobileCard(s) {
   <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">
     ${thumb}
     <div style="min-width:0">
-      <div style="font-size:14px;font-weight:700;color:#0F172A;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${name}</div>
+      <div style="font-size:14px;font-weight:700;color:#1E3A5F;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${name}</div>
       ${s.nombre_comprador?`<div style="display:flex;align-items:center;gap:4px;font-size:12px;color:#64748B;margin-top:2px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>${esc(s.nombre_comprador)}</div>`:''}
       <div style="font-size:12px;color:#94A3B8;margin-top:2px">${dt(s.fecha_venta)}</div>
     </div>
   </div>
   <div style="font-size:14px;font-weight:700;color:${mc};flex-shrink:0;white-space:nowrap">${margenStr}</div>
-  <button onclick="event.stopPropagation();openVentasDetail('${s.id}')" style="flex-shrink:0;font-size:13px;color:#0F172A;font-weight:500;background:#F8FAFC;border:1px solid #E2E8F0;padding:6px 12px;border-radius:8px;white-space:nowrap;cursor:pointer;font-family:inherit">Ver más</button>
+  <button onclick="event.stopPropagation();openVentasDetail('${s.id}')" style="flex-shrink:0;font-size:13px;color:#1E3A5F;font-weight:500;background:#F8FAFC;border:1px solid #E2E8F0;padding:6px 12px;border-radius:8px;white-space:nowrap;cursor:pointer;font-family:inherit">Ver más</button>
 </div>`;
 }
 
