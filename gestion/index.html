@@ -654,10 +654,12 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 .vtog-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
 .vcard-right{display:flex;flex-direction:column;align-items:flex-end;flex-shrink:0;gap:2px;margin-right:4px}
 .vcard-margin-mob{display:none;font-size:11px;font-weight:600;white-space:nowrap}
+.page-header-vehicles{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px}
 /* ── VEHICLE TAB MOBILE ──────────────────────────────────────────── */
 @media(max-width:767px){
-  .page-header-vehicles{flex-direction:column;align-items:flex-start;gap:12px}
+  .page-header-vehicles{flex-direction:column;align-items:stretch}
   .page-header-vehicles button{width:100%;justify-content:center}
+  .vgc-name,.vcard-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%;max-width:100%}
   .filter-bar{flex-direction:column;align-items:stretch;gap:10px;padding:12px;overflow:hidden;width:100%;box-sizing:border-box}
   .filter-tabs{display:flex;flex-wrap:nowrap!important;overflow-x:auto;gap:6px;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none;width:100%}
   .filter-tabs::-webkit-scrollbar{display:none}
@@ -1741,7 +1743,7 @@ function renderDash() {
   const featuredCount = vehiclesCache.filter(x => x.destacado).length;
   const vehicleView = localStorage.getItem('stockdrive_vehicle_view') || 'gallery';
 
-  const pageHeader = `<div class="page-header-vehicles" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px"><div><h2 style="font-size:22px;font-weight:700;color:var(--text);margin:0 0 4px">Vehículos</h2><p style="font-size:13px;color:var(--text-2);margin:0">Gestiona tu stock, precios y publicación.</p></div><button class="btn btn-primary" onclick="showAddForm()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Añadir vehículo</button></div>`;
+  const pageHeader = `<div class="page-header-vehicles" style="margin-bottom:20px"><div><h2 style="font-size:22px;font-weight:700;color:var(--text);margin:0 0 4px">Vehículos</h2><p style="font-size:13px;color:var(--text-2);margin:0">Gestiona tu stock, precios y publicación.</p></div><button class="btn btn-primary" onclick="showAddForm()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Añadir vehículo</button></div>`;
 
   const filterBar = `
 <div class="filter-bar">
