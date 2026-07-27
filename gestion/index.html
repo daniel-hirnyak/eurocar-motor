@@ -701,6 +701,13 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   .ventas-table-wrap{display:none}
   .ventas-mobile-cards{display:flex}
 }
+@media(max-width:767px){
+  .ventas-chart-row{grid-template-columns:1fr!important;gap:16px}
+  .ventas-chart-row > div{width:100%}
+  .ventas-period-pills{flex-wrap:nowrap!important;overflow-x:auto;gap:8px;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .ventas-period-pills::-webkit-scrollbar{display:none}
+  .ventas-period-pills button{flex-shrink:0}
+}
 
 /* ── WEB ANALYTICS DASHBOARD ─────────────────────── */
 .web-analytics{padding:0}
@@ -3071,7 +3078,7 @@ function renderVentas() {
       <button class="btn btn-primary" onclick="openSoldModal(null)">${IC.plus} Registrar venta</button>
     </div>
   </div>
-  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px">${periodPills}</div>
+  <div class="ventas-period-pills" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px">${periodPills}</div>
   <div class="ventas-kpi-grid" style="margin-bottom:24px">
     ${kpiCard('Vehículos vendidos', count, periodLabel, 'var(--text)', IC_TRUCK)}
     ${kpiCard('Importe vendido', eur(importe), 'Precio de venta acumulado', 'var(--text)', IC_COIN)}
@@ -3079,7 +3086,7 @@ function renderVentas() {
     ${kpiCard('IVA a liquidar', eur(iva), 'Estimado (REBU / IVA 21%)', 'var(--text)', IC_FILE2)}
   </div>
   ${ventasCache.length > 0 ? `
-<div style="display:grid;grid-template-columns:65% 1fr;gap:16px;margin-bottom:24px">
+<div class="ventas-chart-row" style="display:grid;grid-template-columns:65% 1fr;gap:16px;margin-bottom:24px">
   <div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:20px">
     <div style="margin-bottom:16px">
       <div style="font-size:15px;font-weight:600;color:var(--text)">Evolución de las ventas</div>
@@ -3174,56 +3181,48 @@ function mkVentaRow(s) {
 }
 
 function mkVentaMobileCard(s) {
-  const veh    = vehiclesCache.find(x => x.id === s.vehiculo_id);
-  const thumb  = veh && veh.photos && veh.photos[0]
-    ? `<img src="${veh.photos[0]}" style="width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0">`
-    : `<div style="width:44px;height:44px;border-radius:8px;background:var(--border-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#94A3B8">${IC.carGray}</div>`;
-  const name   = `${esc(s.marca||'')} ${esc(s.modelo||'')}`.trim();
+  const veh = vehiclesCache.find(x => x.id === s.vehiculo_id);
+  const thumb = veh && veh.photos && veh.photos[0]
+    ? `<img src="${veh.photos[0]}" style="width:52px;height:52px;border-radius:10px;object-fit:cover;flex-shrink:0">`
+    : `<div style="width:52px;height:52px;border-radius:10px;background:#F1F5F9;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#94A3B8">${IC.carGray}</div>`;
+  const name = `${esc(s.marca||'')} ${esc(s.modelo||'')}`.trim();
   const margen = +s.margen||0;
-  const coste  = +s.coste_total||0;
+  const coste = +s.coste_total||0;
   const margenPct = coste > 0 ? (margen/coste*100).toFixed(1) : null;
-  const dias   = s.dias_en_stock!=null ? +s.dias_en_stock : null;
-  const tipo   = s.tipo_iva || 'rebu';
-  const tipoPill = tipo==='iva_21'
-    ? `<span style="display:inline-block;padding:3px 8px;border-radius:12px;font-size:11px;font-weight:600;background:#EFF6FF;color:#1E40AF">IVA 21%</span>`
-    : `<span style="display:inline-block;padding:3px 8px;border-radius:12px;font-size:11px;font-weight:600;background:#F0FDF4;color:#15803D">REBU</span>`;
-  const meta   = [dt(s.fecha_venta), veh?.km?`${(+veh.km).toLocaleString('es-ES')} km`:null, veh?.combustible||null].filter(Boolean).join(' · ');
-  const lbl    = l => `<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-2);margin-bottom:3px">${l}</div>`;
-  const mc     = '#15803D', mr = '#DC2626', mc2 = margen>=0?mc:mr;
+  const dias = s.dias_en_stock!=null ? +s.dias_en_stock : null;
+  const tipo = s.tipo_iva || 'rebu';
+  const tipoBadge = tipo==='iva_21'
+    ? `<span style="display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;background:#EFF6FF;color:#1D4ED8">IVA 21%</span>`
+    : `<span style="display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;background:#EFF6FF;color:#1D4ED8">REBU</span>`;
+  const pdfBtn = s.numero_contrato
+    ? `<button onclick="event.stopPropagation();redownloadContrato('${s.id}')" style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:#0F172A;border:1px solid #E2E8F0;padding:6px 12px;border-radius:8px;background:white;cursor:pointer;font-family:inherit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Descargar PDF</button>`
+    : `<span style="color:#94A3B8;font-size:13px">—</span>`;
+  const mc = margen >= 0 ? '#16A34A' : '#DC2626';
+  const margenVal = `${margen>=0?'+':''}${eur(margen)}${margenPct!==null?` (${margen>=0?'+':''}${margenPct}%)`:''}`;
+  const cell = (lbl, val, color) =>
+    `<div style="background:white;padding:12px 16px">` +
+    `<div style="font-size:11px;font-weight:600;color:#94A3B8;letter-spacing:.05em;text-transform:uppercase">${lbl}</div>` +
+    `<div style="font-size:15px;font-weight:700;color:${color||'#0F172A'};margin-top:2px">${val}</div>` +
+    `</div>`;
   return `<div class="venta-mobile-card" onclick="openVentasDetail('${s.id}')">
-  <div style="display:flex;align-items:center;gap:10px;padding:14px 14px 10px">
+  <div style="display:flex;align-items:center;gap:12px;padding:16px 16px 12px">
     ${thumb}
-    <div style="min-width:0">
-      <div style="font-weight:600;font-size:14px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${name}</div>
-      ${s.nombre_comprador?`<div style="font-size:12px;color:var(--text-2);margin-top:2px">${esc(s.nombre_comprador)}</div>`:''}
+    <div style="min-width:0;flex:1">
+      <div style="font-size:15px;font-weight:700;color:#0F172A;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${name}</div>
+      ${s.nombre_comprador?`<div style="display:flex;align-items:center;gap:4px;font-size:13px;color:#64748B;margin-top:3px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>${esc(s.nombre_comprador)}</div>`:''}
+      <div style="font-size:12px;color:#94A3B8;margin-top:2px">${dt(s.fecha_venta)}</div>
     </div>
   </div>
-  <div style="padding:0 14px 10px;font-size:12px;color:var(--text-2)">${meta}</div>
-  <div style="border-top:1px solid var(--border-light)"></div>
-  <div style="display:grid;grid-template-columns:1fr 1fr">
-    <div style="padding:10px 12px;border-right:1px solid var(--border-light)">
-      ${lbl('Coste total')}
-      <div style="font-size:14px;font-weight:600;color:var(--text)">${eur(coste)}</div>
-    </div>
-    <div style="padding:10px 12px">
-      ${lbl('Precio venta')}
-      <div style="font-size:14px;font-weight:600;color:var(--text)">${eur(+s.precio_venta||0)}</div>
-    </div>
-    <div style="padding:10px 12px;border-right:1px solid var(--border-light);border-top:1px solid var(--border-light)">
-      ${lbl('Margen')}
-      <div style="font-size:14px;font-weight:600;color:${mc2}">${margen>=0?'+':''}${eur(margen)}</div>
-      ${margenPct!==null?`<div style="font-size:11px;color:${mc2}">${margen>=0?'+':''}${margenPct}%</div>`:''}
-    </div>
-    <div style="padding:10px 12px;border-top:1px solid var(--border-light)">
-      ${lbl('Días stock')}
-      <div style="font-size:14px;font-weight:600;color:var(--text)">${dias!==null?dias+'d':'—'}</div>
-    </div>
+  <div style="border-top:1px solid #F1F5F9;margin:0 16px"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#F1F5F9">
+    ${cell('Coste total', eur(coste))}
+    ${cell('Precio venta', eur(+s.precio_venta||0))}
+    ${cell('Margen', margenVal, mc)}
+    ${cell('Días stock', dias!==null?dias+' días':'—')}
   </div>
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-top:1px solid var(--border-light)">
-    ${tipoPill}
-    ${s.numero_contrato
-      ? `<button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();redownloadContrato('${s.id}')" title="Descargar contrato PDF" style="padding:5px 7px;color:#1E3A5F"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>`
-      : `<span style="color:var(--text-2);font-size:13px">—</span>`}
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid #F1F5F9">
+    ${tipoBadge}
+    ${pdfBtn}
   </div>
 </div>`;
 }
