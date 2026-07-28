@@ -4975,11 +4975,7 @@ ${!_saleData._fromVender?`<button class="btn btn-secondary" onclick="_saleStep=1
   <div class="prow big"><span class="plabel">Margen bruto</span><span class="pval num ${margen3>=0?'pos':'neg'}">${margen3>=0?'+':''}${eur(margen3)}</span></div>
   <div class="prow sep"><span class="plabel">Base imponible</span><span class="pval num">${eur(Math.max(0,base3))}</span></div>
   <div class="prow"><span class="plabel">IVA (${tipo3==='rebu'?'REBU':'21%'})</span><span class="pval num">${eur(ivaVal3)}</span></div>
-</div>
-<label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text);font-weight:400">
-  <input type="checkbox" id="_smPdf" ${_saleData.genPdf!==false?'checked':''} onchange="_saleData.genPdf=this.checked" style="width:16px;height:16px;cursor:pointer;accent-color:var(--primary)">
-  Generar y descargar contrato PDF
-</label>`;
+</div>`;
     foot.innerHTML = `
 <button class="btn btn-secondary" onclick="closeSoldModal()">Cancelar</button>
 <div style="flex:1"></div>
@@ -5017,22 +5013,35 @@ async function _confirmSale() {
   const price=+_saleData.price||null;
   const date=_saleData.date||null;
   const buyerData={name:_saleData.name,dni:_saleData.dni,addr:_saleData.addr,payMethod:_saleData.payMethod,tipoIva:_saleData.tipoIva||'rebu'};
-  closeSoldModal();
-  if(_saleData.genPdf!==false){
-    try{generateContractPDF(v,buyerData.name,buyerData.dni,buyerData.addr,price,buyerData.payMethod,date);}
-    catch(err){console.error('PDF:',err);toast('El PDF no se pudo generar, pero la venta se confirmará igualmente.',4000,'error');}
-  }
   await doChangeStatus(id,v.status,'vendido',price,date,buyerData);
+  closeSoldModal();
+  toast('✓ Venta registrada correctamente',3000,'success');
+  const _pdfDlg=document.createElement('div');
+  _pdfDlg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:300';
+  _pdfDlg.innerHTML=`<div style="background:#fff;border-radius:16px;padding:24px;max-width:320px;width:calc(100% - 32px);text-align:center">
+    <div style="font-size:18px;font-weight:700;margin-bottom:8px">Venta registrada</div>
+    <div style="font-size:14px;color:#64748B;margin-bottom:20px">¿Quieres generar el contrato de compraventa en PDF?</div>
+    <button id="_pdfDlgYes" class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:8px">Generar PDF</button>
+    <button id="_pdfDlgNo" class="btn btn-secondary" style="width:100%;justify-content:center">Omitir</button>
+  </div>`;
+  document.body.appendChild(_pdfDlg);
+  const _closePdfDlg=()=>_pdfDlg.remove();
+  _pdfDlg.querySelector('#_pdfDlgYes').onclick=()=>{
+    _closePdfDlg();
+    try{generateContractPDF(v,buyerData.name,buyerData.dni,buyerData.addr,price,buyerData.payMethod,date,buyerData.tipoIva);}
+    catch(err){console.error('PDF:',err);toast('El PDF no se pudo generar.',4000,'error');}
+  };
+  _pdfDlg.querySelector('#_pdfDlgNo').onclick=_closePdfDlg;
 }
 document.getElementById('soldModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeSoldModal();});
 
 // ─── CONTRACT PDF ─────────────────────────────────────────────
-function generateContractPDF(v, buyerName, buyerDni, buyerAddr, price, payMethod, saleDate) {
+function generateContractPDF(v, buyerName, buyerDni, buyerAddr, price, payMethod, saleDate, tipoIva='rebu') {
   if (!window.jspdf) { throw new Error('jsPDF not loaded'); }
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const PW=210, PH=297, ML=20, MR=20, CW=170;
-  const NAVY=[30,42,94], BLACK=[30,30,30], GRAY=[140,140,140], LGRAY=[240,242,248];
+  const NAVY=[22,37,92], BLACK=[30,30,30], GRAY=[140,140,140], LGRAY=[240,242,248];
 
   const now=new Date();
   const dateStr=saleDate||now.toISOString().split('T')[0];
@@ -5173,7 +5182,7 @@ function generateContractPDF(v, buyerName, buyerDni, buyerAddr, price, payMethod
   [
     ['Precio de venta:',priceFmt],
     ['Forma de pago:',payMethod],
-    ['Régimen fiscal:','Régimen Especial de Bienes Usados (REBU)'],
+    ['Régimen fiscal:',tipoIva==='iva_21'?'IVA 21% (tipo general)':'Régimen Especial de Bienes Usados (REBU)'],
   ].forEach(([label,val])=>{
     doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(...BLACK);
     doc.text(label,ML,y);
