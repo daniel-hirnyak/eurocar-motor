@@ -1048,10 +1048,11 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   html, body { overflow-x: hidden; max-width: 100vw; }
   #appBody, .main { overflow-x: hidden; max-width: 100vw; box-sizing: border-box; }
 }
-/* ── TAB SLIDE ANIMATIONS ────────────────────────────────────── */
+/* ── TAB FADE ANIMATION ──────────────────────────────────────── */
 @media(max-width:1100px){
-  #homeContent{position:relative;overflow:hidden;min-height:100vh}
-  .tab-transitioning-out,.tab-transitioning-in{position:absolute;top:0;left:0;right:0;will-change:transform;transition:transform 0.32s cubic-bezier(.4,0,.2,1);pointer-events:none}
+  #homeContent{transition:opacity .18s ease,transform .18s ease}
+  #homeContent.tab-leaving{opacity:0;transform:translateX(-12px)}
+  #homeContent.tab-entering{opacity:0;transform:translateX(12px)}
 }
 </style>
 </head>
@@ -5325,45 +5326,13 @@ if ('serviceWorker' in navigator) {
     if (!c) { setHomeTab(TABS[nextIdx]); return; }
 
     _animating = true;
-    const outgoingHTML = c.innerHTML;
+    c.classList.add(deltaX > 0 ? 'tab-leaving' : 'tab-entering');
 
-    // Renderiza nuevo tab en c (inicia charts, carga analytics, etc.)
-    setHomeTab(TABS[nextIdx]);
-
-    // Envuelve el contenido recién renderizado en el panel "incoming"
-    const incoming = document.createElement('div');
-    incoming.className = 'tab-transitioning-in';
-    while (c.firstChild) incoming.appendChild(c.firstChild);
-
-    // Panel "outgoing" con el HTML anterior
-    const outgoing = document.createElement('div');
-    outgoing.className = 'tab-transitioning-out';
-    outgoing.innerHTML = outgoingHTML;
-
-    // Posiciones iniciales antes de insertar en el DOM (sin transición todavía)
-    const dir = deltaX > 0 ? 1 : -1;
-    outgoing.style.transform = 'translateX(0)';
-    incoming.style.transform = `translateX(${dir * 100}%)`;
-
-    c.appendChild(outgoing);
-    c.appendChild(incoming);
-
-    // Dos frames para que el browser pinte las posiciones iniciales
-    // antes de que la transición CSS empiece a aplicarse
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        outgoing.style.transform = `translateX(${dir * -100}%)`;
-        incoming.style.transform = 'translateX(0)';
-      });
-    });
-
-    // Cleanup: devuelve los hijos reales a c y elimina los paneles temporales
     setTimeout(() => {
-      while (incoming.firstChild) c.appendChild(incoming.firstChild);
-      if (c.contains(outgoing)) c.removeChild(outgoing);
-      if (c.contains(incoming)) c.removeChild(incoming);
+      setHomeTab(TABS[nextIdx]);
+      c.classList.remove('tab-leaving', 'tab-entering');
       _animating = false;
-    }, 340);
+    }, 180);
   }, { passive: true });
 })();
 </script>
