@@ -5303,6 +5303,13 @@ document.addEventListener('keydown', e => {
 });
 initApp();
 
+document.addEventListener('visibilitychange', async () => {
+  if (document.visibilityState === 'visible') {
+    const session = await sb.auth.getSession();
+    if (session?.data?.session) { loadData(); }
+  }
+});
+
 // ── MOBILE HEADER ────────────────────────────────────────────────
 function toggleMobileHamburgerMenu() {
   var m = document.getElementById('mobileHamburgerMenu');
