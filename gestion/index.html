@@ -1463,12 +1463,39 @@ async function initApp() {
   if (el) el.textContent = CLIENT_CONFIG.businessName;
   const sc = document.getElementById('sidebarClientName');
   if (sc) sc.textContent = CLIENT_CONFIG.businessName;
-  const { data: { session } } = await sb.auth.getSession();
-  if (session) { showApp(); syncSidebarActive(S.homeTab); await loadData(); }
+
+  // Pre-rellena el formulario si hay email guardado (sea cual sea el resultado del auto-login)
+  const _savedEmail = localStorage.getItem('sd_email');
+  if (_savedEmail) {
+    const _eEl = document.getElementById('loginEmail');
+    const _rEl = document.getElementById('loginRemember');
+    if (_eEl) _eEl.value = _savedEmail;
+    if (_rEl) _rEl.checked = true;
+  }
+
+  // Listener para cambios de estado futuros (login manual, logout, refresh)
   sb.auth.onAuthStateChange((event, _s) => {
     if (event === 'SIGNED_IN')  { showApp(); syncSidebarActive(S.homeTab); loadData(); }
     if (event === 'SIGNED_OUT') { vehiclesCache=[]; document.getElementById('appContainer').classList.add('hidden'); document.getElementById('loginScreen').classList.remove('hidden'); }
   });
+
+  // 1. Sesión activa existente
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) { showApp(); syncSidebarActive(S.homeTab); await loadData(); return; }
+
+  // 2. Auto-login si el usuario marcó "Recordar sesión" en el último login
+  const _savedPw = localStorage.getItem('sd_password');
+  if (localStorage.getItem('sd_remember') === 'true' && _savedEmail && _savedPw) {
+    const { error: _ae } = await sb.auth.signInWithPassword({ email: _savedEmail, password: atob(_savedPw) });
+    if (_ae) {
+      // Credenciales inválidas (contraseña cambiada, etc.) — limpia y muestra login
+      // El formulario ya tiene el email pre-rellenado desde arriba
+      localStorage.removeItem('sd_remember');
+      localStorage.removeItem('sd_email');
+      localStorage.removeItem('sd_password');
+    }
+    // Si éxito: onAuthStateChange dispara SIGNED_IN → showApp() + loadData()
+  }
 }
 
 function showApp() {
@@ -1482,15 +1509,30 @@ async function handleLogin(e) {
   const remember=document.getElementById('loginRemember')?.checked||false;
   const btn=document.getElementById('loginBtn'), errEl=document.getElementById('loginError');
   btn.disabled=true; btn.textContent='Iniciando sesión...'; errEl.classList.add('hidden');
-  const { error } = await sb.auth.signInWithPassword({ email, password, options:{ persistSession: remember } });
+  const { error } = await sb.auth.signInWithPassword({ email, password });
   btn.disabled=false; btn.textContent='Iniciar sesión';
   if (error) {
     errEl.textContent=(error.message||'').includes('Invalid login credentials')?'Email o contraseña incorrectos':(error.message||'Error al iniciar sesión');
     errEl.classList.remove('hidden');
+  } else {
+    if (remember) {
+      localStorage.setItem('sd_remember', 'true');
+      localStorage.setItem('sd_email', email);
+      localStorage.setItem('sd_password', btoa(password));
+    } else {
+      localStorage.removeItem('sd_remember');
+      localStorage.removeItem('sd_email');
+      localStorage.removeItem('sd_password');
+    }
   }
 }
 
-async function handleLogout() { await sb.auth.signOut(); }
+async function handleLogout() {
+  localStorage.removeItem('sd_remember');
+  localStorage.removeItem('sd_email');
+  localStorage.removeItem('sd_password');
+  await sb.auth.signOut();
+}
 
 // ─── SETTINGS MODAL ──────────────────────────────────────────
 function openSettingsModal() {
