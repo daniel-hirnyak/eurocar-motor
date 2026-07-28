@@ -723,6 +723,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 
 /* ── VENTAS TAB REDESIGN ─────────────────────────────────────── */
 .ventas-kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+.ventas-chart-row{display:grid;grid-template-columns:65% 1fr;gap:16px}
 .ventas-mobile-cards{display:none;flex-direction:column;gap:10px}
 .venta-mobile-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);cursor:pointer;transition:box-shadow .12s;overflow:hidden}
 .venta-mobile-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}
@@ -749,7 +750,7 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   .ventas-mobile-cards{display:flex}
 }
 @media(max-width:767px){
-  .ventas-chart-row{grid-template-columns:1fr!important;gap:16px}
+  .ventas-chart-row{grid-template-columns:1fr;gap:16px}
   .ventas-chart-row > div{width:100%}
   .ventas-period-pills{flex-wrap:nowrap!important;overflow-x:auto;gap:8px;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .ventas-period-pills::-webkit-scrollbar{display:none}
@@ -926,8 +927,8 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   .ventas-kpi-grid{grid-template-columns:repeat(2,1fr)}
   .ventas-header-btns{flex-wrap:wrap}
   .ventas-table{min-width:unset}
-  .web-chart-grid{grid-template-columns:1fr;gap:16px}
-  .web-chart-grid > div{width:100%}
+  .web-chart-grid{grid-template-columns:1fr!important;gap:16px}
+  .web-chart-grid > div{width:100%!important}
   .web-kpi-grid{grid-template-columns:repeat(2,1fr)}
   .web-vehicle-table-wrap table{min-width:unset}
 }
@@ -3188,7 +3189,7 @@ function renderVentas() {
     ${kpiCard('IVA a liquidar', eur(iva), 'Estimado (REBU / IVA 21%)', 'var(--text)', IC_FILE2)}
   </div>
   ${ventasCache.length > 0 ? `
-<div class="ventas-chart-row" style="display:grid;grid-template-columns:65% 1fr;gap:16px;margin-bottom:24px">
+<div class="ventas-chart-row" style="margin-bottom:24px">
   <div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:20px">
     <div style="margin-bottom:16px">
       <div style="font-size:15px;font-weight:600;color:var(--text)">Evolución de las ventas</div>
