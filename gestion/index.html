@@ -4918,16 +4918,6 @@ function _renderSaleModal() {
   <div class="fg"><label>DNI / NIE <span style="color:var(--danger)">*</span></label>
     <input type="text" id="_smDni" placeholder="12345678A" value="${esc(_saleData.dni||'')}" autocomplete="off">
   </div>
-  <div class="fg"><label>Dirección <span style="color:var(--danger)">*</span></label>
-    <input type="text" id="_smAddr" placeholder="Calle Mayor, 5, 1º, 08001 Barcelona" value="${esc(_saleData.addr||'')}" autocomplete="off">
-  </div>
-  <div class="fg"><label>Forma de pago</label>
-    <select id="_smPay">
-      <option value="Efectivo"${(_saleData.payMethod||'Efectivo')==='Efectivo'?' selected':''}>Efectivo</option>
-      <option value="Transferencia bancaria"${_saleData.payMethod==='Transferencia bancaria'?' selected':''}>Transferencia bancaria</option>
-      <option value="Financiación"${_saleData.payMethod==='Financiación'?' selected':''}>Financiación</option>
-    </select>
-  </div>
 </div>
 <div style="height:1px;background:var(--border);margin-bottom:14px"></div>
 <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--primary);margin-bottom:10px">Datos de la operación</div>
@@ -4993,18 +4983,16 @@ function _selectSaleVehicle(id) {
 function _saleStep2Next() {
   const name=(document.getElementById('_smName')?.value||'').trim();
   const dni=(document.getElementById('_smDni')?.value||'').trim();
-  const addr=(document.getElementById('_smAddr')?.value||'').trim();
-  const payMethod=document.getElementById('_smPay')?.value||'Efectivo';
   const price=document.getElementById('_smPrice')?.value||'';
   const date=document.getElementById('_smDate')?.value||'';
   let ok=true;
-  ['_smName','_smDni','_smAddr'].forEach(fid=>{
+  ['_smName','_smDni'].forEach(fid=>{
     const el=document.getElementById(fid);
     if(el&&!el.value.trim()){el.style.borderColor='var(--danger)';ok=false;}
     else if(el) el.style.borderColor='';
   });
   if(!ok){toast('Completa los campos obligatorios del comprador',3000,'error');return;}
-  _saleData={..._saleData,name,dni,addr,payMethod,price,date};
+  _saleData={..._saleData,name,dni,addr:'',payMethod:'',price,date};
   _saleStep=3; _renderSaleModal();
 }
 async function _confirmSale() {
@@ -5012,7 +5000,7 @@ async function _confirmSale() {
   const v=vehiclesCache.find(x=>x.id===id); if(!v) return;
   const price=+_saleData.price||null;
   const date=_saleData.date||null;
-  const buyerData={name:_saleData.name,dni:_saleData.dni,addr:_saleData.addr,payMethod:_saleData.payMethod,tipoIva:_saleData.tipoIva||'rebu'};
+  const buyerData={name:_saleData.name,dni:_saleData.dni,addr:_saleData.addr||'',payMethod:_saleData.payMethod||'',tipoIva:_saleData.tipoIva||'rebu'};
   await doChangeStatus(id,v.status,'vendido',price,date,buyerData);
   closeSoldModal();
   toast('✓ Venta registrada correctamente',3000,'success');
