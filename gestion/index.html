@@ -5293,6 +5293,29 @@ if ('serviceWorker' in navigator) {
     window.location.reload();
   });
 }
+
+// ── SWIPE ENTRE TABS (mobile) ─────────────────────────────────
+(function() {
+  const TABS = ['metricas', 'stock', 'ventas', 'web'];
+  let _tx = 0, _ty = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    _tx = e.touches[0].clientX;
+    _ty = e.touches[0].clientY;
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (window.innerWidth > 1100) return;
+    if (S.view !== 'home') return;
+    const deltaX = _tx - e.changedTouches[0].clientX;
+    const deltaY = Math.abs(_ty - e.changedTouches[0].clientY);
+    if (Math.abs(deltaX) < 60 || deltaY > 80) return;
+    const idx = TABS.indexOf(S.homeTab);
+    if (idx === -1) return;
+    if (deltaX > 0 && idx < TABS.length - 1) setHomeTab(TABS[idx + 1]);
+    else if (deltaX < 0 && idx > 0) setHomeTab(TABS[idx - 1]);
+  }, { passive: true });
+})();
 </script>
 </body>
 </html>
