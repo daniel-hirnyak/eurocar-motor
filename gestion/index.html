@@ -1050,15 +1050,8 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
 }
 /* ── TAB SLIDE ANIMATIONS ────────────────────────────────────── */
 @media(max-width:1100px){
-  #homeContent{overflow:hidden;position:relative}
-  .tab-slide-out-left{animation:slideOutLeft .28s cubic-bezier(.4,0,.2,1) forwards}
-  .tab-slide-out-right{animation:slideOutRight .28s cubic-bezier(.4,0,.2,1) forwards}
-  .tab-slide-in-left{animation:slideInLeft .28s cubic-bezier(.4,0,.2,1) forwards}
-  .tab-slide-in-right{animation:slideInRight .28s cubic-bezier(.4,0,.2,1) forwards}
-  @keyframes slideOutLeft{from{transform:translateX(0);opacity:1}to{transform:translateX(-100%);opacity:0}}
-  @keyframes slideOutRight{from{transform:translateX(0);opacity:1}to{transform:translateX(100%);opacity:0}}
-  @keyframes slideInLeft{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
-  @keyframes slideInRight{from{transform:translateX(-100%);opacity:0}to{transform:translateX(0);opacity:1}}
+  #homeContent{position:relative;overflow:hidden;min-height:100vh}
+  .tab-transitioning-out,.tab-transitioning-in{position:absolute;top:0;left:0;right:0;will-change:transform;transition:transform 0.32s cubic-bezier(.4,0,.2,1);pointer-events:none}
 }
 </style>
 </head>
@@ -5328,24 +5321,49 @@ if ('serviceWorker' in navigator) {
     const nextIdx = deltaX > 0 ? idx + 1 : idx - 1;
     if (nextIdx < 0 || nextIdx >= TABS.length) return;
 
-    const outClass = deltaX > 0 ? 'tab-slide-out-left' : 'tab-slide-out-right';
-    const inClass  = deltaX > 0 ? 'tab-slide-in-left'  : 'tab-slide-in-right';
     const c = document.getElementById('homeContent');
     if (!c) { setHomeTab(TABS[nextIdx]); return; }
 
     _animating = true;
-    c.classList.add(outClass);
+    const outgoingHTML = c.innerHTML;
 
+    // Renderiza nuevo tab en c (inicia charts, carga analytics, etc.)
+    setHomeTab(TABS[nextIdx]);
+
+    // Envuelve el contenido recién renderizado en el panel "incoming"
+    const incoming = document.createElement('div');
+    incoming.className = 'tab-transitioning-in';
+    while (c.firstChild) incoming.appendChild(c.firstChild);
+
+    // Panel "outgoing" con el HTML anterior
+    const outgoing = document.createElement('div');
+    outgoing.className = 'tab-transitioning-out';
+    outgoing.innerHTML = outgoingHTML;
+
+    // Posiciones iniciales antes de insertar en el DOM (sin transición todavía)
+    const dir = deltaX > 0 ? 1 : -1;
+    outgoing.style.transform = 'translateX(0)';
+    incoming.style.transform = `translateX(${dir * 100}%)`;
+
+    c.appendChild(outgoing);
+    c.appendChild(incoming);
+
+    // Dos frames para que el browser pinte las posiciones iniciales
+    // antes de que la transición CSS empiece a aplicarse
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        outgoing.style.transform = `translateX(${dir * -100}%)`;
+        incoming.style.transform = 'translateX(0)';
+      });
+    });
+
+    // Cleanup: devuelve los hijos reales a c y elimina los paneles temporales
     setTimeout(() => {
-      setHomeTab(TABS[nextIdx]);
-      c.classList.remove(outClass);
-      void c.offsetWidth; // fuerza reflow para reiniciar animación
-      c.classList.add(inClass);
-      setTimeout(() => {
-        c.classList.remove(inClass);
-        _animating = false;
-      }, 280);
-    }, 280);
+      while (incoming.firstChild) c.appendChild(incoming.firstChild);
+      if (c.contains(outgoing)) c.removeChild(outgoing);
+      if (c.contains(incoming)) c.removeChild(incoming);
+      _animating = false;
+    }, 340);
   }, { passive: true });
 })();
 </script>
