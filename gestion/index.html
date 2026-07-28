@@ -1054,6 +1054,10 @@ textarea{resize:vertical;min-height:76px;line-height:1.5}
   #homeContent.tab-leaving{opacity:0;transform:translateX(-12px)}
   #homeContent.tab-entering{opacity:0;transform:translateX(12px)}
 }
+/* ── FLOATING BACK BUTTON (detail, mobile only) ─────────────── */
+#floatingBackBtn{position:fixed;bottom:100px;left:16px;z-index:120;background:#fff;border:1px solid #E2E8F0;border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,.12);cursor:pointer;color:#16255C;padding:0}
+#floatingBackBtn:active{background:#F8FAFC}
+@media(min-width:1101px){#floatingBackBtn{display:none!important}}
 </style>
 </head>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -1792,9 +1796,11 @@ function sortArrow(col) {
 }
 
 // ─── RENDER ──────────────────────────────────────────────────
+function _removeFloatingBack() { const _b = document.getElementById('floatingBackBtn'); if (_b) _b.remove(); }
 function render() {
   const app = document.getElementById('app'); if (!app) return;
   if (S.view==='home' || S.view==='stock' || S.view==='dash') {
+    _removeFloatingBack();
     if (!document.getElementById('homeShell')) {
       app.innerHTML = renderHome();
     } else {
@@ -1807,8 +1813,17 @@ function render() {
     return;
   }
   app.innerHTML = '';
-  if (S.view==='form')   { app.innerHTML = renderForm();   return; }
-  if (S.view==='detail') { app.innerHTML = renderDetail(); loadDetailWebStats(S.detailId); return; }
+  if (S.view==='form')   { _removeFloatingBack(); app.innerHTML = renderForm();   return; }
+  if (S.view==='detail') {
+    app.innerHTML = renderDetail(); loadDetailWebStats(S.detailId);
+    _removeFloatingBack();
+    const _fb = document.createElement('button');
+    _fb.id = 'floatingBackBtn'; _fb.onclick = showDash;
+    _fb.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>';
+    document.body.appendChild(_fb);
+    return;
+  }
+  _removeFloatingBack();
 }
 
 // ─── VEHICLE CARDS ────────────────────────────────────────────
