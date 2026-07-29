@@ -5097,7 +5097,7 @@ function generateContractPDF(v, buyerName, buyerDni, buyerAddr, price, payMethod
     ['',CLIENT_CONFIG.address],
     ['',CLIENT_CONFIG.city],
     ['','Barcelona'],
-    ['Tel.:','+34 692 92 22 99'],
+    ['Tel.:', CLIENT_CONFIG.phone || ''],
   ].forEach(([label,val])=>{
     if(label){
       doc.setFont('helvetica','bold');doc.text(label,ML,yL);
