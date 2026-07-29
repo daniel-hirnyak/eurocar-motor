@@ -12,6 +12,7 @@ const CLIENT_CONFIG = {
   // --- Datos de contacto ---
   phone: "+34 692 92 22 99",           // Con prefijo internacional
   phoneDisplay: "692 92 22 99",         // Como se muestra en pantalla
+  whatsapp: "+34 692 92 22 99",         // Número de WhatsApp de contacto
   address: "Carrer les Minetes, 100, Polígono Industrial, 08130",
   city: "Santa Perpètua de Mogoda",
   email: "",                            // Vacío por ahora
