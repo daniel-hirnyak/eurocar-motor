@@ -7,6 +7,7 @@
 const CLIENT_CONFIG = {
   // --- Identidad del negocio ---
   businessName: "Eurocar-Motor",        // Nombre que aparece en PDFs, contratos, etc.
+  clientName: "Yuriy",                  // Nombre del propietario, usado en el saludo del dashboard
 
   // --- Datos de contacto ---
   phone: "+34 692 92 22 99",           // Con prefijo internacional
