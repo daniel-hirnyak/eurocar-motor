@@ -20,4 +20,5 @@ const CLIENT_CONFIG = {
   // --- Conexión a Supabase (base de datos del cliente) ---
   supabaseUrl: "https://rxmokcdynbmkhtirdpcf.supabase.co",
   supabaseKey: "sb_publishable_jG5mA8o9eVvMEIVBAJop2A_XA9EI4cu",
+  bucket: "vehiculos-fotos",            // Bucket de Supabase Storage para fotos
 };
