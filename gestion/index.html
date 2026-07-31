@@ -3795,7 +3795,7 @@ function applyWebPeriod(p) {
   // KPIs período actual
   const pEv      = events.filter(inCur);
   const visitas  = pEv.filter(e=>e.tipo==='vista').length;
-  const fichas   = new Set(pEv.filter(e=>e.tipo==='vista'&&e.vehiculo_id).map(e=>e.vehiculo_id)).size;
+  const fichas   = pEv.filter(e=>e.tipo==='vista'&&e.vehiculo_id).length;
   const calls    = pEv.filter(e=>e.tipo==='clic_llamar').length;
   const wa       = pEv.filter(e=>e.tipo==='clic_whatsapp').length;
   const contactos = calls+wa;
@@ -3804,7 +3804,7 @@ function applyWebPeriod(p) {
   // KPIs período anterior
   const pvEv       = events.filter(inPrev);
   const pvVisitas  = pvEv.filter(e=>e.tipo==='vista').length;
-  const pvFichas   = new Set(pvEv.filter(e=>e.tipo==='vista'&&e.vehiculo_id).map(e=>e.vehiculo_id)).size;
+  const pvFichas   = pvEv.filter(e=>e.tipo==='vista'&&e.vehiculo_id).length;
   const pvCalls    = pvEv.filter(e=>e.tipo==='clic_llamar').length;
   const pvWa       = pvEv.filter(e=>e.tipo==='clic_whatsapp').length;
   const pvContactos = pvCalls+pvWa;
