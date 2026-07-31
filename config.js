@@ -21,4 +21,11 @@ const CLIENT_CONFIG = {
   supabaseUrl: "https://rxmokcdynbmkhtirdpcf.supabase.co",
   supabaseKey: "sb_publishable_jG5mA8o9eVvMEIVBAJop2A_XA9EI4cu",
   bucket: "vehiculos-fotos",            // Bucket de Supabase Storage para fotos
+
+  // --- Web y catálogo ---
+  catalogUrl: "https://eurocarmotor.com/catalogo/",
+  catalogTitle: "Furgonetas y vehículos comerciales de ocasión",
+  catalogHero: "Furgonetas y vehículos de ocasión, listos para ti",
+  catalogColor: "#16255C",
+  catalogMapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2985.8!2d2.1889!3d41.5234!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12a4bd5c5c5c5c5c%3A0x0!2sSanta+Perp%C3%A8tua+de+Mogoda!5e0!3m2!1ses!2ses!4v1234567890",
 };
